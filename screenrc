@@ -1,0 +1,7 @@
+term xterm-color
+autodetach on
+vbell off
+startup_message off
+defscrollback 30000
+termcapinfo xterm ti@:te@   # scroll wheel action!
+escape ^Tt                  # Control-b > Control-a
