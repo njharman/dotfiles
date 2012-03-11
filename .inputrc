@@ -1,0 +1,32 @@
+# Bash VI mode
+set editing-mode vi
+set keymap vi-command
+# jj alias for escape
+"jj": "\e"
+# Prefix history search, for vi-command mode
+"j": history-search-backward
+"k": history-search-forward
+set keymap vi-insert
+# Prefix history search, for vi-insert mode
+"\e[A": history-search-backward
+"\e[B": history-search-forward
+# Muscle memory; ctrl-a ctrl-e ctrl-d 
+"\C-a": beginning-of-line
+"\C-e": end-of-line
+"\C-d": delete-char
+
+set completion-query-items 250
+set mark-symlinked-directories on
+set show-all-if-unmodified on
+set show-all-if-ambiguous on
+set skip-completed-text on
+set match-hidden-files off
+set visible-stats on
+#set completion-ignore-case on
+
+#set horizontal-scroll-mode on
+
+# Allow UTF-8 input and output, instead of showing stuff like $'\0123\0456'
+set input-meta on
+set output-meta on
+set convert-meta off

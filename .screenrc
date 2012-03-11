@@ -1,0 +1,7 @@
+vbell off
+autodetach on
+startup_message off
+defscrollback 30000
+term xterm-color
+termcapinfo xterm ti@:te@ # scroll wheel action!
+escape ^Tt # Instead of Control-a, make the escape/command character be Control-b
