@@ -50,7 +50,10 @@ chmod 700 ~/.ssh
 chmod -f 600 ~/.authorized_keys
 chown -R $USER:$USER ~/.ssh
 
-## ~/tmp ~/work
+## ~/tmp ~/work vim stuff
 mkdir -p ~/tmp
 mkdir -p ~/work
-
+mkdir -p ~/.vim/colors/
+mkdir -p ~/.vim/ftplugin/
+symtastico ~/.vim/colors/ `ls -d "$WORK"/.vim/colors/*`
+symtastico ~/.vim/ftplugin/ `ls -d "$WORK"/.vim/ftplugin/*`
