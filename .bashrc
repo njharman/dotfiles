@@ -5,7 +5,7 @@ export HISTSIZE=10000
 export HISTFILESIZE=999999
 export HISTIGNORE='[bf]g:cd:cd -:cd ~:ls:ls -al:la:ll:l:history:exit'
 export HISTCONTROL=ignoreboth
-export IGNOREEOF=3
+export IGNOREEOF=2
 export PATH=$HOME/bin:$PATH
 export CDPATH='.:~/work/'
 
@@ -51,7 +51,7 @@ case "$TERM" in
       PS1="\[\e]0;\h: \w\a\]$PS1"
       ;;
 esac
-unset color_prompt 
+unset color_prompt
 
 export CLICOLORS=1
 # ls colors
@@ -69,8 +69,8 @@ export GROFF_NO_SGR=1
 export LESS_TERMCAP_mb=$'\E[01;31m'
 export LESS_TERMCAP_md=$'\E[01;31m'
 export LESS_TERMCAP_me=$'\E[0m'
-export LESS_TERMCAP_so=$'\E[01;44;33m'                                 
-export LESS_TERMCAP_se=$'\E[0m'                           
+export LESS_TERMCAP_so=$'\E[01;44;33m'
+export LESS_TERMCAP_se=$'\E[0m'
 export LESS_TERMCAP_us=$'\E[01;32m'
 export LESS_TERMCAP_ue=$'\E[0m'
 

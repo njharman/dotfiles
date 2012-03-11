@@ -1,0 +1,9 @@
+Thumbs.db
+.DS_Store
+.gitconfig
+.DS_Store
+*~
+.*.swp
+.svn
+.pyc
+.pyo
