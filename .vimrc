@@ -136,7 +136,6 @@ imap <C-l> <C-x><C-l>
 nnoremap <space> >>
 vnoremap <space> >>
 
-
 let mapleader = ","
 
 map <leader># :s/^/#/<cr>
@@ -227,6 +226,7 @@ au FileType text setlocal formatoptions=tqcan12w nocindent textwidth=78
 " Remove any trailing whitespace that is in the file
 autocmd BufRead,BufWrite * if ! &bin | silent! %s/\s\+$//ge | endif
 
+" For SICP
 "https://github.com/jpalardy/vim-slime/blob/master/plugin/slime.vim
 " start screen (in other terminal) screen -S sicp rlwrap scheme -large
 function Send_to_Screen(text)
@@ -242,7 +242,6 @@ function Screen_Vars()
   end
   let b:slime["sessionname"] = input("session name: ", b:slime["sessionname"], "custom,Screen_Session_Names")
 endfunction
-
 vmap <C-c><C-c> "ry:call Send_to_Screen(@r)<CR>
 nmap <C-c><C-c> vip<C-c><C-c>
 nmap <C-c><C-a> :call Send_to_Screen("(restart 1)\n")<CR>
