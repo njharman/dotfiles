@@ -38,10 +38,10 @@ fi
 ## .dotfiles
 symtastico ~ `ls -ad "$WORK"/\.*`
 
-## ~/bin
-mkdir -p ~/bin
-chmod 700 ~/bin
-symtastico ~/bin `ls -d "$WORK"/bin/*`
+## ~/.vim  (only some stuff)
+mkdir -p ~/.vim/ftplugin ~/.vim/colors
+symtastico ~/.vim/ftplugin/ `ls -d "$WORK"/.vim/ftplugin/*`
+symtastico ~/.vim/colors/ `ls -d "$WORK"/.vim/colors/*`
 
 ## ~/.ssh
 # Just dir/permissions.  Don't wanna autolink config...
@@ -50,7 +50,11 @@ chmod 700 ~/.ssh
 chmod -f 600 ~/.authorized_keys
 chown -R $USER:$USER ~/.ssh
 
+## ~/bin
+mkdir -p ~/bin
+chmod 700 ~/bin
+symtastico ~/bin `ls -d "$WORK"/bin/*`
+
 ## ~/tmp ~/work
 mkdir -p ~/tmp
 mkdir -p ~/work
-
