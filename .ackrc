@@ -1,6 +1,6 @@
 --type-add=css=.sass,.less
---type-add=txt=.rst
 --ignore-dir=coverage
+--ignore-dir=migrations
 --sort-files
 --follow
 --color

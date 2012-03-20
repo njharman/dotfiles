@@ -1,19 +1,27 @@
 # Bash VI mode
 set editing-mode vi
-set keymap vi-command
-# jj alias for escape
-"jj": "\e"
-# Prefix history search, for vi-command mode
-"j": history-search-backward
-"k": history-search-forward
-set keymap vi-insert
-# Prefix history search, for vi-insert mode
-"\e[A": history-search-backward
-"\e[B": history-search-forward
-# Muscle memory; ctrl-a ctrl-e ctrl-d 
-"\C-a": beginning-of-line
-"\C-e": end-of-line
-"\C-d": delete-char
+$if mode=vi
+    set keymap vi-command
+    # Prefix history search, for vi-command mode
+    "j": history-search-backward
+    "k": history-search-forward
+    "gg": beginning-of-history
+    "G": end-of-history
+    set keymap vi-insert
+    # Prefix history search, for vi-insert mode
+    "\e[A": history-search-backward
+    "\e[B": history-search-forward
+    "\e[C": forward-char
+    "\e[D": backward-char
+    # glob patterns without executing, eg: 'rm *x'
+    "\C-e": glob-expand-word
+    # Muscle memory; ctrl-a ctrl-e ctrl-d
+    "\C-a": beginning-of-line
+    "\C-e": end-of-line
+    "\C-d": delete-char
+    # jj for escape
+    "jj": vi-movement-mode
+#endif
 
 set completion-query-items 250
 set mark-symlinked-directories on

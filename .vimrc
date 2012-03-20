@@ -112,28 +112,26 @@ autocmd filetype python imap <buffer> <S-F5> <Esc>:w<CR>:!pylint %<CR>
 " <C-6> switches to alternate file and correct column.
 nnoremap <C-6> <C-6>`"
 
+";=: jj=ESC
+nnoremap ; :
+inoremap jj <ESC>
+
 " Emacs movement keybindings in insert mode.
 map <C-a> ^
 map <C-e> $
+" Swap these keps cause ` is cooler but ' is easier to type.
+nnoremap ' `
+nnoremap ` '
+" Reflow paragraph with Q in normal and visual mode.
+nnoremap Q gqap
+vnoremap Q gq
+" Make Y consistent with C and D.
+nnoremap Y y$
 
 " Buffer navigation.
 map <C-right> <ESC>:bn<CR>
 map <C-left> <ESC>:bp<CR>
 
-" Reflow paragraph with Q in normal and visual mode.
-nnoremap Q gqap
-vnoremap Q gq
-
-";=: jj=ESC
-nnoremap ; :
-inoremap jj <ESC>
-
-" Swap these keps cause ` is cooler but ' is easier to type.
-nnoremap ' `
-nnoremap ` '
-
-" Make Y consistent with C and D.
-nnoremap Y y$
 
 " Fast find / obnoxious higlight word under cursor.
 "function Funkmaster()
@@ -145,7 +143,6 @@ nnoremap Y y$
 "endfunction
 "" Remap the tab key to select action with InsertTabWrapper
 "nnoremap <space> :call Funkmaster()<CR>
-
 " Indent with spacebar.
 nnoremap <space> >>
 vnoremap <space> >>
@@ -154,7 +151,7 @@ vnoremap <space> >>
 imap <C-f> <C-x><C-f>
 imap <C-l> <C-x><C-l>
 
-" Sudo to write.
+" Sudo write
 cmap w!! w !sudo tee % >/dev/null
 
 " :o <file> open file if in path, open gf in new buffer.
@@ -202,8 +199,8 @@ iab todo: TODO:
 iab months- January February March April May June July August September October November December
 iab 80- 1234567890123456789012345678901234567890123456789012345678901234567890123456789
 iab me- Norman J. Harman Jr.
-iab time-  <C-R>=strftime("%H:%M:%S")<CR>
-iab date-  <C-R>=strftime("%a, %d %b %Y")<CR>
+iab time- <C-R>=strftime("%H:%M:%S")<CR>
+iab date- <C-R>=strftime("%a, %d %b %Y")<CR>
 iab now- <C-R>=strftime("%a, %d %b %Y %H:%M:%S %z")<CR>
 
 
@@ -211,8 +208,8 @@ iab now- <C-R>=strftime("%a, %d %b %Y %H:%M:%S %z")<CR>
 " Jump to matching pairs easily, with Tab
 nnoremap <tab> %
 vnoremap <tab> %
-" This function determines, whether we are on the start of the line text (then
-" tab indents) or if we want to try omni/dict/backwards completion.
+" InsertTabWrapper determines, whether we are on the start of the line text
+" (then tab indents) or if we want to try omni/dict/backwards completion.
 function InsertTabWrapper()
     if strpart( getline('.'), 0, col('.')-1 ) =~ '^\s*$'
         return "\<tab>"
@@ -264,6 +261,7 @@ au BufEnter *.js        setlocal softtabstop=2|setlocal shiftwidth=2
 au BufEnter *.html      setlocal softtabstop=2|setlocal shiftwidth=2
 au BufNewFile,BufRead *.scss       setlocal ft=scss.css
 au BufNewFile,BufRead *.sass       setlocal ft=sass.css
+
 
 " Ghetto Slime
 " https://github.com/jpalardy/vim-slime/blob/master/plugin/slime.vim

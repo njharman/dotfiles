@@ -32,10 +32,6 @@ alias hl='highlight -M'
 function mkmine() { sudo chown -R ${USER} ${1:-.}; }
 function mkyours() { sudo chown -R ${1} ${2}; }
 
-if [ -f ~/.bash_aliases ]; then
-    . ~/.bash_aliases
-fi
-
 if [ -x /usr/bin/tput ] && tput setaf 1 >&/dev/null; then
     color_prompt=yes
 else
@@ -77,17 +73,15 @@ export LESS_TERMCAP_ue=$'\E[0m'
 # Check the window size after each command and, if necessary, update the values of LINES and COLUMNS.
 shopt -s checkwinsize
 
-
 if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
     . /etc/bash_completion
 fi
 
-# pip bash completion start
+# pip bash completion
 _pip_completion()
-{
-    COMPREPLY=( $( COMP_WORDS="${COMP_WORDS[*]}" \
-                   COMP_CWORD=$COMP_CWORD \
-                   PIP_AUTO_COMPLETE=1 $1 ) )
-}
+    { COMPREPLY=( $( COMP_WORDS="${COMP_WORDS[*]}" COMP_CWORD=$COMP_CWORD PIP_AUTO_COMPLETE=1 $1 ) ) }
 complete -o default -F _pip_completion pip
-# pip bash completion end
+
+if [ -f ~/.bash_local ]; then
+    . ~/.bash_local
+fi
