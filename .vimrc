@@ -5,7 +5,7 @@
 " :3match
 " :match ErrorMsg /\%>73v.\+/ # \%> match col, 'v' virtual columns only
 " :setlocal spell spelllang=en_us " ]s [s zg=addword
-" searches # * g# g* g,
+" searches # * g# g* g, gd
 
 set nocompatible                " vim > vi
 
@@ -59,6 +59,8 @@ set shortmess=atI       " Shorten messages and no splash screen.
 set list                " Show invisible characters.
 set listchars=tab:>·    " But only show tabs.
 let g:clipbrdDefaultReg = '+'
+" Paste Toggle
+set pastetoggle=<F9> " When in insert mode, press <F11> to go to paste mode.
 " Freakin awesome, start scrolling 5 lines from top/bottom/left/right.
 set scrolloff=5
 set sidescrolloff=5
@@ -91,28 +93,12 @@ set statusline=%F%m%r%h%w%<\ \ %{&ff}%y%=0x\%02.2B\ /\ \%03.3b\ \ %04lr:%02vc\ \
 set laststatus=2  "set laststatus=0 to remove
 
 
-
 " Key Bindings
 " :map normal, insert, visual, command
 " :imap insert
 " :cmap command
 " :nmap normal
 " :vmap visual
-
-" Paste Toggle
-let paste_mode = 0 " 0 = normal, 1 = paste
-func! Paste_on_off()
-   if g:paste_mode == 0
-      set paste
-      let g:paste_mode = 1
-   else
-      set nopaste
-      let g:paste_mode = 0
-   endif
-   return
-endfunc
-map <silent> <F11> :call Paste_on_off()<CR>
-set pastetoggle=<F11> " When in insert mode, press <F11> to go to paste mode.
 
 "F1 not help
 inoremap <F1> <ESC>
@@ -149,6 +135,17 @@ nnoremap ` '
 " Make Y consistent with C and D.
 nnoremap Y y$
 
+" Fast find / obnoxious higlight word under cursor.
+"function Funkmaster()
+"    if &hlsearch
+"        set nohlsearch
+"    else
+"        set hlsearch
+"    endif
+"endfunction
+"" Remap the tab key to select action with InsertTabWrapper
+"nnoremap <space> :call Funkmaster()<CR>
+
 " Indent with spacebar.
 nnoremap <space> >>
 vnoremap <space> >>
@@ -175,18 +172,20 @@ let mapleader = ","
 " Pull word under cursor into LHS of a substitute.
 nmap <leader>s :%s/<C-r>=expand("<cword>")CR>/
 
-nmap <leader># :s/^/#/<cr>
-nmap <leader>3 :s/^/#/<cr>
-nmap <leader>u :s/#//<cr>
-nmap <leader>w <C-W><C-W>
+nmap <leader># :s/^/#/<CR>
+vmap <leader># :s/^/#/<CR>
+nmap <leader>3 :s/^/#/<CR>
+vmap <leader>3 :s/^/#/<CR>
+nmap <leader>u :s/#//<CR>
+vmap <leader>u :s/#//<CR>
 
 " ReST titles
-nmap <leader># yyp:s/./#/g<cr>
-nmap <leader>= yyp:s/./=/g<cr>
-nmap <leader>- yyp:s/./-/g<cr>
-nmap <leader>~ yyp:s/./\~/g<cr>
-nmap <leader>^ yyp:s/./^/g<cr>
-nmap <leader>* yyp:s/./*/g<cr>
+nmap <leader># yypVr#o
+nmap <leader>= yypVr=o
+nmap <leader>- yypVr-o
+nmap <leader>~ yypVr\~o
+nmap <leader>^ yypVr^o
+nmap <leader>* yypVr*o
 
 " Sloppy fingers
 command WQ wq
@@ -208,22 +207,25 @@ iab date-  <C-R>=strftime("%a, %d %b %Y")<CR>
 iab now- <C-R>=strftime("%a, %d %b %Y %H:%M:%S %z")<CR>
 
 
-" Awesome completion
+" Tab completion
+" Jump to matching pairs easily, with Tab
+nnoremap <tab> %
+vnoremap <tab> %
 " This function determines, whether we are on the start of the line text (then
-" tab indents) or if we want to try autocompletion.
+" tab indents) or if we want to try omni/dict/backwards completion.
 function InsertTabWrapper()
-    let col = col('.') - 1
-    if !col || getline('.')[col - 1] !~ '\k'
+    if strpart( getline('.'), 0, col('.')-1 ) =~ '^\s*$'
         return "\<tab>"
+    elseif &omnifunc != ''
+        return "\<c-X>\<c-O>"
+    elseif &dictionary != ''
+        return "\<c-K>"
     else
         return "\<c-p>"
     endif
 endfunction
 " Remap the tab key to select action with InsertTabWrapper
-inoremap <tab> <c-r>=InsertTabWrapper()<cr>
-" Jump to matching pairs easily, with Tab
-nnoremap <Tab> %
-vnoremap <Tab> %
+inoremap <tab> <c-r>=InsertTabWrapper()<CR>
 
 
 " Formating
