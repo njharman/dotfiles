@@ -74,14 +74,15 @@ export LESS_TERMCAP_ue=$'\E[0m'
 shopt -s checkwinsize
 
 if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
-    . /etc/bash_completion
+    source /etc/bash_completion
 fi
 
 # pip bash completion
-_pip_completion()
-    { COMPREPLY=( $( COMP_WORDS="${COMP_WORDS[*]}" COMP_CWORD=$COMP_CWORD PIP_AUTO_COMPLETE=1 $1 ) ) }
+function _pip_completion() {
+    COMPREPLY=( $( COMP_WORDS="${COMP_WORDS[*]}" COMP_CWORD=$COMP_CWORD PIP_AUTO_COMPLETE=1 $1 ) )
+    }
 complete -o default -F _pip_completion pip
 
 if [ -f ~/.bash_local ]; then
-    . ~/.bash_local
+    source ~/.bash_local
 fi
