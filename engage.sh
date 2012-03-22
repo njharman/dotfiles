@@ -50,6 +50,13 @@ chmod 700 ~/.ssh
 chmod -f 600 ~/.authorized_keys
 chown -R $USER:$USER ~/.ssh
 
+## ~/.subversion
+mkdir -p ~/.subversion
+chmod 700 ~/.subversion
+chmod -Rf o-rw ~/.subversion/auth/*
+chown -R $USER:$USER ~/.subversion
+symtastico ~/.subversion `ls -d "$WORK"/.subversion/*`
+
 ## ~/bin
 mkdir -p ~/bin
 chmod 700 ~/bin
