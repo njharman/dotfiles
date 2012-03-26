@@ -48,13 +48,13 @@ symtastico ~/.vim/colors/ `ls -d "$WORK"/.vim/colors/*`
 mkdir -p ~/.ssh
 chmod 700 ~/.ssh
 chmod -f 600 ~/.authorized_keys
-chown -R $USER:$USER ~/.ssh
+chown -R $USER ~/.ssh
 
 ## ~/.subversion
 mkdir -p ~/.subversion
 chmod 700 ~/.subversion
 chmod -Rf o-rw ~/.subversion/auth/*
-chown -R $USER:$USER ~/.subversion
+chown -R $USER ~/.subversion
 symtastico ~/.subversion `ls -d "$WORK"/.subversion/*`
 
 ## ~/bin
