@@ -141,8 +141,8 @@ map <C-left> <ESC>:bp<CR>
 "        set hlsearch
 "    endif
 "endfunction
-"" Remap the tab key to select action with InsertTabWrapper
 "nnoremap <space> :call Funkmaster()<CR>
+
 " Indent with spacebar.
 nnoremap <space> >>
 vnoremap <space> >>
@@ -203,7 +203,6 @@ iab time- <C-R>=strftime("%H:%M:%S")<CR>
 iab date- <C-R>=strftime("%a, %d %b %Y")<CR>
 iab now- <C-R>=strftime("%a, %d %b %Y %H:%M:%S %z")<CR>
 
-
 " Tab completion
 " Jump to matching pairs easily, with Tab
 nnoremap <tab> %
@@ -211,7 +210,7 @@ vnoremap <tab> %
 " InsertTabWrapper determines, whether we are on the start of the line text
 " (then tab indents) or if we want to try omni/dict/backwards completion.
 function InsertTabWrapper()
-    if strpart( getline('.'), 0, col('.')-1 ) =~ '^\s*$'
+    if col('.') == 1 || strpart( getline('.'), col('.')-2, 1 ) =~ '\s'
         return "\<tab>"
     elseif &omnifunc != ''
         return "\<c-X>\<c-O>"
@@ -257,6 +256,8 @@ au BufNewFile,BufRead handlers.py  setlocal filetype=python.django
 au BufNewFile,BufRead settings.py  setlocal filetype=python.django
 au BufNewFile,BufRead local_settings.py  setlocal filetype=python.django
 au BufNewFile,BufRead *.html       setlocal filetype=htmldjango
+au BufEnter *.rb        setlocal softtabstop=2|setlocal shiftwidth=2
+au BufEnter *.erb       setlocal softtabstop=2|setlocal shiftwidth=2
 au BufEnter *.js        setlocal softtabstop=2|setlocal shiftwidth=2
 au BufEnter *.html      setlocal softtabstop=2|setlocal shiftwidth=2
 au BufNewFile,BufRead *.scss       setlocal ft=scss.css
