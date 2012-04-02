@@ -22,13 +22,17 @@ if [ -e /usr/bin/meld ]; then
     export SVN_DIFF=/usr/bin/meld
 fi
 
-# Recursively remove compiled python files
-alias nukepyc="find . -name '*py[co]' -exec rm -f {} ';'"
-alias :e=vim
 alias ll='ls -alF'
 alias la='ls -A'
+# It's called ack, dammit!
+which ack || alias ack=ack-grep
+# Recursively remove compiled python files.
+alias nukepyc="find . -name '*py[co]' -exec rm -f {} ';'"
+# Muscle memory.
+alias :e=vim
 # Requires highlight to be installed
 alias hl='highlight -M'
+# Funny more than useful.
 function mkmine() { sudo chown -R ${USER} ${1:-.}; }
 function mkyours() { sudo chown -R ${1} ${2}; }
 
