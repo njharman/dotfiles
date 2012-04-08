@@ -214,25 +214,31 @@ iab time- <C-R>=strftime("%H:%M:%S")<CR>
 iab date- <C-R>=strftime("%a, %d %b %Y")<CR>
 iab now- <C-R>=strftime("%a, %d %b %Y %H:%M:%S %z")<CR>
 
-" Tab completion
+"" Tab completion
+" SuperTab
+let g:SuperTabDefaultCompletionType = "context"
+let g:SuperTabContextDefaultCompletionType = "<c-p>"
+set completeopt=menuone,longest,preview
 " Jump to matching pairs easily, with Tab
 nnoremap <tab> %
 vnoremap <tab> %
+
+" Not sure I love SuperTab yet
 " InsertTabWrapper determines, whether we are on the start of the line text
 " (then tab indents) or if we want to try omni/dict/backwards completion.
-function InsertTabWrapper()
-    if col('.') == 1 || strpart( getline('.'), col('.')-2, 1 ) =~ '\s'
-        return "\<tab>"
-    elseif &omnifunc != ''
-        return "\<c-X>\<c-O>"
-    elseif &dictionary != ''
-        return "\<c-K>"
-    else
-        return "\<c-p>"
-    endif
-endfunction
+"function InsertTabWrapper()
+"    if col('.') == 1 || strpart( getline('.'), col('.')-2, 1 ) =~ '\s'
+"        return "\<tab>"
+"    elseif &omnifunc != ''
+"        return "\<c-X>\<c-O>"
+"    elseif &dictionary != ''
+"        return "\<c-K>"
+"    else
+"        return "\<c-p>"
+"    endif
+"endfunction
 " Remap the tab key to select action with InsertTabWrapper
-inoremap <tab> <c-r>=InsertTabWrapper()<CR>
+"inoremap <tab> <c-r>=InsertTabWrapper()<CR>
 
 
 " Formating
@@ -264,15 +270,14 @@ au BufNewFile,BufRead models.py    setlocal filetype=python.django
 au BufNewFile,BufRead forms.py     setlocal filetype=python.django
 au BufNewFile,BufRead views.py     setlocal filetype=python.django
 au BufNewFile,BufRead handlers.py  setlocal filetype=python.django
-au BufNewFile,BufRead settings.py  setlocal filetype=python.django
-au BufNewFile,BufRead local_settings.py  setlocal filetype=python.django
+au BufNewFile,BufRead *settings.py setlocal filetype=python.django
 au BufNewFile,BufRead *.html       setlocal filetype=htmldjango
-au BufEnter *.rb        setlocal softtabstop=2|setlocal shiftwidth=2
-au BufEnter *.erb       setlocal softtabstop=2|setlocal shiftwidth=2
-au BufEnter *.js        setlocal softtabstop=2|setlocal shiftwidth=2
-au BufEnter *.html      setlocal softtabstop=2|setlocal shiftwidth=2
 au BufNewFile,BufRead *.scss       setlocal ft=scss.css
 au BufNewFile,BufRead *.sass       setlocal ft=sass.css
+au BufEnter *.erb       setlocal softtabstop=2|setlocal shiftwidth=2
+au BufEnter *.rb        setlocal softtabstop=2|setlocal shiftwidth=2
+au BufEnter *.js        setlocal softtabstop=2|setlocal shiftwidth=2
+au BufEnter *.html      setlocal softtabstop=2|setlocal shiftwidth=2
 
 
 " Ghetto Slime
@@ -296,23 +301,3 @@ nmap <C-c><C-c> vip<C-c><C-c>
 nmap <C-c><C-a> :call Send_to_Screen("(restart 1)\n")<CR>
 "nmap  :call Send_to_Screen(" ")<CR>
 nmap <F10> :0,$y r<CR>:call Send_to_Screen(@r)<CR>
-
-
-" More syntax highlighting.
-let python_highlight_all = 1
-
-" Smart indenting
-"set smartindent cinwords=if,elif,else,for,while,try,except,finally,def,classo
-
-" Get this plugin from http://www.vim.org/scripts/script.php?script_id=1112
-" Pressing "K" takes you to the documentation for the word under the cursor.
-"autocmd filetype python source ~/.vim/pydoc.vim
-
-" `gf` jumps to the filename under the cursor.
-" Point at an import statement and jump to it!
-python << EOF
-import os,sys,vim
-for p in sys.path:
-    if os.path.isdir(p):
-        vim.command(r"set path+=%s" % (p.replace(" ", r"\ ")))
-EOF
