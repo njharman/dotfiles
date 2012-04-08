@@ -3,7 +3,7 @@
 
 REPO="git://github.com/njharman/dotfiles.git"
 WORK=~/.dotfiles
-ORIG=~/tmp/.dotfile_preserve
+SAVE=~/tmp/.dotfile_preserve
 
 function symtastico {
   # make symlinks, ignoring directories and archiving existing files.
@@ -13,20 +13,43 @@ function symtastico {
     if [ -f "$file" ]; then
        name=`basename "$file"`
        dest=$destdir/$name
-       echo -n "$name, "
+       echo -n "$dest, "
        if [ -h $dest ]; then
          echo -n "re-"
          rm $dest
        elif [ -e $dest ]; then
-         echo -n "moving existing file to $ORIG/, "
-         mkdir -p "$ORIG"
-         mv $dest "$ORIG/"
+         echo -n "exists, archived to $SAVE/, "
+         mkdir -p "$SAVE"
+         mv $dest "$SAVE/"
        fi
        ln -s $file $dest
        echo "symlinked."
     fi
   done
   }
+
+function symlamedir {
+  # Make directory symlinks, bitch about existing ones.
+  destdir=$1
+  shift
+  for path in $@; do
+    if [ -d "$path" ]; then
+       name=`basename "$path"`
+       dest=$destdir/$name
+       echo -n "$dest, "
+       if [ -h $dest ]; then
+         echo -n "re-"
+         rm $dest
+       elif [ -e $dest ]; then
+         echo "exists. Abort!"  # TODO: make red
+         continue
+       fi
+       ln -s $path $dest
+       echo "symlinked."
+    fi
+  done
+  }
+
 
 
 ## Clone repo if it doesn't exist.  Otherwise, leave it to user to pull/update.
@@ -38,10 +61,10 @@ fi
 ## .dotfiles
 symtastico ~ `ls -ad "$WORK"/\.*`
 
-## ~/.vim  (only some stuff)
-mkdir -p ~/.vim/ftplugin ~/.vim/colors
-symtastico ~/.vim/ftplugin/ `ls -d "$WORK"/.vim/ftplugin/*`
-symtastico ~/.vim/colors/ `ls -d "$WORK"/.vim/colors/*`
+## ~/.vim  (pathogen & bundles, pretty colors)
+mkdir -p ~/.vim/bundle ~/.vim/colors
+symlamedir ~/.vim/bundle `ls -d "$WORK"/.vim/bundle/*`
+symtastico ~/.vim/colors `ls -d "$WORK"/.vim/colors/*`
 
 ## ~/.ssh
 # Just dir/permissions.  Don't wanna autolink config...
@@ -62,10 +85,7 @@ mkdir -p ~/bin
 chmod 700 ~/bin
 symtastico ~/bin `ls -d "$WORK"/bin/*`
 
-## ~/tmp ~/work vim stuff
+## ~/tmp ~/work
 mkdir -p ~/tmp
+chmod 700 ~/tmp
 mkdir -p ~/work
-mkdir -p ~/.vim/colors/
-mkdir -p ~/.vim/ftplugin/
-symtastico ~/.vim/colors/ `ls -d "$WORK"/.vim/colors/*`
-symtastico ~/.vim/ftplugin/ `ls -d "$WORK"/.vim/ftplugin/*`

@@ -6,12 +6,16 @@
 " :match ErrorMsg /\%>73v.\+/ # \%> match col, 'v' virtual columns only
 " :setlocal spell spelllang=en_us " ]s [s zg=addword
 " searches # * g# g* g, gd
+" <leader>pw python docs
 
 set nocompatible                " vim > vi
+filetype off
+runtime bundle/vim-pathogen/autoload/pathogen.vim
+call pathogen#infect()
 
-runtime plugin/matchit.vim      " More better % matching
+syntax on
+filetype on
 filetype plugin indent on
-syntax enable
 
 let xterm16_brightness = 'high'
 let xterm16_colormap = 'softlight'
@@ -158,16 +162,23 @@ cmap w!! w !sudo tee % >/dev/null
 cab o find
 map gf :edit <cfile><CR>
 
-" Highlight conflict markers.
-match ErrorMsg '^\(<\|=\|>\)\{7\}\([^=].\+\)\?$'
-" Shortcut to jump to next conflict marker.
-nmap <silent> <leader>c /^\(<\\|=\\|>\)\{7\}\([^=].\+\)\?$<CR>
-
-
 let mapleader = ","
 
 " Pull word under cursor into LHS of a substitute.
 nmap <leader>s :%s/<C-r>=expand("<cword>")CR>/
+
+" Highlight merge conflict markers.
+match ErrorMsg '^\(<\|=\|>\)\{7\}\([^=].\+\)\?$'
+" Shortcut to jump to next merge conflict marker.
+nmap <silent> <leader>c /^\(<\\|=\\|>\)\{7\}\([^=].\+\)\?$<CR>
+
+" Jump to other window, handy with pep8
+nmap <leader>w <C-W><C-W>
+
+nmap <leader>g :GundoToggle<CR>
+nmap <leader>d :RopeGotoDefinition<CR>
+nmap <leader>r :RopeRename<CR>
+nmap <leader>a :Ack!
 
 nmap <leader># :s/^/#/<CR>
 vmap <leader># :s/^/#/<CR>
@@ -285,3 +296,23 @@ nmap <C-c><C-c> vip<C-c><C-c>
 nmap <C-c><C-a> :call Send_to_Screen("(restart 1)\n")<CR>
 "nmap  :call Send_to_Screen(" ")<CR>
 nmap <F10> :0,$y r<CR>:call Send_to_Screen(@r)<CR>
+
+
+" More syntax highlighting.
+let python_highlight_all = 1
+
+" Smart indenting
+"set smartindent cinwords=if,elif,else,for,while,try,except,finally,def,classo
+
+" Get this plugin from http://www.vim.org/scripts/script.php?script_id=1112
+" Pressing "K" takes you to the documentation for the word under the cursor.
+"autocmd filetype python source ~/.vim/pydoc.vim
+
+" `gf` jumps to the filename under the cursor.
+" Point at an import statement and jump to it!
+python << EOF
+import os,sys,vim
+for p in sys.path:
+    if os.path.isdir(p):
+        vim.command(r"set path+=%s" % (p.replace(" ", r"\ ")))
+EOF
