@@ -12,3 +12,12 @@ sudo aptitude install opscode-keyring
 sudo aptitude upgrade
 
 sudo aptitude install chef
+#https://chef.r.mutualmobile.com
+/etc/init.d/chef-client stop
+rm /etc/rc*.d/S*chef-client*
+#scp /etc/chef/validation.pem /etc/chef/encrypted_data_bag_secret host:
+chmod 600 /etc/chef/validation.pem /etc/chef/encrypted_data_bag_secret
+
+vim /etc/hostname /etc/hosts
+#hostname foo
+chef-client

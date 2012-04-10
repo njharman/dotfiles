@@ -25,7 +25,7 @@ fi
 alias ll='ls -alF'
 alias la='ls -A'
 # It's called ack, dammit!
-which ack || alias ack=ack-grep
+which ack || alias ack="ack-grep"
 # Recursively remove compiled python files.
 alias nukepyc="find . -name '*py[co]' -exec rm -f {} ';'"
 # Muscle memory.

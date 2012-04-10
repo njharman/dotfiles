@@ -12,6 +12,9 @@ function symtastico {
   for file in $@; do
     if [ -f "$file" ]; then
        name=`basename "$file"`
+       if [ "$name" == ".gitignore" -o "$name" == ".gitmodules" -o "$name" == ".osx" ]; then
+         continue
+       fi
        dest=$destdir/$name
        echo -n "$dest, "
        if [ -h $dest ]; then

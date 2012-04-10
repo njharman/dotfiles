@@ -2,24 +2,24 @@
 set editing-mode vi
 $if mode=vi
     set keymap vi-command
-    # Prefix history search, for vi-command mode
+    # Prefix history search, vi-command mode.
     "j": history-search-backward
     "k": history-search-forward
     "gg": beginning-of-history
     "G": end-of-history
     set keymap vi-insert
-    # Prefix history search, for vi-insert mode
+    # Prefix history search, vi-insert mode.
     "\e[A": history-search-backward
     "\e[B": history-search-forward
     "\e[C": forward-char
     "\e[D": backward-char
-    # glob patterns without executing, eg: 'rm *x'
-    "\C-e": glob-expand-word
-    # Muscle memory; ctrl-a ctrl-e ctrl-d
+    # Expand Globs without executing. Eg 'rm *x'.
+    "\C-g": glob-expand-word
+    # Muscle memory; ctrl-a ctrl-e ctrl-d.
     "\C-a": beginning-of-line
     "\C-e": end-of-line
     "\C-d": delete-char
-    # jj for escape
+    # jj Return to command mode.
     "jj": vi-movement-mode
 #endif
 
@@ -34,7 +34,7 @@ set visible-stats on
 
 #set horizontal-scroll-mode on
 
-# Allow UTF-8 input and output, instead of showing stuff like $'\0123\0456'
+# Allow UTF-8 input and output, instead of showing stuff like $'\0123\0456'.
 set input-meta on
 set output-meta on
 set convert-meta off
