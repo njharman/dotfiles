@@ -219,6 +219,8 @@ iab now- <C-R>=strftime("%a, %d %b %Y %H:%M:%S %z")<CR>
 let g:SuperTabDefaultCompletionType = "context"
 let g:SuperTabContextDefaultCompletionType = "<c-p>"
 set completeopt=menuone,longest,preview
+" Python calltips
+set iskeyword+=.
 " Jump to matching pairs easily, with Tab
 nnoremap <tab> %
 vnoremap <tab> %
