@@ -40,3 +40,6 @@
 [submodule ".vim/bundle/python_calltips"]
 	path = .vim/bundle/python_calltips
 	url = https://github.com/vim-scripts/python_calltips
+[submodule ".vim/bundle/slime.vim"]
+	path = .vim/bundle/slime.vim
+	url = https://github.com/jpalardy/vim-slime

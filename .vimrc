@@ -164,9 +164,6 @@ map gf :edit <cfile><CR>
 
 let mapleader = ","
 
-" Pull word under cursor into LHS of a substitute.
-nmap <leader>s :%s/<C-r>=expand("<cword>")CR>/
-
 " Highlight merge conflict markers.
 match ErrorMsg '^\(<\|=\|>\)\{7\}\([^=].\+\)\?$'
 " Shortcut to jump to next merge conflict marker.
@@ -218,29 +215,20 @@ iab now- <C-R>=strftime("%a, %d %b %Y %H:%M:%S %z")<CR>
 " SuperTab
 let g:SuperTabDefaultCompletionType = "context"
 let g:SuperTabContextDefaultCompletionType = "<c-p>"
+let g:SuperTabNoCompleteAfter = [':', ',', '\s']
+"let g:SuperTabLongestEnhanced = 1
+autocmd FileType *
+  \ if &omnifunc != '' |
+  \   call SuperTabChain(&omnifunc, "<c-p>") |
+  \   call SuperTabSetDefaultCompletionType("context") |
+  \ endif
+
 set completeopt=menuone,longest,preview
 " Python calltips
-set iskeyword+=.
+"set iskeyword+=.
 " Jump to matching pairs easily, with Tab
 nnoremap <tab> %
 vnoremap <tab> %
-
-" Not sure I love SuperTab yet
-" InsertTabWrapper determines, whether we are on the start of the line text
-" (then tab indents) or if we want to try omni/dict/backwards completion.
-"function InsertTabWrapper()
-"    if col('.') == 1 || strpart( getline('.'), col('.')-2, 1 ) =~ '\s'
-"        return "\<tab>"
-"    elseif &omnifunc != ''
-"        return "\<c-X>\<c-O>"
-"    elseif &dictionary != ''
-"        return "\<c-K>"
-"    else
-"        return "\<c-p>"
-"    endif
-"endfunction
-" Remap the tab key to select action with InsertTabWrapper
-"inoremap <tab> <c-r>=InsertTabWrapper()<CR>
 
 
 " Formating
@@ -281,10 +269,16 @@ au BufEnter *.rb        setlocal softtabstop=2|setlocal shiftwidth=2
 au BufEnter *.js        setlocal softtabstop=2|setlocal shiftwidth=2
 au BufEnter *.html      setlocal softtabstop=2|setlocal shiftwidth=2
 
-
-" Ghetto Slime
-" https://github.com/jpalardy/vim-slime/blob/master/plugin/slime.vim
-" Start screen (in other terminal) screen -S sicp rlwrap scheme -large
+" Ghetto Slime https://github.com/jpalardy/vim-slime
+" Start screen (in other terminal)
+"   scheme: screen -S sicp rlwrap scheme -large
+"    shell: screen -S bash
+function Screen_Vars()
+  if !exists("b:slime")
+    let b:slime = {"sessionname": ""}
+  end
+  let b:slime["sessionname"] = input("session name: ", b:slime["sessionname"], "custom,Screen_Session_Names")
+endfunction
 function Send_to_Screen(text)
   if !exists("b:slime")
     call Screen_Vars()
@@ -292,14 +286,14 @@ function Send_to_Screen(text)
   let escaped_text = substitute(shellescape(a:text), "\\\\\n", "\n", "g")
   call system("screen -S " . b:slime["sessionname"] . " -X stuff " . escaped_text)
 endfunction
-function Screen_Vars()
-  if !exists("b:slime")
-    let b:slime = {"sessionname": ""}
-  end
-  let b:slime["sessionname"] = input("session name: ", b:slime["sessionname"], "custom,Screen_Session_Names")
-endfunction
-vmap <C-c><C-c> "ry:call Send_to_Screen(@r)<CR>
-nmap <C-c><C-c> vip<C-c><C-c>
+" scheme reset
 nmap <C-c><C-a> :call Send_to_Screen("(restart 1)\n")<CR>
-"nmap  :call Send_to_Screen(" ")<CR>
+" send visual selection
+vmap <C-c><C-c> "ry:call Send_to_Screen(@r)<CR>
+" send current block
+nmap <C-c><C-c> vip<C-c><C-c>
+" send entire file
 nmap <F10> :0,$y r<CR>:call Send_to_Screen(@r)<CR>
+" I change following all the time, proly should use and set vim vars...
+nmap <F11> :call Send_to_Screen("./runall.py\n")<CR>
+nmap <F12> :call Send_to_Screen("jjj\n")<CR>
