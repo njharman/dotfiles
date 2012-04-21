@@ -69,5 +69,6 @@ if !exists("no_plugin_maps") && !exists("no_pep8_maps")
     if !hasmapto('Pep8()')
         noremap <buffer> <F8> :call Pep8()<CR>
         noremap! <buffer> <F8> :call Pep8()<CR>
+        imap <buffer> <F8> <ESC>:call Pep8()<CR>
     endif
 endif
