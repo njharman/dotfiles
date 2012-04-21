@@ -100,9 +100,9 @@ set laststatus=2  "set laststatus=0 to remove
 " Key Bindings
 " :map normal, insert, visual, command
 " :imap insert
+" :vmap visual
 " :cmap command
 " :nmap normal
-" :vmap visual
 
 "F1 not help
 inoremap <F1> <ESC>
@@ -274,26 +274,28 @@ au BufEnter *.html      setlocal softtabstop=2|setlocal shiftwidth=2
 "   scheme: screen -S sicp rlwrap scheme -large
 "    shell: screen -S bash
 function Screen_Vars()
-  if !exists("b:slime")
-    let b:slime = {"sessionname": ""}
+  if !exists("g:slime")
+    let g:slime = {"sessionname": ""}
   end
-  let b:slime["sessionname"] = input("session name: ", b:slime["sessionname"], "custom,Screen_Session_Names")
+  let g:slime["sessionname"] = input("session name: ", g:slime["sessionname"], "custom,Screen_Session_Names")
 endfunction
 function Send_to_Screen(text)
-  if !exists("b:slime")
+  if !exists("g:slime")
     call Screen_Vars()
   end
   let escaped_text = substitute(shellescape(a:text), "\\\\\n", "\n", "g")
-  call system("screen -S " . b:slime["sessionname"] . " -X stuff " . escaped_text)
+  call system("screen -S " . g:slime["sessionname"] . " -X stuff " . escaped_text)
 endfunction
-" scheme reset
+" Scheme reset
 nmap <C-c><C-a> :call Send_to_Screen("(restart 1)\n")<CR>
-" send visual selection
+" Send visual selection
 vmap <C-c><C-c> "ry:call Send_to_Screen(@r)<CR>
-" send current block
+" Send current block
 nmap <C-c><C-c> vip<C-c><C-c>
-" send entire file
+" Send entire file
 nmap <F10> :0,$y r<CR>:call Send_to_Screen(@r)<CR>
-" I change following all the time, proly should use and set vim vars...
-nmap <F11> :call Send_to_Screen("./runall.py\n")<CR>
-nmap <F12> :call Send_to_Screen("jjj\n")<CR>
+" Proly should use and set vim vars...
+nmap <F11> <ESC>:w<CR>:call Send_to_Screen("./runall.py\n")<CR>
+" \eGj esc to command mode, go to end of history, go up one history item.
+imap <F12> <ESC>:w<CR>:call Send_to_Screen("\eGj\n")<CR>
+nmap <F12> :w<CR>:call Send_to_Screen("\eGj\n")<CR>
