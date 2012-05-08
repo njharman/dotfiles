@@ -267,6 +267,7 @@ au BufNewFile,BufRead *.sass       setlocal ft=sass.css
 au BufEnter *.erb       setlocal softtabstop=2|setlocal shiftwidth=2
 au BufEnter *.rb        setlocal softtabstop=2|setlocal shiftwidth=2
 au BufEnter *.js        setlocal softtabstop=2|setlocal shiftwidth=2
+au BufEnter *.json      setlocal softtabstop=2|setlocal shiftwidth=2
 au BufEnter *.html      setlocal softtabstop=2|setlocal shiftwidth=2
 
 " Ghetto Slime https://github.com/jpalardy/vim-slime
