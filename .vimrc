@@ -188,7 +188,7 @@ vmap <leader>u :s/#//<CR>
 nmap <leader># yypVr#o
 nmap <leader>= yypVr=o
 nmap <leader>- yypVr-o
-nmap <leader>~ yypVr\~o
+nmap <leader>~ yypVr~o
 nmap <leader>^ yypVr^o
 nmap <leader>* yypVr*o
 
