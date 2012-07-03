@@ -59,6 +59,10 @@ function symlamedir {
 if [ ! -d "$WORK" ]; then
   mkdir "$WORK"
   git clone "$REPO" $WORK
+  cd $WORK
+  git submodule init
+  git submodule update
+  # git submodule foreach git pull origin master
 fi
 
 ## .dotfiles

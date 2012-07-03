@@ -53,7 +53,13 @@ bin/
     No plaintext passwords.
 
 .vim
-    My colors and pathogen managed plugins.
+    My colors and pathogen managed plugins. ::
+
+      git submodule init
+      git submodule update
+      git submodule foreach git pull origin master
+
+
     - ack: programmer's grep.
     - fugitive: git wrapper
     - git: more git
