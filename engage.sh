@@ -60,6 +60,8 @@ if [ ! -d "$WORK" ]; then
   mkdir "$WORK"
   git clone "$REPO" $WORK
   cd $WORK
+  git config --global user.name "Norman J. Harman Jr."
+  git config --global user.email njharman@gmail.com
   git submodule init
   git submodule update
   # git submodule foreach git pull origin master
