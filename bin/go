@@ -1,0 +1,15 @@
+#!/bin/bash
+# tmux trifecta of ssh panes
+
+if [[ "$1" == "" ]]; then
+    echo Ur doin it wrong.
+    exit
+fi
+
+target="$1"
+
+tmux new-window   -dn "$target" "ssh $target"
+tmux split-window -t "$target" -dv -l 20 "ssh $target"
+tmux select-pane  -t "$target" -l 2> /dev/null
+tmux split-window -t "$target" -dh -p 50 "ssh $target"
+tmux select-pane  -t "$target" -l 2> /dev/null

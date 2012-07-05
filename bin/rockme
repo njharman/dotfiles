@@ -1,0 +1,23 @@
+#!/bin/bash
+# open tmux session with some panes
+
+if [[ "$1" == "" ]]; then
+    session="amadeus"
+else
+    session="$1"
+fi
+
+
+function dothething_thatdoesthestuff {
+    tmux new-session -d -n 'desktop' -s $session
+
+    tmux split-window -t $session:1 -v -l 20
+    tmux select-pane  -t $session:1 -l
+    tmux split-window -t $session:1 -h -l 80
+    tmux select-pane  -t $session:1 -l
+
+    tmux select-window -t $session:1
+    tmux -2 attach-session -t $session
+    }
+
+tmux -2 attach-session -t $session || dothething_thatdoesthestuff

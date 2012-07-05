@@ -80,6 +80,8 @@ au BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$") | exe "normal g'
 set viminfo='20,<50,s10,h,%
 " Remove any trailing whitespace that is in the file.
 autocmd BufRead,BufWrite * if ! &bin | silent! %s/\s\+$//ge | endif
+" Make Pyflakes workth with pep8
+let g:pyflakes_use_quickfix = 0
 
 set mousehide           " Hide the mouse pointer while typing.
 set guioptions=a        " Hide scrollbar/menu/tabs/etc.
@@ -94,7 +96,7 @@ end
 
 " Status line is gnarly.
 set statusline=%F%m%r%h%w%<\ \ %{&ff}%y%=0x\%02.2B\ /\ \%03.3b\ \ %04lr:%02vc\ \ [%p%%\ of\ %L]
-set laststatus=2  "set laststatus=0 to remove
+set laststatus=2
 
 
 " Key Bindings
