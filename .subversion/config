@@ -1,6 +1,6 @@
 ### This file configures various client-side behaviors.
-###
-### Section for authentication and authorization customizations.
+
+
 [auth]
 ### Set password stores used by Subversion. They should be
 ### delimited by spaces or commas. The order of values determines
@@ -33,7 +33,7 @@ password-stores = keychain,gnome-keyring,kwallet
 ### caches.  (To do that, remove the cache files by hand.)
 # store-auth-creds = no
 
-### Section for configuring external helper applications.
+
 [helpers]
 ### Set editor-cmd to the command used to invoke your text editor.
 ###   This will override the environment variables that Subversion
@@ -56,7 +56,7 @@ password-stores = keychain,gnome-keyring,kwallet
 ### the specified command: base theirs mine merged
 # merge-tool-cmd = merge_command
 
-### Section for configuring tunnel agents.
+
 [tunnels]
 ### Configure svn protocol tunnel schemes here.  By default, only
 ### the 'ssh' scheme is defined.  You can define other schemes to
@@ -82,7 +82,7 @@ password-stores = keychain,gnome-keyring,kwallet
 ### path separator.  A single backslash will be treated as an
 ### escape for the following character.
 
-### Section for configuring miscelleneous Subversion options.
+
 [miscellany]
 ### Set global-ignores to a set of whitespace-delimited globs
 ### which Subversion will ignore in its 'status' output, and
@@ -94,7 +94,7 @@ global-ignores = *.o *.lo *.la *.al .libs *.so *.so.[0-9]* *.a *.pyc *.pyo *.rej
 # log-encoding = latin1
 ### Set use-commit-times to make checkout/update/switch/revert
 ### put last-committed timestamps on every file touched.
-# use-commit-times = yes
+use-commit-times = yes
 ### Set no-unlock to prevent 'svn commit' from automatically
 ### releasing locks on files.
 # no-unlock = yes
@@ -110,12 +110,12 @@ global-ignores = *.o *.lo *.la *.al .libs *.so *.so.[0-9]* *.a *.pyc *.pyo *.rej
 ### Set enable-auto-props to 'yes' to enable automatic properties
 ### for 'svn add' and 'svn import', it defaults to 'no'.
 ### Automatic properties are defined in the section 'auto-props'.
-# enable-auto-props = yes
+enable-auto-props = yes
 ### Set interactive-conflicts to 'no' to disable interactive
 ### conflict resolution prompting.  It defaults to 'yes'.
-# interactive-conflicts = no
+interactive-conflicts = no
 
-### Section for configuring automatic properties.
+
 [auto-props]
 ### The format of the entries is:
 ###   file-name-pattern = propname[=value][;propname[=value]...]
@@ -124,14 +124,13 @@ global-ignores = *.o *.lo *.la *.al .libs *.so *.so.[0-9]* *.a *.pyc *.pyo *.rej
 ### applied to the file.  Note that auto-props functionality
 ### must be enabled, which is typically done by setting the
 ### 'enable-auto-props' option.
-# *.c = svn:eol-style=native
-# *.cpp = svn:eol-style=native
-# *.h = svn:eol-style=native
+*.c = svn:eol-style=native
+*.cpp = svn:eol-style=native
+*.h = svn:eol-style=native
 # *.dsp = svn:eol-style=CRLF
 # *.dsw = svn:eol-style=CRLF
-# *.sh = svn:eol-style=native;svn:executable
-# *.txt = svn:eol-style=native
-# *.png = svn:mime-type=image/png
-# *.jpg = svn:mime-type=image/jpeg
+*.sh = svn:eol-style=native;svn:executable
+*.txt = svn:eol-style=native
+*.png = svn:mime-type=image/png
+*.jpg = svn:mime-type=image/jpeg
 # Makefile = svn:eol-style=native
-

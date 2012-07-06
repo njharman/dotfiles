@@ -5,6 +5,7 @@ REPO="git://github.com/njharman/dotfiles.git"
 WORK=~/.dotfiles
 SAVE=~/tmp/.dotfile_preserve
 
+
 function symtastico {
   # make symlinks, ignoring directories and archiving existing files.
   destdir=$1
@@ -31,6 +32,7 @@ function symtastico {
   done
   }
 
+
 function symlamedir {
   # Make directory symlinks, bitch about existing ones.
   destdir=$1
@@ -54,47 +56,80 @@ function symlamedir {
   }
 
 
+function init_the_dotfiles {
+  ## Clone repo if it doesn't exist.  Otherwise, leave it to user to pull/update.
+  if [ ! -d "$WORK" ]; then
+    mkdir "$WORK"
+    git clone "$REPO" $WORK
+    cd $WORK
+    git config --global user.name "Norman J. Harman Jr."
+    git config --global user.email njharman@gmail.com
+    git submodule init
+    git submodule update
+  fi
+  }
 
-## Clone repo if it doesn't exist.  Otherwise, leave it to user to pull/update.
-if [ ! -d "$WORK" ]; then
-  mkdir "$WORK"
-  git clone "$REPO" $WORK
+function engage_sym {
+  # Do all the stuff that's fun to do.
+
+  ## .dotfiles
+  symtastico ~ `ls -ad "$WORK"/\.*`
+
+  ## ~/.vim  (pathogen & bundles, pretty colors)
+  mkdir -p ~/.vim/bundle ~/.vim/colors
+  symlamedir ~/.vim/bundle `ls -d "$WORK"/.vim/bundle/*`
+  symtastico ~/.vim/colors `ls -d "$WORK"/.vim/colors/*`
+
+  ## ~/.ssh
+  # Just dir/permissions.  Don't wanna autolink config...
+  mkdir -p ~/.ssh
+  chmod 700 ~/.ssh
+  chmod -f 600 ~/.authorized_keys
+  chown -R $USER ~/.ssh
+
+  ## ~/.subversion
+  mkdir -p ~/.subversion
+  chmod 700 ~/.subversion
+  chmod -Rf o-rw ~/.subversion/auth/*
+  chown -R $USER ~/.subversion
+  symtastico ~/.subversion `ls -d "$WORK"/.subversion/*`
+
+  ## ~/bin
+  mkdir -p ~/bin
+  chmod 700 ~/bin
+  symtastico ~/bin `ls -d "$WORK"/bin/*`
+
+  ## ~/tmp ~/work
+  mkdir -p ~/tmp
+  mkdir -p ~/work
+  chmod 700 ~/tmp ~/work
+  }
+
+
+function engage_up {
+  # Update repo.
   cd $WORK
-  git config --global user.name "Norman J. Harman Jr."
-  git config --global user.email njharman@gmail.com
-  git submodule init
-  git submodule update
-  # git submodule foreach git pull origin master
+  git pull
+  }
+
+
+function engage_vim {
+  # Update repo.
+  cd $WORK
+  git submodule foreach git pull origin master
+  }
+
+
+init_the_dotfiles
+
+if [[ "$1" == "up" ]]; then
+    engage_up
+elif [[ "$1" == "vim" ]]; then
+    engage_vim
+elif [[ "$1" == "all" ]]; then
+    engage_up
+    engage_vim
+    engage_sym
+else
+    engage_sym
 fi
-
-## .dotfiles
-symtastico ~ `ls -ad "$WORK"/\.*`
-
-## ~/.vim  (pathogen & bundles, pretty colors)
-mkdir -p ~/.vim/bundle ~/.vim/colors
-symlamedir ~/.vim/bundle `ls -d "$WORK"/.vim/bundle/*`
-symtastico ~/.vim/colors `ls -d "$WORK"/.vim/colors/*`
-
-## ~/.ssh
-# Just dir/permissions.  Don't wanna autolink config...
-mkdir -p ~/.ssh
-chmod 700 ~/.ssh
-chmod -f 600 ~/.authorized_keys
-chown -R $USER ~/.ssh
-
-## ~/.subversion
-mkdir -p ~/.subversion
-chmod 700 ~/.subversion
-chmod -Rf o-rw ~/.subversion/auth/*
-chown -R $USER ~/.subversion
-symtastico ~/.subversion `ls -d "$WORK"/.subversion/*`
-
-## ~/bin
-mkdir -p ~/bin
-chmod 700 ~/bin
-symtastico ~/bin `ls -d "$WORK"/bin/*`
-
-## ~/tmp ~/work
-mkdir -p ~/tmp
-chmod 700 ~/tmp
-mkdir -p ~/work

@@ -28,3 +28,12 @@
 [submodule ".vim/bundle/slime.vim"]
 	path = .vim/bundle/slime.vim
 	url = https://github.com/jpalardy/vim-slime
+[submodule "bundle/dbext"]
+	path = bundle/dbext
+	url = https://github.com/vim-scripts/dbext.vim
+[submodule ".vim/bundle/dbext"]
+	path = .vim/bundle/dbext
+	url = https://github.com/vim-scripts/dbext.vim
+[submodule ".vim/bundle/ctrlp"]
+	path = .vim/bundle/ctrlp
+	url = https://github.com/kien/ctrlp.vim
