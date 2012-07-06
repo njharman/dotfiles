@@ -17,11 +17,18 @@ syntax on
 filetype on
 filetype plugin indent on
 
+set t_Co=256
+set background=light
+
+let g:solarized_termcolors=256
 let xterm16_brightness = 'high'
 let xterm16_colormap = 'softlight'
 let xterm16_white = '#ffffff'
-colo xterm16
-set background=light
+let g:lucius_style='light'
+"colo solarized
+"colo xterm16
+colo lucius
+
 
 set encoding=utf-8
 set termencoding=utf-8
@@ -82,6 +89,8 @@ set viminfo='20,<50,s10,h,%
 autocmd BufRead,BufWrite * if ! &bin | silent! %s/\s\+$//ge | endif
 " Make Pyflakes workth with pep8
 let g:pyflakes_use_quickfix = 0
+" Hate the hi-lite
+let g:pydoc_highlight=0
 
 set mousehide           " Hide the mouse pointer while typing.
 set guioptions=a        " Hide scrollbar/menu/tabs/etc.
