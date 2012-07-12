@@ -57,8 +57,8 @@ function symlamedir {
 
 
 function init_the_dotfiles {
-  ## Clone repo if it doesn't exist.  Otherwise, leave it to user to pull/update.
-  if [ ! -d "$WORK" ]; then
+  ## Clone repo if missing. Otherwise, leave it to user to pull/update.
+  if [ ! -f "$WORK/.bashrc" ]; then
     mkdir "$WORK"
     git clone "$REPO" $WORK
     cd $WORK
