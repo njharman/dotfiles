@@ -1,15 +1,23 @@
 #!/bin/bash
 # tmux trifecta of ssh panes
 
+if [[ "$2" == "" ]]; then
+    session="amadeus"
+else
+    session="$1"
+    shift
+fi
+
 if [[ "$1" == "" ]]; then
     echo Ur doin it wrong.
     exit
+else
+    target="$1"
 fi
 
-target="$1"
 
 tmux new-window   -n "$target" "ssh $target"
-tmux split-window -t "$target" -dv -l 20 "ssh $target"
-tmux select-pane  -t "$target" -l 2> /dev/null
-tmux split-window -t "$target" -dh -p 50 "ssh $target"
-tmux select-pane  -t "$target" -l 2> /dev/null
+tmux split-window -t "$sesion:$target".1 -dv -l 20 "ssh $target"
+tmux split-window -t "$sesion:$target".1 -dh -p 50 "ssh $target"
+tmux send-keys    -t "$sesion:$target".2 'sudo bash' C-m
+tmux select-pane  -t "$sesion:$target".1
