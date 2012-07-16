@@ -280,6 +280,7 @@ au BufEnter *.rb        setlocal softtabstop=2|setlocal shiftwidth=2
 au BufEnter *.js        setlocal softtabstop=2|setlocal shiftwidth=2
 au BufEnter *.json      setlocal softtabstop=2|setlocal shiftwidth=2
 au BufEnter *.html      setlocal softtabstop=2|setlocal shiftwidth=2
+au BufEnter *.yml       setlocal softtabstop=2|setlocal shiftwidth=2
 
 " Ghetto Slime https://github.com/jpalardy/vim-slime
 " Start screen (in other terminal)
