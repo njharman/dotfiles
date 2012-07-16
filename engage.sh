@@ -58,8 +58,8 @@ function symlamedir {
 
 function init_the_dotfiles {
   ## Clone repo if missing. Otherwise, leave it to user to pull/update.
-  if [ ! -f "$WORK/.bashrc" ]; then
-    mkdir "$WORK"
+  if [ ! -d "$WORK" ]; then
+    mkdir -p "$WORK"
     git clone "$REPO" $WORK
     cd $WORK
     git config --global user.name "Norman J. Harman Jr."
