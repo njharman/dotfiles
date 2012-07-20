@@ -93,6 +93,12 @@ Configs
 
       git submodule add <link> .vim/bundle/<name>
 
+    Remove submodule::
+
+      Delete from .gitmodules
+      Delete from .git/config
+      git rm --cached path_to_submodule (no trailing slash)
+
     Get upstream updates::
 
       git submodule foreach git pull origin master
