@@ -122,7 +122,15 @@ function engage_vim {
 
 init_the_dotfiles
 
-if [[ "$1" == "up" ]]; then
+if [[ "$1" == "help" ]]; then
+    prog=`basename $0`
+    cat <<USAGE
+$prog      - (re)create symbolic links, directories, etc
+$prog up   - git pull
+$prog vim  - git pull pathogen submodules
+$prog all  - all of the above
+USAGE
+elif [[ "$1" == "up" ]]; then
     engage_up
 elif [[ "$1" == "vim" ]]; then
     engage_vim
