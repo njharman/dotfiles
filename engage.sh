@@ -62,6 +62,8 @@ function init_the_dotfiles {
     mkdir -p "$WORK"
     git clone "$REPO" $WORK
     cd $WORK
+    # old systems don't got the CA
+    git config --global http.sslVerify false
     git config --global user.name "Norman J. Harman Jr."
     git config --global user.email njharman@gmail.com
     git submodule init
