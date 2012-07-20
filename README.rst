@@ -42,9 +42,6 @@ Templates
 
 Configs
 -------
-.ackrc
-    *ack* is awesome, you should be using it. http://betterthangrep.com/
-
 .bash_logout
     Yeah.
 
