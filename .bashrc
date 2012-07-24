@@ -30,7 +30,7 @@ alias la='ls -A'
 # Hate nano, very much.
 alias visudo="sudo EDITOR=$EDITOR visudo"
 # It's called ack, dammit!
-which ack > /dev/null || alias ack="ack-grep"
+which ack & > /dev/null || alias ack="ack-grep"
 # Recursively remove compiled python files.
 alias nukepyc="find . -name '*py[co]' -exec rm -f {} ';'"
 # Muscle memory.
@@ -39,7 +39,7 @@ alias :e=vim
 alias hl='highlight -M'
 
 
-## Colors
+## Colors & Prompt
 
 if [ -e /lib/terminfo/x/xterm-256color ]; then
     export TERM='xterm-256color'
@@ -57,11 +57,7 @@ if [ "$color_prompt" = yes ]; then
 else
     PS1='\h:\w\$ '
 fi
-case "$TERM" in
-    xterm*|rxvt*)
-      PS1="\[\e]0;\h: \w\a\]$PS1"
-      ;;
-esac
+PROMPT_DIRTRIM=2
 unset color_prompt
 
 # ls colors
