@@ -1,6 +1,5 @@
 ### This file configures various client-side behaviors.
 
-
 [auth]
 ### Set password stores used by Subversion. They should be
 ### delimited by spaces or commas. The order of values determines
@@ -125,12 +124,18 @@ interactive-conflicts = no
 ### must be enabled, which is typically done by setting the
 ### 'enable-auto-props' option.
 *.c = svn:eol-style=native
-*.cpp = svn:eol-style=native
 *.h = svn:eol-style=native
+*.cpp = svn:eol-style=native
+*.py = svn:eol-style=native
+*.js = svn:eol-style=native
+*.css = svn:eol-style=native
+*.html = svn:eol-style=native
 # *.dsp = svn:eol-style=CRLF
 # *.dsw = svn:eol-style=CRLF
 *.sh = svn:eol-style=native;svn:executable
 *.txt = svn:eol-style=native
 *.png = svn:mime-type=image/png
 *.jpg = svn:mime-type=image/jpeg
-# Makefile = svn:eol-style=native
+Makefile = svn:eol-style=native
+SConscript = svn:eol-style=native
+SConstruct = svn:eol-style=native
