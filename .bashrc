@@ -30,7 +30,7 @@ alias la='ls -A'
 # Hate nano, very much.
 alias visudo="sudo EDITOR=$EDITOR visudo"
 # It's called ack, dammit!
-which ack & > /dev/null || alias ack="ack-grep"
+which ack &> /dev/null || alias ack="ack-grep"
 # Recursively remove compiled python files.
 alias nukepyc="find . -name '*py[co]' -exec rm -f {} ';'"
 # Muscle memory.

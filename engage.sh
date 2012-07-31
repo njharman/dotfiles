@@ -66,6 +66,10 @@ function init_the_dotfiles {
     git config --global http.sslVerify false
     git config --global user.name "Norman J. Harman Jr."
     git config --global user.email njharman@gmail.com
+    #tells git-branch and git-checkout to setup new branches so that git-pull(1) will appropriately merge from that remote branch.  Recommended.  Without this, you will have to add --track to your branch command or manually merge remote tracking branches with "fetch" and then "merge".
+    git config branch.autosetupmerge true
+    #convert newlines to the system's standard when checking out files, and to LF newlines when committing in.    │etc/hsflowd.conf
+    git config core.autocrlf true
     git submodule init
     git submodule update
   fi
@@ -86,7 +90,7 @@ function engage_sym {
   # Just dir/permissions.  Don't wanna autolink config...
   mkdir -p ~/.ssh
   chmod 700 ~/.ssh
-  chmod -f 600 ~/.authorized_keys
+  chmod -f 600 ~/.ssh/authorized_keys
   chown -R $USER ~/.ssh
 
   ## ~/.subversion
