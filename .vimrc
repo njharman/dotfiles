@@ -1,14 +1,13 @@
 " :highlight Group ctermbg=white ctermfg=black term=bold
 " :match Group /pattern/
-" :match None
-" :2match
-" :3match
 " :match ErrorMsg /\%>73v.\+/ # \%> match col, 'v' virtual columns only
-" :setlocal spell spelllang=en_us " ]s [s zg=addword
+" :match None
+" :2match :3match
+" :setlocal spell spelllang=en_us suggest "z=", addword "zg", next/prev "]s"/"[s"
 " searches # * g# g* g, gd
 " <leader>pw python docs
 
-set nocompatible                " vim > vi
+set nocompatible
 filetype off
 runtime bundle/vim-pathogen/autoload/pathogen.vim
 call pathogen#infect()
@@ -209,7 +208,7 @@ command Wq wq
 command W w
 command Q q
 
-cab spellon setlocal spell spelllang=en_us
+cab spell setlocal spell spelllang=en_us
 iab teh the
 iab adn and
 iab Todo TODO:
@@ -243,8 +242,8 @@ vnoremap <tab> %
 
 
 " Formating
-au FileType python setlocal formatoptions=cqlro textwidth=80
-au FileType text setlocal formatoptions=tan1 nocindent textwidth=78
+au FileType python setlocal formatoptions=cqlr textwidth=80
+au FileType text setlocal formatoptions=tn12 nocindent textwidth=78
 " t - Autowrap to textwidth
 " c - Autowrap comments to textwidth
 " q - Allow formatting of comments with :gq
