@@ -9,7 +9,7 @@ export HISTFILESIZE=999999
 export HISTIGNORE='[bf]g:cd:cd -:cd ~:ls:ls -al:la:ll:l:history:exit'
 export HISTCONTROL=ignoreboth
 export IGNOREEOF=2
-export PATH=$HOME/bin:$PATH
+export PATH=$HOME/bin:/sbin:/usr/sbin:$PATH
 export CDPATH='.:~/work/'
 
 export PAGER=less
@@ -32,7 +32,7 @@ alias visudo="sudo EDITOR=$EDITOR visudo"
 # It's called ack, dammit!
 which ack &> /dev/null || alias ack="ack-grep"
 # Recursively remove compiled python files.
-alias nukepyc="find . -name '*py[co]' -exec rm -f {} ';'"
+alias nukepyc="find . -name '*py[co]' -exec rm -f {} ';';find . -name '__pycache__' -exec rm -f {} ';'"
 # Muscle memory.
 alias :e=vim
 # Requires highlight to be installed
