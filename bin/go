@@ -1,6 +1,15 @@
 #!/bin/bash
 # tmux trifecta of ssh panes
 
+
+while getopts "b" option; do
+    case $option in
+        b) build_host='true';;
+    esac
+done
+shift $((OPTIND-1))
+
+
 if [[ "$2" == "" ]]; then
     session="amadeus"
 else
@@ -16,8 +25,31 @@ else
 fi
 
 
-tmux new-window   -n "$target" "ssh $target"
-tmux split-window -t "$sesion:$target".1 -dv -l 20 "ssh $target"
-tmux split-window -t "$sesion:$target".1 -dh -p 50 "ssh $target"
-tmux send-keys    -t "$sesion:$target".2 'sudo bash' C-m
-tmux select-pane  -t "$sesion:$target".1
+if [[ "$build_host" == "true" ]]; then
+    tmux new-window   -n "$target" "ssh ${target}a || bash"
+    # host below
+    tmux split-window -t "$sesion:$target".1 -dv -l 16 "ssh $target"
+    # hsplit 8 build slave guests
+    tmux split-window -t "$sesion:$target".1 -dh -p 50 "ssh ${target}e || bash"
+    #tmux display-panes;sleep 2
+    tmux split-window -t "$sesion:$target".2 -dv -l 11 "ssh ${target}h || bash"
+    #tmux display-panes;sleep 2
+    tmux split-window -t "$sesion:$target".3 -dv -l 11 "ssh ${target}g || bash"
+    #tmux display-panes;sleep 2
+    tmux split-window -t "$sesion:$target".4 -dv -l 11 "ssh ${target}f || bash"
+    #tmux display-panes;sleep 2
+    tmux split-window -t "$sesion:$target".1 -dv -l 11 "ssh ${target}d || bash"
+    #tmux display-panes;sleep 2
+    tmux split-window -t "$sesion:$target".1 -dv -l 11 "ssh ${target}c || bash"
+    #tmux display-panes;sleep 2
+    tmux split-window -t "$sesion:$target".1 -dv -l 11 "ssh ${target}b || bash"
+else
+    # "work" pane
+    tmux new-window   -n "$target" "ssh $target"
+    # log below
+    tmux split-window -t "$sesion:$target".1 -dv -l 16 "ssh $target"
+    tmux send-keys    -t "$sesion:$target".2 'clear;cd /var/log;echo "tailing some logs";sudo tail --follow=name messages syslog kern.log daemon.log' C-m
+    # root shell right
+    tmux split-window -t "$sesion:$target".1 -dh -p 50 "ssh $target"
+    tmux send-keys    -t "$sesion:$target".2 'sudo bash' C-m
+fi

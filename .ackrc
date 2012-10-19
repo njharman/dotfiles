@@ -1,7 +1,7 @@
 --type-add=css=.sass,.less
+--type-add=python=.SConstruct,.SConscript
 --ignore-dir=coverage
 --ignore-dir=migrations
 --sort-files
 --follow
 --color
---group

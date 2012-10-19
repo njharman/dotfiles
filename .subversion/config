@@ -123,15 +123,17 @@ interactive-conflicts = no
 ### applied to the file.  Note that auto-props functionality
 ### must be enabled, which is typically done by setting the
 ### 'enable-auto-props' option.
-*.c = svn:eol-style=native
 *.h = svn:eol-style=native
+*.c = svn:eol-style=native
 *.cpp = svn:eol-style=native
+*.cs = svn:eol-style=native
+*.sln = svn:eol-style=native
+*.csproj = svn:eol-style=native
+*.csprops = svn:eol-style=native
 *.py = svn:eol-style=native
 *.js = svn:eol-style=native
 *.css = svn:eol-style=native
 *.html = svn:eol-style=native
-# *.dsp = svn:eol-style=CRLF
-# *.dsw = svn:eol-style=CRLF
 *.sh = svn:eol-style=native;svn:executable
 *.txt = svn:eol-style=native
 *.png = svn:mime-type=image/png

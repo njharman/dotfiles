@@ -31,8 +31,12 @@ alias la='ls -A'
 alias visudo="sudo EDITOR=$EDITOR visudo"
 # It's called ack, dammit!
 which ack &> /dev/null || alias ack="ack-grep"
+# Chdir to python module source.
+function cdp() {
+   cd $(python -c"import os,sys;print os.path.dirname(__import__(sys.argv[1]).__file__)" $1)
+   }
 # Recursively remove compiled python files.
-alias nukepyc="find . -name '*py[co]' -exec rm -f {} ';';find . -name '__pycache__' -exec rm -f {} ';'"
+alias nukepyc="find . -name '*py[co]' -exec rm -f {} ';';find . -name '__pycache__' -exec rm -rf {} ';'"
 # Muscle memory.
 alias :e=vim
 # Requires highlight to be installed
@@ -40,6 +44,12 @@ alias hl='highlight -M'
 
 
 ## Colors & Prompt
+function parse_git_dirty {
+    [[ $(git status 2> /dev/null | tail -n1) != "nothing to commit (working directory clean)" ]] && echo "*"
+    }
+function parse_git_branch {
+    git branch --no-color 2> /dev/null | sed -e '/^[^*]/d' -e "s/* \(.*\)/(\1$(parse_git_dirty))/"
+    }
 
 if [ -e /lib/terminfo/x/xterm-256color ]; then
     export TERM='xterm-256color'
@@ -53,10 +63,25 @@ else
     color_prompt=
 fi
 if [ "$color_prompt" = yes ]; then
-    PS1='\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
+    RED="\[\033[0;31m\]"
+    LTRED="\[\033[1;31m\]"
+    BLUE="\[\033[0;34m\]"
+    TEAL="\[\e[0;36m\]"
+    GREEN="\[\033[0;32m\]"
+    LTGREEN="\[\033[1;32m\]"
+    WHITE="\[\033[1;37m\]"
+    BLACK="\[\033[00m\]"
+    if [ 0 -eq ${UID} ]; then
+        export PS1="$RED\u@\h:$BLUE\w$BLACK\$(parse_git_branch)\$"
+    else
+        export PS1="$TEAL\u$GREEN@\h:$BLUE\w$BLACK\$(parse_git_branch)\$ "
+    fi
 else
     PS1='\h:\w\$ '
 fi
+export PS2='> '
+export PS4='+ '
+
 PROMPT_DIRTRIM=2
 unset color_prompt
 

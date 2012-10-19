@@ -12,21 +12,20 @@ filetype off
 runtime bundle/vim-pathogen/autoload/pathogen.vim
 call pathogen#infect()
 
-syntax on
-filetype on
 filetype plugin indent on
+syntax on
 
 set t_Co=256
 set background=light
 
-let g:solarized_termcolors=256
 let xterm16_brightness = 'high'
 let xterm16_colormap = 'softlight'
 let xterm16_white = '#ffffff'
+let g:solarized_termcolors=256
 let g:lucius_style='light'
+colo lucius
 "colo solarized
 "colo xterm16
-colo lucius
 
 
 set encoding=utf-8
@@ -65,10 +64,11 @@ set linebreak           " Wrap lines at convenient points.
 set more                " Use more prompt.
 set nobackup            " Live dangerously.
 set hidden              " Hide buffers instead of closing them.
-set shortmess=atI       " Shorten messages and no splash screen.
+set shortmess=ato       " Shorten messages and no splash screen.
+set viewoptions=unix,slash
 set list                " Show invisible characters.
 set listchars=tab:>·    " But only show tabs.
-let g:clipbrdDefaultReg = '+'
+    let g:clipbrdDefaultReg = '+'
 " Paste Toggle
 set pastetoggle=<F9> " When in insert mode, press <F11> to go to paste mode.
 " Freakin awesome, start scrolling 5 lines from top/bottom/left/right.
@@ -91,6 +91,7 @@ let g:pyflakes_use_quickfix = 0
 " Hate the hi-lite
 let g:pydoc_highlight=0
 
+set mouse=a
 set mousehide           " Hide the mouse pointer while typing.
 set guioptions=a        " Hide scrollbar/menu/tabs/etc.
 if has('gui_running')
@@ -103,8 +104,8 @@ if has('gui_running')
 end
 
 " Status line is gnarly.
-set statusline=%F%m%r%h%w%<\ \ %{&ff}%y%=0x\%02.2B\ /\ \%03.3b\ \ %04lr:%02vc\ \ [%p%%\ of\ %L]
 set laststatus=2
+set statusline=%F%m%r%h%w%<\ \ %{&ff}%y%=0x\%02.2B\ /\ \%03.3b\ \ %04lr:%02vc\ \ [%p%%\ of\ %L]
 
 
 " Key Bindings
@@ -256,30 +257,26 @@ au FileType text setlocal formatoptions=tn12 nocindent textwidth=78
 " o - Autointert comment leader with 'o' 'O'
 
 
-" Bunch of crap.
+" Filetype handling
 nnoremap _dt :set ft=htmldjango<CR>
 nnoremap _pd :set ft=python.django<CR>
-au FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
-au FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
+au FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags|setlocal softtabstop=2|setlocal shiftwidth=2
+au FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS|setlocal softtabstop=2|setlocal shiftwidth=2
 au FileType python setlocal omnifunc=pythoncomplete#Complete
-au FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
-au FileType css set omnifunc=csscomplete#CompleteCSS
-au BufNewFile,BufRead urls.py      setlocal filetype=python.django
-au BufNewFile,BufRead admin.py     setlocal filetype=python.django
-au BufNewFile,BufRead models.py    setlocal filetype=python.django
-au BufNewFile,BufRead forms.py     setlocal filetype=python.django
-au BufNewFile,BufRead views.py     setlocal filetype=python.django
-au BufNewFile,BufRead handlers.py  setlocal filetype=python.django
-au BufNewFile,BufRead *settings.py setlocal filetype=python.django
-au BufNewFile,BufRead *.html       setlocal filetype=htmldjango
-au BufNewFile,BufRead *.scss       setlocal ft=scss.css
-au BufNewFile,BufRead *.sass       setlocal ft=sass.css
-au BufEnter *.erb       setlocal softtabstop=2|setlocal shiftwidth=2
-au BufEnter *.rb        setlocal softtabstop=2|setlocal shiftwidth=2
-au BufEnter *.js        setlocal softtabstop=2|setlocal shiftwidth=2
-au BufEnter *.json      setlocal softtabstop=2|setlocal shiftwidth=2
-au BufEnter *.html      setlocal softtabstop=2|setlocal shiftwidth=2
-au BufEnter *.yml       setlocal softtabstop=2|setlocal shiftwidth=2
+au FileType xml setlocal omnifunc=xmlcomplete#CompleteTags|setlocal softtabstop=2|setlocal shiftwidth=2
+au FileType css setlocal omnifunc=csscomplete#CompleteCSS|setlocal softtabstop=2|setlocal shiftwidth=2
+au BufNewFile,BufRead *.html    setlocal filetype=htmldjango
+au BufNewFile,BufRead *.scss    setlocal filetype=scss.css
+au BufNewFile,BufRead *.sass    setlocal filetype=sass.css
+au BufNewFile,BufRead *.csproj  setlocal filetype=xml
+au BufNewFile,BufRead *.csprops setlocal filetype=xml
+au BufNewFile,BufRead *SConscript setlocal filetype=python
+au BufNewFile,BufRead *SConstruct setlocal filetype=python
+au BufNewFile,BufRead *.json    setlocal softtabstop=2|setlocal shiftwidth=2
+au BufNewFile,BufRead *.yml     setlocal softtabstop=2|setlocal shiftwidth=2
+au BufNewFile,BufRead *.erb     setlocal softtabstop=2|setlocal shiftwidth=2
+au BufNewFile,BufRead *.rb      setlocal softtabstop=2|setlocal shiftwidth=2
+
 
 " Ghetto Slime https://github.com/jpalardy/vim-slime
 " Start screen (in other terminal)
