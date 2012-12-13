@@ -7,7 +7,7 @@ SAVE=~/tmp/.dotfile_preserve
 
 
 function symtastico {
-  # make symlinks, ignoring directories and archiving existing files.
+  # Make symlinks, ignoring directories and archiving existing files.
   destdir=$1
   shift
   for file in $@; do
@@ -62,13 +62,13 @@ function init_the_dotfiles {
     mkdir -p "$WORK"
     git clone "$REPO" $WORK
     cd $WORK
-    # old systems don't got the CA
+    # Old systems don't got the CA
     git config --global http.sslVerify false
     git config --global user.name "Norman J. Harman Jr."
     git config --global user.email njharman@gmail.com
-    #tells git-branch and git-checkout to setup new branches so that git-pull(1) will appropriately merge from that remote branch.  Recommended.  Without this, you will have to add --track to your branch command or manually merge remote tracking branches with "fetch" and then "merge".
+    # Tells git-branch and git-checkout to setup new branches so that git-pull(1) will appropriately merge from that remote branch.  Recommended.  Without this, you will have to add --track to your branch command or manually merge remote tracking branches with "fetch" and then "merge".
     git config branch.autosetupmerge true
-    #convert newlines to the system's standard when checking out files, and to LF newlines when committing in.    │etc/hsflowd.conf
+    # Convert newlines to the system's standard when checking out files, and to LF newlines when committing in.    │etc/hsflowd.conf
     git config core.autocrlf true
     git submodule init
     git submodule update

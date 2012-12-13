@@ -8,12 +8,10 @@
 " <leader>pw python docs
 
 set nocompatible
-filetype off
 runtime bundle/vim-pathogen/autoload/pathogen.vim
 call pathogen#infect()
-
-filetype plugin indent on
 syntax on
+filetype plugin indent on
 
 set t_Co=256
 set background=light
@@ -26,7 +24,6 @@ let g:lucius_style='light'
 colo lucius
 "colo solarized
 "colo xterm16
-
 
 set encoding=utf-8
 set termencoding=utf-8
@@ -85,7 +82,7 @@ au BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$") | exe "normal g'
 " Remember stuff after quiting: marks, registers, searches, buffer list.
 set viminfo='20,<50,s10,h,%
 " Remove any trailing whitespace that is in the file.
-autocmd BufRead,BufWrite * if ! &bin | silent! %s/\s\+$//ge | endif
+au BufRead,BufWrite * if ! &bin | silent! %s/\s\+$//ge | endif
 " Make Pyflakes workth with pep8
 let g:pyflakes_use_quickfix = 0
 " Hate the hi-lite
@@ -103,12 +100,11 @@ if has('gui_running')
   set guioptions-=m
 end
 
-" Status line is gnarly.
+"" Gnarly status line.
 set laststatus=2
 set statusline=%F%m%r%h%w%<\ \ %{&ff}%y%=0x\%02.2B\ /\ \%03.3b\ \ %04lr:%02vc\ \ [%p%%\ of\ %L]
 
-
-" Key Bindings
+"" Key Bindings
 " :map normal, insert, visual, command
 " :imap insert
 " :vmap visual
@@ -116,78 +112,66 @@ set statusline=%F%m%r%h%w%<\ \ %{&ff}%y%=0x\%02.2B\ /\ \%03.3b\ \ %04lr:%02vc\ \
 " :nmap normal
 
 "F1 not help
-inoremap <F1> <ESC>
-nnoremap <F1> <ESC>
-vnoremap <F1> <ESC>
+imap <F1> <ESC>
+nmap <F1> <ESC>
+vmap <F1> <ESC>
 "F5 not compile
-autocmd filetype python map <buffer> <F5> :w<CR>:!pyflakes %<CR>
-autocmd filetype python imap <buffer> <F5> <Esc>:w<CR>:!pyflakes %<CR>
-autocmd filetype python map <buffer> <S-F5> :w<CR>:!pylint %<CR>
-autocmd filetype python imap <buffer> <S-F5> <Esc>:w<CR>:!pylint %<CR>
+au filetype python map <buffer> <F5> :w<CR>:!pyflakes %<CR>
+au filetype python imap <buffer> <F5> <Esc>:w<CR>:!pyflakes %<CR>
+au filetype python map <buffer> <S-F5> :w<CR>:!pylint %<CR>
+au filetype python imap <buffer> <S-F5> <Esc>:w<CR>:!pylint %<CR>
 " <C-6> switches to alternate file and correct column.
-nnoremap <C-6> <C-6>`"
+nmap <C-6> <C-6>`"
 
 ";=: jj=ESC
-nnoremap ; :
-inoremap jj <ESC>
+nmap ; :
+imap jj <ESC>
+cmap jj <up>
+cmap kk <down>
 
 " Emacs movement keybindings in insert mode.
 map <C-a> ^
 map <C-e> $
-" Swap these keps cause ` is cooler but ' is easier to type.
-nnoremap ' `
-nnoremap ` '
+" Swap these keys cause ` is cooler but ' is easier to type.
+nmap ' `
+nmap ` '
 " Reflow paragraph with Q in normal and visual mode.
-nnoremap Q gqap
-vnoremap Q gq
+nmap Q gqap
+vmap Q gq
 " Make Y consistent with C and D.
-nnoremap Y y$
+nmap Y y$
 
-" Buffer navigation.
-map <C-right> <ESC>:bn<CR>
-map <C-left> <ESC>:bp<CR>
-
-
-" Fast find / obnoxious higlight word under cursor.
-"function Funkmaster()
-"    if &hlsearch
-"        set nohlsearch
-"    else
-"        set hlsearch
-"    endif
-"endfunction
-"nnoremap <space> :call Funkmaster()<CR>
-
-" Indent with spacebar.
-nnoremap <space> >>
-vnoremap <space> >>
-
-" Complete filenames/lines with a quicker shortcut.
-imap <C-f> <C-x><C-f>
-imap <C-l> <C-x><C-l>
-
-" Sudo write
+" Sudo write.
 cmap w!! w !sudo tee % >/dev/null
 
-" :o <file> open file if in path, open gf in new buffer.
-cab o find
-map gf :edit <cfile><CR>
+" Indent with spacebar.
+nmap <space> >>
+vmap <space> >>
+
+" Jump to matching pairs easily, with Tab.
+nnoremap <tab> %
+vnoremap <tab> %
+" Add angles to matching pairs. Can't figure out why matchit not loading.
+:set mps+=<:>
 
 let mapleader = ","
+
+" Buffer navigation.
+map <right> <ESC>:bn<CR>
+map <left> <ESC>:bp<CR>
+nmap <leader>, :bn<CR>
+nmap <leader>. :bp<CR>
 
 " Highlight merge conflict markers.
 match ErrorMsg '^\(<\|=\|>\)\{7\}\([^=].\+\)\?$'
 " Shortcut to jump to next merge conflict marker.
 nmap <silent> <leader>c /^\(<\\|=\\|>\)\{7\}\([^=].\+\)\?$<CR>
 
-" Jump to other window, handy with pep8
+" Jump to other window, handy with pep8.
 nmap <leader>w <C-W><C-W>
+nmap <leader>U :GundoToggle<CR>
 
-nmap <leader>g :GundoToggle<CR>
-nmap <leader>d :RopeGotoDefinition<CR>
-nmap <leader>r :RopeRename<CR>
-nmap <leader>a :Ack!
-
+" Comment lines
 nmap <leader># :s/^/#/<CR>
 vmap <leader># :s/^/#/<CR>
 nmap <leader>3 :s/^/#/<CR>
@@ -208,8 +192,6 @@ command WQ wq
 command Wq wq
 command W w
 command Q q
-
-cab spellon setlocal spell spelllang=en_us
 iab teh the
 iab adn and
 iab Todo TODO:
@@ -221,30 +203,39 @@ iab me- Norman J. Harman Jr.
 iab time- <C-R>=strftime("%H:%M:%S")<CR>
 iab date- <C-R>=strftime("%a, %d %b %Y")<CR>
 iab now- <C-R>=strftime("%a, %d %b %Y %H:%M:%S %z")<CR>
+cab spellon setlocal spell spelllang=en_us
 
 "" Tab completion
 " SuperTab
 let g:SuperTabDefaultCompletionType = "context"
 let g:SuperTabContextDefaultCompletionType = "<c-p>"
 let g:SuperTabNoCompleteAfter = [':', ',', '\s']
-"let g:SuperTabLongestEnhanced = 1
-autocmd FileType *
+let g:SuperTabLongestEnhanced = 1
+au FileType *
   \ if &omnifunc != '' |
   \   call SuperTabChain(&omnifunc, "<c-p>") |
   \   call SuperTabSetDefaultCompletionType("context") |
   \ endif
 
 set completeopt=menuone,longest,preview
-" Python calltips
-"set iskeyword+=.
-" Jump to matching pairs easily, with Tab
-nnoremap <tab> %
-vnoremap <tab> %
+
+"" Finding files to edit
+" Complete filenames/lines with a quicker shortcut.
+imap <C-f> <C-x><C-f>
+imap <C-l> <C-x><C-l>
+" :o <file> open file in path.
+cab o find
+" gf edit file even if it doesn't exist.
+"map gf :edit <cfile><CR>
+" Search up from current directory, then up from parent directory when gf'ing.
+:set path+=**,../**
+" If line has 'include' replace dots and try gf again.
+:set includeexpr=substitute(v:fname,'\\.','/','g')
+" Search in (some) python library paths
+au filetype python :setlocal path+=/usr/local/lib/python2.7/dist-packages/,/usr/lib/python2.7/|setlocal suffixesadd=.py
 
 
-" Formating
-au FileType python setlocal formatoptions=cqlr textwidth=80
-au FileType text setlocal formatoptions=tn12 nocindent textwidth=78
+"" Formating
 " t - Autowrap to textwidth
 " c - Autowrap comments to textwidth
 " q - Allow formatting of comments with :gq
@@ -255,12 +246,10 @@ au FileType text setlocal formatoptions=tn12 nocindent textwidth=78
 " 2 - Support 1st line indent
 " r - Autoinsert comment leader with <Enter>
 " o - Autointert comment leader with 'o' 'O'
+au FileType python setlocal formatoptions=cqlr textwidth=80
+au FileType text setlocal formatoptions=tn12 nocindent textwidth=78
 
-".swp files not in Dropbox Folder
-"au BufNew,BufRead ~/Dropbox/* :setlocal directory=~/.vimswp//
-"set directory=~/.vimswp//
-
-" Filetype handling
+"" Filetype handling
 nnoremap _dt :set ft=htmldjango<CR>
 nnoremap _pd :set ft=python.django<CR>
 au FileType html,markdown :setlocal omnifunc=htmlcomplete#CompleteTags|setlocal softtabstop=2|setlocal shiftwidth=2
@@ -280,7 +269,7 @@ au BufNewFile,BufRead *.yml         :setlocal softtabstop=2|setlocal shiftwidth=
 au BufNewFile,BufRead *.erb         :setlocal softtabstop=2|setlocal shiftwidth=2
 au BufNewFile,BufRead *.rb          :setlocal softtabstop=2|setlocal shiftwidth=2
 
-" Ghetto Slime https://github.com/jpalardy/vim-slime
+"" Ghetto Slime https://github.com/jpalardy/vim-slime
 " Start screen (in other terminal)
 "   scheme: screen -S sicp rlwrap scheme -large
 "    shell: screen -S bash
