@@ -50,6 +50,10 @@ function parse_git_dirty {
 function parse_git_branch {
     git branch --no-color 2> /dev/null | sed -e '/^[^*]/d' -e "s/* \(.*\)/(\1$(parse_git_dirty))/"
     }
+function prompt_or_jobs {
+    count=`jobs|wc -l`
+    [ 0 -eq $count ] && echo "$1" || echo "$count"
+    }
 
 if [ -e /lib/terminfo/x/xterm-256color ]; then
     export TERM='xterm-256color'
@@ -63,27 +67,29 @@ else
     color_prompt=
 fi
 if [ "$color_prompt" = yes ]; then
-    RED="\[\033[0;31m\]"
-    LTRED="\[\033[1;31m\]"
-    BLUE="\[\033[0;34m\]"
-    TEAL="\[\e[0;36m\]"
-    GREEN="\[\033[0;32m\]"
-    LTGREEN="\[\033[1;32m\]"
-    WHITE="\[\033[1;37m\]"
-    BLACK="\[\033[00m\]"
-    if [ 0 -eq ${UID} ]; then
-        export PS1="$RED\u@\h:$BLUE\w$BLACK\$(parse_git_branch)\$"
+    _RED="\[\033[0;31m\]"
+    _LTRED="\[\033[1;31m\]"
+    _BLUE="\[\033[0;34m\]"
+    _TEAL="\[\e[0;36m\]"
+    _GREEN="\[\033[0;32m\]"
+    _LTGREEN="\[\033[1;32m\]"
+    _WHITE="\[\033[1;37m\]"
+    _BLACK="\[\033[00m\]"
+    if [ 0 -eq $UID ]; then
+        export PS1="$_RED\u@\h:$_BLUE\w/$_BLACK\$(parse_git_branch) $_RED\$(prompt_or_jobs '$') $_BLACK"
     else
-        export PS1="$TEAL\u$GREEN@\h:$BLUE\w$BLACK\$(parse_git_branch)\$ "
+        export PS1="$_TEAL\u$_GREEN@\h:$_BLUE\w/$_BLACK\$(parse_git_branch)\$(prompt_or_jobs '#') "
     fi
 else
     PS1='\h:\w\$ '
 fi
-export PS2='> '
-export PS4='+ '
+
 
 PROMPT_DIRTRIM=2
 unset color_prompt
+
+export PS2='> '
+export PS4='+ '
 
 # ls colors
 export CLICOLORS=1

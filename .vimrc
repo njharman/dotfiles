@@ -209,7 +209,7 @@ command Wq wq
 command W w
 command Q q
 
-cab spell setlocal spell spelllang=en_us
+cab spellon setlocal spell spelllang=en_us
 iab teh the
 iab adn and
 iab Todo TODO:
@@ -256,27 +256,29 @@ au FileType text setlocal formatoptions=tn12 nocindent textwidth=78
 " r - Autoinsert comment leader with <Enter>
 " o - Autointert comment leader with 'o' 'O'
 
+".swp files not in Dropbox Folder
+"au BufNew,BufRead ~/Dropbox/* :setlocal directory=~/.vimswp//
+"set directory=~/.vimswp//
 
 " Filetype handling
 nnoremap _dt :set ft=htmldjango<CR>
 nnoremap _pd :set ft=python.django<CR>
-au FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags|setlocal softtabstop=2|setlocal shiftwidth=2
-au FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS|setlocal softtabstop=2|setlocal shiftwidth=2
-au FileType python setlocal omnifunc=pythoncomplete#Complete
-au FileType xml setlocal omnifunc=xmlcomplete#CompleteTags|setlocal softtabstop=2|setlocal shiftwidth=2
-au FileType css setlocal omnifunc=csscomplete#CompleteCSS|setlocal softtabstop=2|setlocal shiftwidth=2
-au BufNewFile,BufRead *.html    setlocal filetype=htmldjango
-au BufNewFile,BufRead *.scss    setlocal filetype=scss.css
-au BufNewFile,BufRead *.sass    setlocal filetype=sass.css
-au BufNewFile,BufRead *.csproj  setlocal filetype=xml
-au BufNewFile,BufRead *.csprops setlocal filetype=xml
-au BufNewFile,BufRead *SConscript setlocal filetype=python
-au BufNewFile,BufRead *SConstruct setlocal filetype=python
-au BufNewFile,BufRead *.json    setlocal softtabstop=2|setlocal shiftwidth=2
-au BufNewFile,BufRead *.yml     setlocal softtabstop=2|setlocal shiftwidth=2
-au BufNewFile,BufRead *.erb     setlocal softtabstop=2|setlocal shiftwidth=2
-au BufNewFile,BufRead *.rb      setlocal softtabstop=2|setlocal shiftwidth=2
-
+au FileType html,markdown :setlocal omnifunc=htmlcomplete#CompleteTags|setlocal softtabstop=2|setlocal shiftwidth=2
+au FileType javascript :setlocal omnifunc=javascriptcomplete#CompleteJS|setlocal softtabstop=2|setlocal shiftwidth=2
+au FileType python :setlocal omnifunc=pythoncomplete#Complete
+au FileType xml :setlocal omnifunc=xmlcomplete#CompleteTags|setlocal softtabstop=2|setlocal shiftwidth=2
+au FileType css :setlocal omnifunc=csscomplete#CompleteCSS|setlocal softtabstop=2|setlocal shiftwidth=2
+au BufNewFile,BufRead *.html        :setlocal filetype=htmldjango
+au BufNewFile,BufRead *.scss        :setlocal filetype=scss.css
+au BufNewFile,BufRead *.sass        :setlocal filetype=sass.css
+au BufNewFile,BufRead *.csproj      :setlocal filetype=xml
+au BufNewFile,BufRead *.csprops     :setlocal filetype=xml
+au BufNewFile,BufRead *SConscript   :setlocal filetype=python
+au BufNewFile,BufRead *SConstruct   :setlocal filetype=python
+au BufNewFile,BufRead *.json        :setlocal softtabstop=2|setlocal shiftwidth=2
+au BufNewFile,BufRead *.yml         :setlocal softtabstop=2|setlocal shiftwidth=2
+au BufNewFile,BufRead *.erb         :setlocal softtabstop=2|setlocal shiftwidth=2
+au BufNewFile,BufRead *.rb          :setlocal softtabstop=2|setlocal shiftwidth=2
 
 " Ghetto Slime https://github.com/jpalardy/vim-slime
 " Start screen (in other terminal)
