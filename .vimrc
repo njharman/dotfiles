@@ -6,6 +6,7 @@
 " :setlocal spell spelllang=en_us suggest "z=", addword "zg", next/prev "]s"/"[s"
 " searches # * g# g* g, gd
 " <leader>pw python docs
+" ctrl-r ctrl-w word complete in command line
 
 set nocompatible
 runtime bundle/vim-pathogen/autoload/pathogen.vim
@@ -106,20 +107,16 @@ set statusline=%F%m%r%h%w%<\ \ %{&ff}%y%=0x\%02.2B\ /\ \%03.3b\ \ %04lr:%02vc\ \
 
 "" Key Bindings
 " :map normal, insert, visual, command
+" :nmap normal
 " :imap insert
 " :vmap visual
 " :cmap command
-" :nmap normal
 
 "F1 not help
-imap <F1> <ESC>
-nmap <F1> <ESC>
-vmap <F1> <ESC>
+map <F1> <ESC>
 "F5 not compile
-au filetype python map <buffer> <F5> :w<CR>:!pyflakes %<CR>
-au filetype python imap <buffer> <F5> <Esc>:w<CR>:!pyflakes %<CR>
-au filetype python map <buffer> <S-F5> :w<CR>:!pylint %<CR>
-au filetype python imap <buffer> <S-F5> <Esc>:w<CR>:!pylint %<CR>
+au filetype python map <buffer> <F5> :w<CR>:!pylint %<CR>
+au filetype python imap <buffer> <F5> <Esc>:w<CR>:!pylint %<CR>
 " <C-6> switches to alternate file and correct column.
 nmap <C-6> <C-6>`"
 
@@ -134,7 +131,7 @@ map <C-a> ^
 map <C-e> $
 " Swap these keys cause ` is cooler but ' is easier to type.
 nmap ' `
-nmap ` '
+"nmap ` '
 " Reflow paragraph with Q in normal and visual mode.
 nmap Q gqap
 vmap Q gq
@@ -147,6 +144,7 @@ cmap w!! w !sudo tee % >/dev/null
 " Indent with spacebar.
 nmap <space> >>
 vmap <space> >>
+" PageDown with spacebar.
 
 " Jump to matching pairs easily, with Tab.
 nnoremap <tab> %
@@ -203,21 +201,27 @@ iab me- Norman J. Harman Jr.
 iab time- <C-R>=strftime("%H:%M:%S")<CR>
 iab date- <C-R>=strftime("%a, %d %b %Y")<CR>
 iab now- <C-R>=strftime("%a, %d %b %Y %H:%M:%S %z")<CR>
-cab spellon setlocal spell spelllang=en_us
+cab spellon setlocal spell spelllang=en_us<CR>
+
 
 "" Tab completion
+map <S-Tab> <C-x><C-p>
 " SuperTab
 let g:SuperTabDefaultCompletionType = "context"
 let g:SuperTabContextDefaultCompletionType = "<c-p>"
+let g:SuperTabContextTextOmniPrecedence = ['&completefunc']
+"let g:SuperTabContextTextOmniPrecedence = ['&omnifunc', '&completefunc']
 let g:SuperTabNoCompleteAfter = [':', ',', '\s']
 let g:SuperTabLongestEnhanced = 1
+let g:SuperTabLongestHighlight = 1
+let g:SuperTabClosePreviewOnPopupClose = 1
 au FileType *
   \ if &omnifunc != '' |
   \   call SuperTabChain(&omnifunc, "<c-p>") |
   \   call SuperTabSetDefaultCompletionType("context") |
   \ endif
-
 set completeopt=menuone,longest,preview
+
 
 "" Finding files to edit
 " Complete filenames/lines with a quicker shortcut.
@@ -228,11 +232,13 @@ cab o find
 " gf edit file even if it doesn't exist.
 "map gf :edit <cfile><CR>
 " Search up from current directory, then up from parent directory when gf'ing.
-:set path+=**,../**
+:set path+=.,**2
+":set path+=**,.,,./**
 " If line has 'include' replace dots and try gf again.
 :set includeexpr=substitute(v:fname,'\\.','/','g')
 " Search in (some) python library paths
-au filetype python :setlocal path+=/usr/local/lib/python2.7/dist-packages/,/usr/lib/python2.7/|setlocal suffixesadd=.py
+"au filetype python :setlocal path+=/usr/local/lib/python2.7/dist-packages/,/usr/lib/python2.7/|setlocal suffixesadd=.py
+au filetype python :setlocal suffixesadd=.py
 
 
 "" Formating

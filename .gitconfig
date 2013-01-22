@@ -29,13 +29,13 @@
   st = status
   ci = commit
   co = checkout
-  lol = log --graph --decorate --pretty=oneline --abbrev-commit
-  lola = log --graph --decorate --pretty=oneline --abbrev-commit --all
+  br = branch
+  lg = log --graph --pretty=format:'%Cred%h%Creset %Cred%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
+  llg = log --graph --pretty=format:'%Cred%h%Creset %Cred%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset%+b' --abbrev-commit --name-status
+  #lgp = log -p
 
-  #br = branch
   #df = diff
   #dc = diff --cached
-  #lg = log -p
   #ls = ls-files
   ## Show files ignored by git:
   #ign = ls-files -o -i --exclude-standard

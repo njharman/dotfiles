@@ -25,7 +25,7 @@ if [ -e /usr/bin/meld ]; then
     export SVN_DIFF=/usr/bin/meld
 fi
 
-alias ll='ls -alF'
+alias ll='ls -lF'
 alias la='ls -A'
 # Hate nano, very much.
 alias visudo="sudo EDITOR=$EDITOR visudo"
@@ -121,6 +121,29 @@ function _pip_completion() {
     COMPREPLY=( $( COMP_WORDS="${COMP_WORDS[*]}" COMP_CWORD=$COMP_CWORD PIP_AUTO_COMPLETE=1 $1 ) )
     }
 complete -o default -F _pip_completion pip
+
+## Nosetests
+# sudo pip install nosecomplete
+__ltrim_colon_completions() {
+    # If word-to-complete contains a colon,
+    # and bash-version < 4,
+    # or bash-version >= 4 and COMP_WORDBREAKS contains a colon
+    if [[ "$1" == *:* && ( ${BASH_VERSINFO[0]} -lt 4 || (${BASH_VERSINFO[0]} -ge 4 && "$COMP_WORDBREAKS" == *:*)) ]]; then
+        # Remove colon-word prefix from COMPREPLY items
+        local colon_word=${1%${1##*:}}
+        local i=${#COMPREPLY[*]}
+        while [ $((--i)) -ge 0 ]; do
+            COMPREPLY[$i]=${COMPREPLY[$i]#"$colon_word"}
+        done
+    fi
+}
+_nosetests()
+{
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    COMPREPLY=(`nosecomplete ${cur} 2>/dev/null`)
+    __ltrim_colon_completions "$cur"
+}
+complete -o nospace -F _nosetests nosetests
 
 
 ## Local things
