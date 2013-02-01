@@ -41,6 +41,13 @@ alias nukepyc="find . -name '*py[co]' -exec rm -f {} ';';find . -name '__pycache
 alias :e=vim
 # Requires highlight to be installed
 alias hl='highlight -M'
+# Requires cdiff to be installed
+function dif {
+    svn diff $@ | cdiff
+    }
+function difs {
+    svn diff $@ | cdiff -s
+    }
 
 
 ## Colors & Prompt
