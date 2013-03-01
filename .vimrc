@@ -9,10 +9,13 @@
 " ctrl-r ctrl-w word complete in command line
 
 set nocompatible
+
+filetype off
 runtime bundle/vim-pathogen/autoload/pathogen.vim
 call pathogen#infect()
-syntax on
+call pathogen#helptags()
 filetype plugin indent on
+syntax on
 
 set t_Co=256
 set background=light
@@ -37,6 +40,7 @@ set noshowmatch         " Don't show matching brackets.
 set matchtime=0         " Blink matching chars for 0 seconds.
 set history=1000
 set undolevels=1000
+set undofile            " Persist undo history.
 set novisualbell
 set noerrorbells
 set ttyfast             " 1980 is long past.
@@ -66,8 +70,8 @@ set shortmess=ato       " Shorten messages and no splash screen.
 set viewoptions=unix,slash
 set list                " Show invisible characters.
 set listchars=tab:>·    " But only show tabs.
-    let g:clipbrdDefaultReg = '+'
-" Paste Toggle
+let g:clipbrdDefaultReg = '+'
+set clipboard=unnamed
 set pastetoggle=<F9> " When in insert mode, press <F11> to go to paste mode.
 " Freakin awesome, start scrolling 5 lines from top/bottom/left/right.
 set scrolloff=5
@@ -88,6 +92,14 @@ au BufRead,BufWrite * if ! &bin | silent! %s/\s\+$//ge | endif
 let g:pyflakes_use_quickfix = 0
 " Hate the hi-lite
 let g:pydoc_highlight=0
+" Python-mode
+"let g:pymode_run=0
+"let g:pymode_folding=0
+"let g:pymode_lint_ignore="E501,E122,E123,E124,E126,E127,E128"
+"let g:pymode_lint_onfly=1
+let g:ctrlp_map = '<c-p>'
+let g:ctrlp_cmd = 'CtrlP'
+let g:ctrlp_working_path_mode = 'a'
 
 set mouse=a
 set mousehide           " Hide the mouse pointer while typing.
@@ -141,10 +153,8 @@ nmap Y y$
 " Sudo write.
 cmap w!! w !sudo tee % >/dev/null
 
-" Indent with spacebar.
-nmap <space> >>
-vmap <space> >>
-" PageDown with spacebar.
+" Page down w/ space.
+nmap <space> <pagedown>
 
 " Jump to matching pairs easily, with Tab.
 nnoremap <tab> %
@@ -153,6 +163,10 @@ vnoremap <tab> %
 :set mps+=<:>
 
 let mapleader = ","
+
+" Indent with spacebar.
+nmap <leader><space> >>
+vmap <leader><space> >>
 
 " Buffer navigation.
 map <right> <ESC>:bn<CR>
@@ -178,12 +192,12 @@ nmap <leader>u :s/#//<CR>
 vmap <leader>u :s/#//<CR>
 
 " ReST titles
-nmap <leader># yypVr#o
-nmap <leader>= yypVr=o
-nmap <leader>- yypVr-o
-nmap <leader>~ yypVr~o
-nmap <leader>^ yypVr^o
-nmap <leader>* yypVr*o
+nmap <leader># yypVr#
+nmap <leader>= yypVr=
+nmap <leader>- yypVr-
+nmap <leader>~ yypVr~
+nmap <leader>^ yypVr^
+nmap <leader>* yypVr*
 
 " Sloppy fingers
 command WQ wq
@@ -253,7 +267,7 @@ au filetype python :setlocal suffixesadd=.py
 " r - Autoinsert comment leader with <Enter>
 " o - Autointert comment leader with 'o' 'O'
 au FileType python setlocal formatoptions=cqlr textwidth=80
-au FileType text setlocal formatoptions=tn12 nocindent textwidth=78
+au FileType text setlocal formatoptions=tn12 nocindent textwidth=78 spell spelllang=en_us
 
 "" Filetype handling
 nnoremap _dt :set ft=htmldjango<CR>
