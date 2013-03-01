@@ -69,7 +69,9 @@ function init_the_dotfiles {
     # Tells git-branch and git-checkout to setup new branches so that git-pull(1) will appropriately merge from that remote branch.  Recommended.  Without this, you will have to add --track to your branch command or manually merge remote tracking branches with "fetch" and then "merge".
     git config branch.autosetupmerge true
     # Convert newlines to the system's standard when checking out files, and to LF newlines when committing in.    │etc/hsflowd.conf
-    git config core.autocrlf true
+    git config core.autocrlf false
+    git config core.filemode true
+    # Update submodules
     git submodule init
     git submodule update
   fi
