@@ -136,13 +136,15 @@ if [[ "$1" == "help" ]]; then
 $prog      - (re)create symbolic links, directories, etc
 $prog up   - git pull
 $prog vim  - git pull pathogen submodules
-$prog all  - all of the above
+$prog all  - all of the above plus more
 USAGE
 elif [[ "$1" == "up" ]]; then
     engage_up
 elif [[ "$1" == "vim" ]]; then
     engage_vim
 elif [[ "$1" == "all" ]]; then
+    # vim-jedi needs this
+    sudo pip install jedi
     engage_up
     engage_vim
     engage_sym

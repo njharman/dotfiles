@@ -1,6 +1,6 @@
 About
 =====
-Dotfile, ~/bin, and other files 'normanize' a unix shell.  njharman@gmail.com
+Dotfile, ~/bin, and other files to 'normanize' shell.  Norman J. Harman Jr. <njharman@gmail.com>
 
 Usage
 =====
@@ -13,7 +13,8 @@ This is how I do things, YMMV. ::
 Contents
 ========
 engage.sh
-    Read it. Briefly, create some directories, move any existing files, create symlinks to .dotfiles/<stuff>.
+    Read it.
+    Briefly, it creates some directories, moves any existing files, and creates symlinks to .dotfiles/foo.
 
 Binaries
 --------
@@ -21,7 +22,7 @@ bin/rockme [<session>]
     Create (or connect to existing) tmux session.
 
 bin/go <target>
-    Open tmux window with 3 panes sshed to target.
+    Open tmux window with 3 panes ssh'd to target.
 
 bin/256colors2.pl
     Verify terminal is 'shiny'.
@@ -77,7 +78,7 @@ Configs
 
      - Supertab
      - ReST titles are nifty.
-     - Auto removing trailing whitespace on save, duh.
+     - Auto removing trailing whitespace on save.
      - Returning to previous position, every tool should do this.
      - Wish I had learned about scrolloff and wildmenu 10 years earlier
      - *jj* to exit insert mode is super bad esp on commandline (see .inputrc).
@@ -103,16 +104,22 @@ Configs
 
       git submodule foreach git pull origin master
 
-    - ack: Programmer's grep.
     - ctrlp: Fuzzy finder. `:h ctrlp-commands`, `:h ctrlp-extensions`
     - dbext: Database shell. `:h dbext-tutorial`
     - gundo: Undo.
+    - jedi-vim:  Autocompletion
     - help_nav: More better vim help nav.
     - matchit: More better matching.
     - pep8: Map to <F8> for code style nirvana.
     - pydoc: `Pydoc re.compile`.
     - pyflakes: Dynamically show your mistakes.
     - python_calltips: Tab to show function signature, etc.
+    - slime-vim:
     - supertab: Think this is awesome.
     - surround: More better.
+    - vim-abolish:
+      coerce case; crs (snake_case) crm (MixedCase), cru (UPPER_CASE).
+      Subvert/address{,es}/reference{,s}/
+    - vim-commentary: (un)comment lines (gcc, gcu).
     - vim-pathogen: Vim package manager.
+    - vim-speeddating: increment dates properly (<C-a>, <C-x>, d<C-a> utc, d<C-x> local).

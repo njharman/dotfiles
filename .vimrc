@@ -124,12 +124,12 @@ set statusline=%F%m%r%h%w%<\ \ %{&ff}%y%=0x\%02.2B\ /\ \%03.3b\ \ %04lr:%02vc\ \
 " :vmap visual
 " :cmap command
 
-"F1 not help
+"F1 is not helpful
 map <F1> <ESC>
-"F5 not compile
+"F5 is not compile
 au filetype python map <buffer> <F5> :w<CR>:!pylint %<CR>
 au filetype python imap <buffer> <F5> <Esc>:w<CR>:!pylint %<CR>
-" <C-6> switches to alternate file and correct column.
+" Switche to alternate file *and* correct column.
 nmap <C-6> <C-6>`"
 
 ";=: jj=ESC
@@ -138,12 +138,8 @@ imap jj <ESC>
 cmap jj <up>
 cmap kk <down>
 
-" Emacs movement keybindings in insert mode.
-map <C-a> ^
-map <C-e> $
 " Swap these keys cause ` is cooler but ' is easier to type.
 nmap ' `
-"nmap ` '
 " Reflow paragraph with Q in normal and visual mode.
 nmap Q gqap
 vmap Q gq
@@ -171,8 +167,6 @@ vmap <leader><space> >>
 " Buffer navigation.
 map <right> <ESC>:bn<CR>
 map <left> <ESC>:bp<CR>
-nmap <leader>, :bn<CR>
-nmap <leader>. :bp<CR>
 
 " Highlight merge conflict markers.
 match ErrorMsg '^\(<\|=\|>\)\{7\}\([^=].\+\)\?$'
@@ -181,23 +175,19 @@ nmap <silent> <leader>c /^\(<\\|=\\|>\)\{7\}\([^=].\+\)\?$<CR>
 
 " Jump to other window, handy with pep8.
 nmap <leader>w <C-W><C-W>
+" Gundo.
 nmap <leader>U :GundoToggle<CR>
 
-" Comment lines
-nmap <leader># :s/^/#/<CR>
-vmap <leader># :s/^/#/<CR>
-nmap <leader>3 :s/^/#/<CR>
-vmap <leader>3 :s/^/#/<CR>
-nmap <leader>u :s/#//<CR>
-vmap <leader>u :s/#//<CR>
+" Comment lines vim-commentary; gcc, gcu.
+au FileType python :setlocal commentstring=#\ %s
 
 " ReST titles
+nmap <leader>* yypVr*
 nmap <leader># yypVr#
 nmap <leader>= yypVr=
 nmap <leader>- yypVr-
 nmap <leader>~ yypVr~
 nmap <leader>^ yypVr^
-nmap <leader>* yypVr*
 
 " Sloppy fingers
 command WQ wq
