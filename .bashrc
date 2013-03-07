@@ -31,17 +31,17 @@ alias la='ls -A'
 alias visudo="sudo EDITOR=$EDITOR visudo"
 # It's called ack, dammit!
 which ack &> /dev/null || alias ack="ack-grep"
+# Muscle memory.
+alias :e=vim
+# Recursively remove compiled python files.
+alias nukepyc="find . -name '*py[co]' -exec rm -f {} ';';find . -name '__pycache__' -exec rm -rf {} ';'"
+
 # Chdir to python module source.
 function cdp() {
    cd $(python -c"import os,sys;print os.path.dirname(__import__(sys.argv[1]).__file__)" $1)
    }
-# Recursively remove compiled python files.
-alias nukepyc="find . -name '*py[co]' -exec rm -f {} ';';find . -name '__pycache__' -exec rm -rf {} ';'"
-# Muscle memory.
-alias :e=vim
-# Requires highlight to be installed
-alias hl='highlight -M'
-# Requires cdiff to be installed
+
+# Color diffs, requires cdiff.
 function dif {
     svn diff $@ | cdiff
     }

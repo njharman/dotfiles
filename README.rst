@@ -1,6 +1,9 @@
 About
 =====
-Dotfile, ~/bin, and other files to 'normanize' shell.  Norman J. Harman Jr. <njharman@gmail.com>
+Author: Norman J. Harman Jr. <njharman@gmail.com>
+
+Dotfile, ~/bin, and other stuff to 'normanize' shell.
+
 
 Usage
 =====
@@ -10,36 +13,59 @@ This is how I do things, YMMV. ::
     wget https://raw.github.com/njharman/dotfiles/master/engage.sh
     ./engage.sh && rm engage.sh
 
+
 Contents
 ========
 engage.sh
-    Read it.
-    Briefly, it creates some directories, moves any existing files, and creates symlinks to .dotfiles/foo.
+    Read the source.
+
+    Briefly, creates directories, creates symlinks to *.dotfiles/foo*.
+    Moves existing files to ``~/tmp/.dotfile_preserve``.
+
 
 Binaries
 --------
-bin/rockme [<session>]
-    Create (or connect to existing) tmux session.
+All in ``~/bin/``.
 
-bin/go <target>
-    Open tmux window with 3 panes ssh'd to target.
+rockme [<session>]
+    Create (or connect to existing) *tmux* session.
 
-bin/256colors2.pl
+go <target>
+    Open *tmux* window with 3 panes ssh'd to target.
+
+256colors2.pl & colortest.pl
     Verify terminal is 'shiny'.
 
-bin/svneditor
+cdiff
+    Used by bash aliases *dif* & *difs* for colorized svn diffs.
+
+sicp
+    Uses *screen* for poor man's slime__.
+
+__ http://en.wikipedia.org/wiki/SLIME
+
+svneditor
     It's rad.
 
-bin/sicp
-    Uses screen for poor man's slime.
+    ``export SVN_EDITOR=$HOME/bin/svneditor``
 
-Templates
----------
-.ssh/
-    Template of ssh config I use.
 
-.osx
-    Not a conf file.  Execute it on osX box to set bunch of crap.
+Aliases
+-------
+These are set in ``.bashrc`` along with some that fix Ubuntu annoyances.
+
+ll & la
+    Standard long and all directory listings.
+
+cdp
+    cd to source of Python module.
+
+nukepyc
+    Recursively remove ``.pyc`` and ``.pyo`` files.
+
+dif & difs
+    Colorized svn diff and side by side diff.
+
 
 Configs
 -------
@@ -47,19 +73,32 @@ Configs
     Yeah.
 
 .bash_profile
-    *"Processed for login shells."* Whatever, put everything in .bashrc
+    **"Processed for login shells."** Whatever, put everything in ``.bashrc``.
 
 .bash_local
-    Not part of repo, is sourced by .bashrc For any local specific bash config.
+    Not part of repository, is sourced by ``.bashrc`` For any local specific bash configuration.
 
 .bashrc
     CDPATH, search path for the *cd* command, is neat.
+    meld__ for SVN_MERGE & SVN_DIFF. ``~/bin/svneditor`` (or vim) for SVN_EDITOR.
+    Git enhanced, colorized prompt (RED for root). Other colorizations.  Bash completions.
+    Finally sourcing ``.bash_local``.
+
+__ http://meldmerge.org/
 
 .gemrc
     No slow ass rdocs.
 
 .inputrc
-    Readline config. VI mode is the flippin bomb.  Took me months to get use to it but it is so worth it.
+    Readline configuration. VI mode is the flipping bomb.  Took me months to get use to it but it is so worth it.
+
+.ipython
+    From http://pynash.org/2013/03/06/timing-and-profiling.html
+
+  - **%time** & **%timeit**: run time, one time / avg (-n 100).
+  - **%prun**: run time by function.
+  - **%lprun**: run time by line.
+  - **%mprun** & **%memit**: memory usage, one time / avg (-n 100).
 
 .pylintrc
     Yeah.
@@ -68,24 +107,24 @@ Configs
     Fix screen's retarded defaults.
 
 .subversion/
-    No plaintext passwords.
+    Needful configuration.
 
 .tmux.conf
-    Use this now instead of screen.
+    Use *tmux* instead of screen.
 
 .vimrc
     Fair amount of comments.  Some highlights:
 
-     - Supertab
-     - ReST titles are nifty.
-     - Auto removing trailing whitespace on save.
-     - Returning to previous position, every tool should do this.
-     - Wish I had learned about scrolloff and wildmenu 10 years earlier
-     - *jj* to exit insert mode is super bad esp on commandline (see .inputrc).
-     - Poor man's slime with screen.
+   - Supertab
+   - Find files.
+   - ReST titles.
+   - Auto removing trailing whitespace on save.
+   - Returning to previous position, every tool should do this.
+   - Wish I had learned about scrolloff and wildmenu 10 years earlier
+   - *jj* to exit insert mode is super bad esp on command line (see .inputrc).
 
 .vim/
-    Colors and pathogen managed plugins. Init submodules on fresh clone::
+    Colors and pathogen managed plugins. Initialize submodules on fresh clone::
 
       git submodule init
       git submodule update
@@ -104,22 +143,33 @@ Configs
 
       git submodule foreach git pull origin master
 
-    - ctrlp: Fuzzy finder. `:h ctrlp-commands`, `:h ctrlp-extensions`
-    - dbext: Database shell. `:h dbext-tutorial`
+    Plugins
+
+    - ctrlp: Fuzzy finder. ``:h ctrlp-commands``, ``:h ctrlp-extensions``
+    - dbext: Database shell. ``:h dbext-tutorial``
     - gundo: Undo.
-    - jedi-vim:  Autocompletion
-    - help_nav: More better vim help nav.
-    - matchit: More better matching.
-    - pep8: Map to <F8> for code style nirvana.
+    - help_nav: Better help navigation, *<enter>* to "follow" link.
+    - jedi-vim: Auto-completion.
+    - matchit: Better % matching.
+    - pep8: Map to *<F8>* for code style nirvana.
     - pydoc: `Pydoc re.compile`.
-    - pyflakes: Dynamically show your mistakes.
-    - python_calltips: Tab to show function signature, etc.
+    - pyflakes: Dynamically reveal your incompetence.
+    - python_calltips: *<tab>* to show function signature, etc.
     - slime-vim:
-    - supertab: Think this is awesome.
-    - surround: More better.
+    - supertab: This is awesome.
+    - surround: *ds"* delete, *cs])* change, *ysiw)* surround motion/text object, *dst* "html tag"
     - vim-abolish:
-      coerce case; crs (snake_case) crm (MixedCase), cru (UPPER_CASE).
+      coerce case; *crs* (snake_case), *crm* (MixedCase), *cru* (UPPER_CASE).
       Subvert/address{,es}/reference{,s}/
     - vim-commentary: (un)comment lines (gcc, gcu).
     - vim-pathogen: Vim package manager.
-    - vim-speeddating: increment dates properly (<C-a>, <C-x>, d<C-a> utc, d<C-x> local).
+    - vim-speeddating: increment dates properly (*<C-a>*, *<C-x>*, *d<C-a>* utc, *d<C-x>* local).
+
+
+Templates
+---------
+.ssh/
+    ssh configuration template.
+
+.osx
+    Not a configuration file.  Execute it under osX to set bunch of crap.
