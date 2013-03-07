@@ -41,6 +41,8 @@ set matchtime=0         " Blink matching chars for 0 seconds.
 set history=1000
 set undolevels=1000
 set undofile            " Persist undo history.
+set undodir=~/.backup,~/tmp,.
+set backupdir=~/.backup,~/tmp,.,/tmp
 set novisualbell
 set noerrorbells
 set ttyfast             " 1980 is long past.
