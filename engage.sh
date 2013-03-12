@@ -1,5 +1,5 @@
 #!/bin/bash
-# Symlink some dotfiles, yo!
+# Symlink dotfiles, yo!
 
 REPO="git://github.com/njharman/dotfiles.git"
 WORK=~/.dotfiles
@@ -13,9 +13,13 @@ function symtastico {
   for file in $@; do
     if [ -f "$file" ]; then
        name=`basename "$file"`
-       if [ "$name" == ".gitignore" -o "$name" == ".gitmodules" -o "$name" == ".osx" ]; then
-         continue
-       fi
+       case $name in
+           ".gitignore") continue;;
+           ".gitmodules") continue;;
+           ".osx") continue;;
+           *swp) continue;;
+           *~) continue;;
+       esac
        dest=$destdir/$name
        echo -n "$dest, "
        if [ -h $dest ]; then
@@ -69,11 +73,14 @@ function init_the_dotfiles {
     # Tells git-branch and git-checkout to setup new branches so that git-pull(1) will appropriately merge from that remote branch.  Recommended.  Without this, you will have to add --track to your branch command or manually merge remote tracking branches with "fetch" and then "merge".
     git config branch.autosetupmerge true
     # Convert newlines to the system's standard when checking out files, and to LF newlines when committing in.    │etc/hsflowd.conf
-    git config core.autocrlf true
+    git config core.autocrlf false
+    git config core.filemode true
+    # Update submodules
     git submodule init
     git submodule update
   fi
   }
+
 
 function engage_sym {
   # Do all the stuff that's fun to do.
@@ -83,6 +90,7 @@ function engage_sym {
 
   ## ~/.vim  (pathogen & bundles, pretty colors)
   mkdir -p ~/.vim/bundle ~/.vim/colors
+  chmod 700 ~/.vim ~/.vim/bundle ~/.vim/colors ~/.vim/spell
   symlamedir ~/.vim/bundle `ls -d "$WORK"/.vim/bundle/*`
   symtastico ~/.vim/colors `ls -d "$WORK"/.vim/colors/*`
 
@@ -100,6 +108,13 @@ function engage_sym {
   chown -R $USER ~/.subversion
   symtastico ~/.subversion `ls -d "$WORK"/.subversion/*`
 
+  ## ~/.ipython
+  # ipython profile create
+  mkdir -p ~/.ipython/extensions
+  chmod 700 ~/.ipython ~/.ipython/extensions
+  symtastico ~/.ipython/profile_default "$WORK/.ipython/profile_default/ipython_config.py"
+  symtastico ~/.ipython/extensions "$WORK/.ipython/extensions/*"
+
   ## ~/bin
   mkdir -p ~/bin
   chmod 700 ~/bin
@@ -108,7 +123,8 @@ function engage_sym {
   ## ~/tmp ~/work
   mkdir -p ~/tmp
   mkdir -p ~/work
-  chmod 700 ~/tmp ~/work
+  mkdir -p ~/.backup  # vim undo and backups
+  chmod 700 ~/tmp ~/work ~/.backup
   }
 
 
@@ -120,7 +136,7 @@ function engage_up {
 
 
 function engage_vim {
-  # Update repo.
+  # Update vim plugins.
   cd $WORK
   git submodule foreach git pull origin master
   }
@@ -131,16 +147,18 @@ init_the_dotfiles
 if [[ "$1" == "help" ]]; then
     prog=`basename $0`
     cat <<USAGE
-$prog      - (re)create symbolic links, directories, etc
+$prog      - (re)create symbolic links, directories, etc.
 $prog up   - git pull
 $prog vim  - git pull pathogen submodules
-$prog all  - all of the above
+$prog all  - all of the above plus more
 USAGE
 elif [[ "$1" == "up" ]]; then
     engage_up
 elif [[ "$1" == "vim" ]]; then
     engage_vim
 elif [[ "$1" == "all" ]]; then
+    # vim-jedi needs this
+    sudo pip install jedi
     engage_up
     engage_vim
     engage_sym

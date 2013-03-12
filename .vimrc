@@ -6,12 +6,16 @@
 " :setlocal spell spelllang=en_us suggest "z=", addword "zg", next/prev "]s"/"[s"
 " searches # * g# g* g, gd
 " <leader>pw python docs
+" ctrl-r ctrl-w word complete in command line
 
 set nocompatible
+
+filetype off
 runtime bundle/vim-pathogen/autoload/pathogen.vim
 call pathogen#infect()
-syntax on
+call pathogen#helptags()
 filetype plugin indent on
+syntax on
 
 set t_Co=256
 set background=light
@@ -36,6 +40,9 @@ set noshowmatch         " Don't show matching brackets.
 set matchtime=0         " Blink matching chars for 0 seconds.
 set history=1000
 set undolevels=1000
+set undofile            " Persist undo history.
+set undodir=~/.backup,~/tmp,.
+set backupdir=~/.backup,~/tmp,.,/tmp
 set novisualbell
 set noerrorbells
 set ttyfast             " 1980 is long past.
@@ -65,8 +72,8 @@ set shortmess=ato       " Shorten messages and no splash screen.
 set viewoptions=unix,slash
 set list                " Show invisible characters.
 set listchars=tab:>·    " But only show tabs.
-    let g:clipbrdDefaultReg = '+'
-" Paste Toggle
+let g:clipbrdDefaultReg = '+'
+set clipboard=unnamed
 set pastetoggle=<F9> " When in insert mode, press <F11> to go to paste mode.
 " Freakin awesome, start scrolling 5 lines from top/bottom/left/right.
 set scrolloff=5
@@ -87,6 +94,14 @@ au BufRead,BufWrite * if ! &bin | silent! %s/\s\+$//ge | endif
 let g:pyflakes_use_quickfix = 0
 " Hate the hi-lite
 let g:pydoc_highlight=0
+" Python-mode
+"let g:pymode_run=0
+"let g:pymode_folding=0
+"let g:pymode_lint_ignore="E501,E122,E123,E124,E126,E127,E128"
+"let g:pymode_lint_onfly=1
+let g:ctrlp_map = '<c-p>'
+let g:ctrlp_cmd = 'CtrlP'
+let g:ctrlp_working_path_mode = 'a'
 
 set mouse=a
 set mousehide           " Hide the mouse pointer while typing.
@@ -106,21 +121,17 @@ set statusline=%F%m%r%h%w%<\ \ %{&ff}%y%=0x\%02.2B\ /\ \%03.3b\ \ %04lr:%02vc\ \
 
 "" Key Bindings
 " :map normal, insert, visual, command
+" :nmap normal
 " :imap insert
 " :vmap visual
 " :cmap command
-" :nmap normal
 
-"F1 not help
-imap <F1> <ESC>
-nmap <F1> <ESC>
-vmap <F1> <ESC>
-"F5 not compile
-au filetype python map <buffer> <F5> :w<CR>:!pyflakes %<CR>
-au filetype python imap <buffer> <F5> <Esc>:w<CR>:!pyflakes %<CR>
-au filetype python map <buffer> <S-F5> :w<CR>:!pylint %<CR>
-au filetype python imap <buffer> <S-F5> <Esc>:w<CR>:!pylint %<CR>
-" <C-6> switches to alternate file and correct column.
+"F1 is not helpful
+map <F1> <ESC>
+"F5 is not compile
+au filetype python map <buffer> <F5> :w<CR>:!pylint %<CR>
+au filetype python imap <buffer> <F5> <Esc>:w<CR>:!pylint %<CR>
+" Switche to alternate file *and* correct column.
 nmap <C-6> <C-6>`"
 
 ";=: jj=ESC
@@ -129,12 +140,8 @@ imap jj <ESC>
 cmap jj <up>
 cmap kk <down>
 
-" Emacs movement keybindings in insert mode.
-map <C-a> ^
-map <C-e> $
 " Swap these keys cause ` is cooler but ' is easier to type.
 nmap ' `
-nmap ` '
 " Reflow paragraph with Q in normal and visual mode.
 nmap Q gqap
 vmap Q gq
@@ -144,9 +151,8 @@ nmap Y y$
 " Sudo write.
 cmap w!! w !sudo tee % >/dev/null
 
-" Indent with spacebar.
-nmap <space> >>
-vmap <space> >>
+" Page down w/ space.
+nmap <space> <pagedown>
 
 " Jump to matching pairs easily, with Tab.
 nnoremap <tab> %
@@ -156,11 +162,13 @@ vnoremap <tab> %
 
 let mapleader = ","
 
+" Indent with spacebar.
+nmap <leader><space> >>
+vmap <leader><space> >>
+
 " Buffer navigation.
 map <right> <ESC>:bn<CR>
 map <left> <ESC>:bp<CR>
-nmap <leader>, :bn<CR>
-nmap <leader>. :bp<CR>
 
 " Highlight merge conflict markers.
 match ErrorMsg '^\(<\|=\|>\)\{7\}\([^=].\+\)\?$'
@@ -169,23 +177,19 @@ nmap <silent> <leader>c /^\(<\\|=\\|>\)\{7\}\([^=].\+\)\?$<CR>
 
 " Jump to other window, handy with pep8.
 nmap <leader>w <C-W><C-W>
+" Gundo.
 nmap <leader>U :GundoToggle<CR>
 
-" Comment lines
-nmap <leader># :s/^/#/<CR>
-vmap <leader># :s/^/#/<CR>
-nmap <leader>3 :s/^/#/<CR>
-vmap <leader>3 :s/^/#/<CR>
-nmap <leader>u :s/#//<CR>
-vmap <leader>u :s/#//<CR>
+" Comment lines vim-commentary; gcc, gcu.
+au FileType python :setlocal commentstring=#\ %s
 
 " ReST titles
-nmap <leader># yypVr#o
-nmap <leader>= yypVr=o
-nmap <leader>- yypVr-o
-nmap <leader>~ yypVr~o
-nmap <leader>^ yypVr^o
-nmap <leader>* yypVr*o
+nmap <leader>* yypVr*
+nmap <leader># yypVr#
+nmap <leader>= yypVr=
+nmap <leader>- yypVr-
+nmap <leader>~ yypVr~
+nmap <leader>^ yypVr^
 
 " Sloppy fingers
 command WQ wq
@@ -203,21 +207,27 @@ iab me- Norman J. Harman Jr.
 iab time- <C-R>=strftime("%H:%M:%S")<CR>
 iab date- <C-R>=strftime("%a, %d %b %Y")<CR>
 iab now- <C-R>=strftime("%a, %d %b %Y %H:%M:%S %z")<CR>
-cab spellon setlocal spell spelllang=en_us
+cab spellon setlocal spell spelllang=en_us<CR>
+
 
 "" Tab completion
+map <S-Tab> <C-x><C-p>
 " SuperTab
 let g:SuperTabDefaultCompletionType = "context"
 let g:SuperTabContextDefaultCompletionType = "<c-p>"
+let g:SuperTabContextTextOmniPrecedence = ['&completefunc']
+"let g:SuperTabContextTextOmniPrecedence = ['&omnifunc', '&completefunc']
 let g:SuperTabNoCompleteAfter = [':', ',', '\s']
 let g:SuperTabLongestEnhanced = 1
+let g:SuperTabLongestHighlight = 1
+let g:SuperTabClosePreviewOnPopupClose = 1
 au FileType *
   \ if &omnifunc != '' |
   \   call SuperTabChain(&omnifunc, "<c-p>") |
   \   call SuperTabSetDefaultCompletionType("context") |
   \ endif
-
 set completeopt=menuone,longest,preview
+
 
 "" Finding files to edit
 " Complete filenames/lines with a quicker shortcut.
@@ -228,11 +238,13 @@ cab o find
 " gf edit file even if it doesn't exist.
 "map gf :edit <cfile><CR>
 " Search up from current directory, then up from parent directory when gf'ing.
-:set path+=**,../**
+:set path+=.,**2
+":set path+=**,.,,./**
 " If line has 'include' replace dots and try gf again.
 :set includeexpr=substitute(v:fname,'\\.','/','g')
 " Search in (some) python library paths
-au filetype python :setlocal path+=/usr/local/lib/python2.7/dist-packages/,/usr/lib/python2.7/|setlocal suffixesadd=.py
+"au filetype python :setlocal path+=/usr/local/lib/python2.7/dist-packages/,/usr/lib/python2.7/|setlocal suffixesadd=.py
+au filetype python :setlocal suffixesadd=.py
 
 
 "" Formating
@@ -247,7 +259,7 @@ au filetype python :setlocal path+=/usr/local/lib/python2.7/dist-packages/,/usr/
 " r - Autoinsert comment leader with <Enter>
 " o - Autointert comment leader with 'o' 'O'
 au FileType python setlocal formatoptions=cqlr textwidth=80
-au FileType text setlocal formatoptions=tn12 nocindent textwidth=78
+au FileType text setlocal formatoptions=tn12 nocindent textwidth=78 spell spelllang=en_us
 
 "" Filetype handling
 nnoremap _dt :set ft=htmldjango<CR>

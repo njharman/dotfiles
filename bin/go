@@ -48,7 +48,7 @@ else
     tmux new-window   -n "$target" "ssh $target"
     # log below
     tmux split-window -t "$sesion:$target".1 -dv -l 16 "ssh $target"
-    tmux send-keys    -t "$sesion:$target".2 'clear;cd /var/log;echo "tailing some logs";sudo tail --follow=name messages syslog kern.log daemon.log' C-m
+    tmux send-keys    -t "$sesion:$target".2 'clear;cd /var/log;echo "tailing some logs";sudo tail --follow=name messages syslog kern.log' C-m
     # root shell right
     tmux split-window -t "$sesion:$target".1 -dh -p 50 "ssh $target"
     tmux send-keys    -t "$sesion:$target".2 'sudo bash' C-m
