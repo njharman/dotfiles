@@ -39,6 +39,9 @@ go <target>
 cdiff
     Used by bash aliases *dif* & *difs* for colorized svn diffs.
 
+j.py & j.sh
+    Jump around, http://www.youtube.com/watch?v=UpmX4qG1kQg
+
 sicp
     Uses *screen* for poor man's slime__.
 
@@ -49,23 +52,31 @@ svneditor
 
     ``export SVN_EDITOR=$HOME/bin/svneditor``
 
+thesaurus
+    Lookup word in online thesaurus, used by vim <leader>t
+
 
 Aliases
 -------
 These are set in ``.bashrc`` along with some that fix Ubuntu annoyances.
 
-ll & la
+ll, la, & lt
     Standard long and all directory listings.
 
 cdp
     cd to source of Python module.
 
-nukepyc
-    Recursively remove ``.pyc`` and ``.pyo`` files.
-
 dif & difs
     Colorized svn diff and side by side diff.
 
+fname
+    Find file like.
+
+nukepyc
+    Recursively remove ``.pyc`` and ``.pyo`` files.
+
+psgrep
+    Kind of use to pgrep -fl, but this shows "stuff".
 
 Configs
 -------
@@ -85,6 +96,10 @@ Configs
     Finally sourcing ``.bash_local``.
 
 __ http://meldmerge.org/
+
+bash_completion.d
+    Copy to /etc/bash_completion.d/
+    ``vagrant`` from https://github.com/rjw1/vagrant-bash-completion
 
 .gemrc
     No slow ass rdocs.
@@ -119,9 +134,10 @@ __ http://meldmerge.org/
    - Find files.
    - ReST titles.
    - Auto removing trailing whitespace on save.
-   - Returning to previous position, every tool should do this.
+   - Returning to previous position on file load, every tool should do this.
    - Wish I had learned about scrolloff and wildmenu 10 years earlier
    - *jj* to exit insert mode is super bad esp on command line (see .inputrc).
+   - Thesaurus word look up using online thesaurus.
 
 .vim/
     Colors and pathogen managed plugins. Initialize submodules on fresh clone::

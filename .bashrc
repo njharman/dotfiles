@@ -11,6 +11,10 @@ export HISTCONTROL=ignoreboth
 export IGNOREEOF=2
 export PATH=$HOME/bin:/sbin:/usr/sbin:$PATH
 export CDPATH='.:~/work/'
+shopt -s cdspell  # Automatically fix 'cd folder' spelling mistakes.
+# https://github.com/rupa/j2
+export JPY=/bin/j.py
+source ~/bin/j.sh
 
 export PAGER=less
 export MANPAGER=less
@@ -27,6 +31,7 @@ fi
 
 alias ll='ls -lF'
 alias la='ls -A'
+alias lt='ls -ltrsa'
 # Hate nano, very much.
 alias visudo="sudo EDITOR=$EDITOR visudo"
 # It's called ack, dammit!
@@ -35,6 +40,8 @@ which ack &> /dev/null || alias ack="ack-grep"
 alias :e=vim
 # Recursively remove compiled python files.
 alias nukepyc="find . -name '*py[co]' -exec rm -f {} ';';find . -name '__pycache__' -exec rm -rf {} ';'"
+function psgrep() { ps axuf | grep -v grep | grep "$@" -i --color=auto; }
+function fname() { find . -iname "*$@*"; }
 
 # Chdir to python module source.
 function cdp() {

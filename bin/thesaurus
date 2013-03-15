@@ -1,0 +1,52 @@
+#!/bin/bash
+
+# This searchs an online thesaurus, cuts as much cruft out as possible,
+# and displays the definitions.
+
+#URL='http://www.merriam-webster.com/thesaurus/'
+URL='http://thesaurus.com/browse/'
+
+# Display help, and quit.
+function usage {
+    cat << EOF_HELP
+    Usage: $(basename $0) [-r][-h] word
+    Display the parsed results of an online thesaurus search for <word>
+
+    -r  Raw results; no filtering.
+    -h  Display this help.
+
+EOF_HELP
+    exit
+}
+
+# Check for a parameter.  Get the output from the website
+function get_thes {
+    [  -z "$1" ] && usage
+    $(readlink -e $(which links)) -dump "${URL}$1"
+}
+
+# Check for a -h parameter or absence of parameter.
+[ "$1" = "-h" -o -z "$1" ] && usage
+
+# If -r just get the raw output, otherwise pass it through sed.
+if [ "$1" = "-r" ] ; then
+    shift
+    get_thes $1
+else
+    # Sed is doing many things:
+    # Print out "no results found for " and quit.
+    # Print out only the lines I'm interested in, which are:
+    #   No results found for
+    #   Main Entry:
+    #   Definition:
+    #   and all from Synonyms: to Antonyms:
+    # Put a new line after Antonyms.
+    # get_thes $1 | sed -n -e '/No results found for/ {' \
+    #   -e ' s|^[ \t]*\(No results .*\)|\1|p ; q} '\
+    #   -e '{/Main Entry:/p ' \
+    #   -e '/Definition:/p ' \
+    #   -e '/Synonyms:/,/\(Antonyms:\)\|\(^$\)/p} ' \
+    #   -e '/Antonyms:/ a \ '
+    get_thes $1 | sed -n -e '/No results found for/ { s|^[ \t]*\(No results .*\)|\1|p ; q} ;{/Main Entry:/p ; /Definition:/p ; /Synonyms:/,/\(Antonyms:\)\|\(^$\)/p} ; /Antonyms:/ a \  '
+
+fi

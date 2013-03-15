@@ -80,10 +80,10 @@ set scrolloff=5
 set sidescrolloff=5
 " Freakin awesome file completion.
 set wildmenu
-set wildmode=list:longest,full
-set wildignore=*.pyc,*.pyo,*.o,*.obj,*.swp,*.DS_Store?
-set wildignore+=.hg,.git,.svn
-set wildignore+=*.jpg,*.bmp,*.gif,*.png,*.jpeg
+set wildmode=longest:full,full
+set wildignore=*.pyc,*.pyo,*.o,*.obj,*.swp
+set wildignore+=.hg,.git,.svn,*.DS_Store
+set wildignore+=*.jpg,*.jpeg,*.png,*.gif,*.bmp,*.ico
 " When opening, jump to the last known cursor position.
 au BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$") | exe "normal g'\"" | endif
 " Remember stuff after quiting: marks, registers, searches, buffer list.
@@ -162,6 +162,30 @@ vnoremap <tab> %
 
 let mapleader = ","
 
+" Thesaurus completion
+fun! ReadThesaurus()
+    " Assign current word under cursor to a script variable
+    let s:thes_word = expand('<cword>')
+    " Open a new window, keep the alternate so this doesn't clobber it.
+    keepalt split thes_
+    " Show cursor word in status line
+    exe "setlocal statusline=thesaurus" . s:thes_word
+    " Set buffer options for scratch buffer
+    setlocal noswapfile nobuflisted nowrap nospell buftype=nofile bufhidden=hide
+    " Delete existing content
+    1,$d
+    " Run the thesaurus script
+    exe ":0r !/home/nharman/bin/thesaurus " . s:thes_word
+    " Goto first line
+    1
+    " Set file type to 'thesaurus'
+    set filetype=thesaurus
+    " Map q to quit without confirm
+    nmap <buffer> <CR> "tyiw:q<CR>viw"tpa
+    nmap <buffer> q :q<CR>a
+endfun
+imap <leader>t <ESC>:call ReadThesaurus()<CR><CR>
+
 " Indent with spacebar.
 nmap <leader><space> >>
 vmap <leader><space> >>
@@ -214,11 +238,11 @@ cab spellon setlocal spell spelllang=en_us<CR>
 map <S-Tab> <C-x><C-p>
 " SuperTab
 let g:SuperTabDefaultCompletionType = "context"
-let g:SuperTabContextDefaultCompletionType = "<c-p>"
+let g:SuperTabContextDefaultCompletionType = "<c-p>"       " Secondary completion type
 let g:SuperTabContextTextOmniPrecedence = ['&completefunc']
 "let g:SuperTabContextTextOmniPrecedence = ['&omnifunc', '&completefunc']
-let g:SuperTabNoCompleteAfter = [':', ',', '\s']
-let g:SuperTabLongestEnhanced = 1
+let g:SuperTabNoCompleteAfter = [':', ',', '\s', '^']
+let g:SuperTabLongestEnhanced = 0
 let g:SuperTabLongestHighlight = 1
 let g:SuperTabClosePreviewOnPopupClose = 1
 au FileType *
@@ -262,6 +286,7 @@ au FileType python setlocal formatoptions=cqlr textwidth=80
 au FileType text setlocal formatoptions=tn12 nocindent textwidth=78 spell spelllang=en_us
 
 "" Filetype handling
+au FileType help :nmap <buffer> q :q<CR>
 nnoremap _dt :set ft=htmldjango<CR>
 nnoremap _pd :set ft=python.django<CR>
 au FileType html,markdown :setlocal omnifunc=htmlcomplete#CompleteTags|setlocal softtabstop=2|setlocal shiftwidth=2
