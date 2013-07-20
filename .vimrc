@@ -160,6 +160,9 @@ vnoremap <tab> %
 " Add angles to matching pairs. Can't figure out why matchit not loading.
 :set mps+=<:>
 
+" use ag with ack.vim
+" let g:ackprg = 'ag --nogroup --nocolor --column'
+
 let mapleader = ","
 
 " Thesaurus completion
@@ -283,7 +286,7 @@ au filetype python :setlocal suffixesadd=.py
 " r - Autoinsert comment leader with <Enter>
 " o - Autointert comment leader with 'o' 'O'
 au FileType python setlocal formatoptions=cqlr textwidth=80
-au FileType text setlocal formatoptions=tn12 nocindent textwidth=78 spell spelllang=en_us
+au FileType text setlocal formatoptions=n12 nocindent textwidth=78 spell spelllang=en_us
 
 "" Filetype handling
 au FileType help :nmap <buffer> q :q<CR>

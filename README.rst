@@ -165,7 +165,6 @@ bash_completion.d
     - dbext: Database shell. ``:h dbext-tutorial``
     - gundo: Undo.
     - help_nav: Better help navigation, *<enter>* to "follow" link.
-    - jedi-vim: Auto-completion.
     - matchit: Better % matching.
     - pep8: Map to *<F8>* for code style nirvana.
     - pydoc: `Pydoc re.compile`.
