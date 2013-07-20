@@ -1,8 +1,6 @@
 # If not running interactively, don't do anything
 [ -z "$PS1" ] && return
 
-# Check the window size after each command and, if necessary, update the values of LINES and COLUMNS.
-shopt -s checkwinsize
 
 export HISTSIZE=10000
 export HISTFILESIZE=999999
@@ -11,53 +9,49 @@ export HISTCONTROL=ignoreboth
 export IGNOREEOF=2
 export PATH=$HOME/bin:/sbin:/usr/sbin:$PATH
 export CDPATH='.:~/work/'
-shopt -s cdspell  # Automatically fix 'cd folder' spelling mistakes.
-# https://github.com/rupa/j2
-export JPY=/bin/j.py
-source ~/bin/j.sh
+shopt -s cdspell        # Automatically fix 'cd folder' spelling mistakes.
+shopt -s checkwinsize   # Resize window after each command, updating the values of LINES and COLUMNS.
 
 export PAGER=less
 export MANPAGER=less
 export EDITOR=vim
-if [ -e $HOME/bin/svneditor ]; then
-    export SVN_EDITOR=$HOME/bin/svneditor
+FOO=`which svneditor`
+if [ -e "$FOO" ]; then
+    export SVN_EDITOR="$FOO"
 else
-    export SVN_EDITOR=$EDITOR
+    export SVN_EDITOR="$EDITOR"
 fi
-if [ -e /usr/bin/meld ]; then
-    export SVN_MERGE=/usr/bin/meld
-    export SVN_DIFF=/usr/bin/meld
+FOO=`which meld`
+if [ -e "$FOO" ]; then
+    export SVN_MERGE="$FOO"
+    export SVN_DIFF="$FOO"
 fi
+unset FOO
 
+
+## Aliases
+# Muscle memory.
+alias :e=vim
+# It's called ack, dammit!
+which ack &> /dev/null || alias ack="ack-grep"
+# Chdir to Python module source.
+function cdp() { cd $(python -c"import os,sys;print os.path.dirname(__import__(sys.argv[1]).__file__)" $1) }
+# Color diffs, requires cdiff.
+function dif { svn diff $@ | cdiff }
+function difs { svn diff $@ | cdiff -s }
+function fname() { find . -iname "*$@*"; }
 alias ll='ls -lF'
 alias la='ls -A'
 alias lt='ls -ltrsa'
-# Hate nano, very much.
-alias visudo="sudo EDITOR=$EDITOR visudo"
-# It's called ack, dammit!
-which ack &> /dev/null || alias ack="ack-grep"
-# Muscle memory.
-alias :e=vim
 # Recursively remove compiled python files.
 alias nukepyc="find . -name '*py[co]' -exec rm -f {} ';';find . -name '__pycache__' -exec rm -rf {} ';'"
+# Alternative pgrep.
 function psgrep() { ps axuf | grep -v grep | grep "$@" -i --color=auto; }
-function fname() { find . -iname "*$@*"; }
-
-# Chdir to python module source.
-function cdp() {
-   cd $(python -c"import os,sys;print os.path.dirname(__import__(sys.argv[1]).__file__)" $1)
-   }
-
-# Color diffs, requires cdiff.
-function dif {
-    svn diff $@ | cdiff
-    }
-function difs {
-    svn diff $@ | cdiff -s
-    }
+# Hate nano, very much.
+alias visudo="sudo EDITOR=$EDITOR visudo"
 
 
-## Colors & Prompt
+## Colors & Git enhanced prompt.
 function parse_git_dirty {
     [[ $(git status 2> /dev/null | tail -n1) != "nothing to commit (working directory clean)" ]] && echo "*"
     }
@@ -98,25 +92,24 @@ else
     PS1='\h:\w\$ '
 fi
 
-
 PROMPT_DIRTRIM=2
 unset color_prompt
 
 export PS2='> '
 export PS4='+ '
 
-# ls colors
+# ls colors.
 export CLICOLORS=1
 if [ -x /usr/bin/dircolors ]; then
     test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
     alias ls='ls --color=auto'
 fi
 
-# grep colors
+# grep colors.
 export GREP_OPTIONS='--color=auto'
 export GREP_COLOR='1;32'
 
-# less/man colors
+# less/man colors.
 export GROFF_NO_SGR=1
 export LESS_TERMCAP_mb=$'\E[01;31m'
 export LESS_TERMCAP_md=$'\E[01;31m'
@@ -127,17 +120,18 @@ export LESS_TERMCAP_us=$'\E[01;32m'
 export LESS_TERMCAP_ue=$'\E[0m'
 
 
-## Bash completions
+## Bash completions.
 if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
     source /etc/bash_completion
 fi
+
+# Pip bash completions.
 function _pip_completion() {
     COMPREPLY=( $( COMP_WORDS="${COMP_WORDS[*]}" COMP_CWORD=$COMP_CWORD PIP_AUTO_COMPLETE=1 $1 ) )
     }
 complete -o default -F _pip_completion pip
 
-## Nosetests
-# sudo pip install nosecomplete
+# Nosetests bash completions. Requires pip install nosecomplete
 __ltrim_colon_completions() {
     # If word-to-complete contains a colon,
     # and bash-version < 4,
@@ -160,7 +154,7 @@ _nosetests()
 complete -o nospace -F _nosetests nosetests
 
 
-## Local things
+## Local things.
 if [ -f ~/.bash_local ]; then
     source ~/.bash_local
 fi

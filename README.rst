@@ -13,14 +13,27 @@ This is how I do things, YMMV. ::
     wget https://raw.github.com/njharman/dotfiles/master/engage.sh
     ./engage.sh && rm engage.sh
 
+Things to install
+-----------------
+ag; apt-get install automake liblzma
+
+apt-get vim, meld, build-essential
+
+pip install nosecomplete
+
+Copy bash_completion.d/ to /etc/
 
 Contents
 ========
 engage.sh
-    Read the source.
-
-    Briefly, creates directories, creates symlinks to *.dotfiles/foo*.
-    Moves existing files to ``~/tmp/.dotfile_preserve``.
+    Read the source. Briefly,
+      - Creates directories
+      - Creates symlinks to *.dotfiles/foo*.
+      - Creates .ipython profile
+      - Creates .subversion
+      - Creates .vim et al
+      - Moves existing files to ``~/tmp/.dotfile_preserve``.
+      - Updates from git repo https://github.com/njharman/dotfiles
 
 
 Binaries
@@ -36,11 +49,20 @@ go <target>
 256colors2.pl & colortest.pl
     Verify terminal is 'shiny'.
 
-cdiff
-    Used by bash aliases *dif* & *difs* for colorized svn diffs.
+ack
+    Beyond grep__.
 
-j.py & j.sh
-    Jump around, http://www.youtube.com/watch?v=UpmX4qG1kQg
+__ http://beyondgrep.com/
+
+ag
+    Faster than ack. Download, build and install locally.
+    https://github.com/ggreer/the_silver_searcher.git ::
+
+        apt-get install automake liblzma
+        ./build.sh
+
+cdiff
+    Colorize svn diffs. Used by bash aliases *dif* & *difs*.
 
 sicp
     Uses *screen* for poor man's slime__.
@@ -70,13 +92,14 @@ dif & difs
     Colorized svn diff and side by side diff.
 
 fname
-    Find file like.
+    Case insensitive find file with 'foo' in name.
 
 nukepyc
     Recursively remove ``.pyc`` and ``.pyo`` files.
 
 psgrep
-    Kind of use to pgrep -fl, but this shows "stuff".
+    Kind of like ``pgrep -fl`` with more "stuff".
+
 
 Configs
 -------
@@ -90,9 +113,12 @@ Configs
     Not part of repository, is sourced by ``.bashrc`` For any local specific bash configuration.
 
 .bashrc
-    CDPATH, search path for the *cd* command, is neat.
+    HISTORY, PATH, PAGER, EDITOR, etc.
+    CDPATH, search path for the *cd* command, Is neat. cdspell.
     meld__ for SVN_MERGE & SVN_DIFF. ``~/bin/svneditor`` (or vim) for SVN_EDITOR.
-    Git enhanced, colorized prompt (RED for root). Other colorizations.  Bash completions.
+    Many Aliases.
+    Git enhanced, colorized prompt (RED for root). Other colorizations.
+    Bash completions.
     Finally sourcing ``.bash_local``.
 
 __ http://meldmerge.org/
@@ -178,6 +204,7 @@ bash_completion.d
       Subvert/address{,es}/reference{,s}/
     - vim-commentary: (un)comment lines (gcc, gcu).
     - vim-pathogen: Vim package manager.
+    - vim-repeat:
     - vim-speeddating: increment dates properly (*<C-a>*, *<C-x>*, *d<C-a>* utc, *d<C-x>* local).
 
 
