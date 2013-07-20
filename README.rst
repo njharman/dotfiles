@@ -64,6 +64,11 @@ ag
 cdiff
     Colorize svn diffs. Used by bash aliases *dif* & *difs*.
 
+sack / sag
+    Wrapper__ for ack / ag.
+
+__ https://github.com/sampson-chen/sack
+
 sicp
     Uses *screen* for poor man's slime__.
 
@@ -142,6 +147,9 @@ bash_completion.d
   - **%mprun** & **%memit**: memory usage, one time / avg (-n 100).
 
 .pylintrc
+    Yeah.
+
+.sackrc
     Yeah.
 
 .screenrc
