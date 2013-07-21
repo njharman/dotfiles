@@ -37,7 +37,7 @@ function symtastico {
   }
 
 
-function symlamedir {
+function symdir {
   # Make directory symlinks, bitch about existing ones.
   destdir=$1
   shift
@@ -88,11 +88,16 @@ function engage_sym {
   ## .dotfiles
   symtastico ~ `ls -ad "$WORK"/\.*`
 
-  ## ~/.vim  (pathogen & bundles, pretty colors)
-  mkdir -p ~/.vim/bundle ~/.vim/colors
-  chmod 700 ~/.vim ~/.vim/bundle ~/.vim/colors ~/.vim/spell
-  symlamedir ~/.vim/bundle `ls -d "$WORK"/.vim/bundle/*`
-  symtastico ~/.vim/colors `ls -d "$WORK"/.vim/colors/*`
+  ## ~/.config
+  mkdir -p ~/.config
+  symtastico ~/.config "$WORK/.config/*"
+
+  ## ~/.ipython
+  # ipython profile create
+  mkdir -p ~/.ipython/extensions
+  chmod 700 ~/.ipython ~/.ipython/extensions
+  symtastico ~/.ipython/profile_default "$WORK/.ipython/profile_default/ipython_config.py"
+  symtastico ~/.ipython/extensions "$WORK/.ipython/extensions/*"
 
   ## ~/.ssh
   # Just dir/permissions.  Don't wanna autolink config...
@@ -108,12 +113,11 @@ function engage_sym {
   chown -R $USER ~/.subversion
   symtastico ~/.subversion `ls -d "$WORK"/.subversion/*`
 
-  ## ~/.ipython
-  # ipython profile create
-  mkdir -p ~/.ipython/extensions
-  chmod 700 ~/.ipython ~/.ipython/extensions
-  symtastico ~/.ipython/profile_default "$WORK/.ipython/profile_default/ipython_config.py"
-  symtastico ~/.ipython/extensions "$WORK/.ipython/extensions/*"
+  ## ~/.vim  (pathogen & bundles, pretty colors)
+  mkdir -p ~/.vim/bundle ~/.vim/colors
+  chmod 700 ~/.vim ~/.vim/bundle ~/.vim/colors ~/.vim/spell
+  symdir ~/.vim/bundle `ls -d "$WORK"/.vim/bundle/*`
+  symtastico ~/.vim/colors `ls -d "$WORK"/.vim/colors/*`
 
   ## ~/bin
   mkdir -p ~/bin
