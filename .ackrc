@@ -1,5 +1,8 @@
 --type-add=python=.SConstruct,.SConscript
 --type-add=css=.sass,.less
+--ignore-dir=dist
+--ignore-dir=build
+--ignore-dir=cover
 --ignore-dir=coverage
 --ignore-dir=migrations
 --sort-files
