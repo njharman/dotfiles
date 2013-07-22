@@ -94,8 +94,8 @@ function engage_sym {
 
   ## ~/.ipython
   # ipython profile create
-  mkdir -p ~/.ipython/extensions
-  chmod 700 ~/.ipython ~/.ipython/extensions
+  mkdir -p ~/.ipython/extensions ~/.ipython/profile_default
+  chmod 700 ~/.ipython ~/.ipython/extensions ~/.ipython/profile_default
   symtastico ~/.ipython/profile_default "$WORK/.ipython/profile_default/ipython_config.py"
   symtastico ~/.ipython/extensions "$WORK/.ipython/extensions/*"
 
@@ -114,7 +114,7 @@ function engage_sym {
   symtastico ~/.subversion `ls -d "$WORK"/.subversion/*`
 
   ## ~/.vim  (pathogen & bundles, pretty colors)
-  mkdir -p ~/.vim/bundle ~/.vim/colors
+  mkdir -p ~/.vim/bundle ~/.vim/colors ~/.vim/spell
   chmod 700 ~/.vim ~/.vim/bundle ~/.vim/colors ~/.vim/spell
   symdir ~/.vim/bundle `ls -d "$WORK"/.vim/bundle/*`
   symtastico ~/.vim/colors `ls -d "$WORK"/.vim/colors/*`

@@ -267,9 +267,9 @@ cab o find
 " Search up from current directory, then up from parent directory when gf'ing.
 :set path+=.,**2
 ":set path+=**,.,,./**
-" If line has 'include' replace dots and try gf again.
+" If line has 'include' replace dots with slashes and try gf again.
 :set includeexpr=substitute(v:fname,'\\.','/','g')
-" Search in (some) python library paths
+" Search in (some) python library paths. Is too slow.
 "au filetype python :setlocal path+=/usr/local/lib/python2.7/dist-packages/,/usr/lib/python2.7/|setlocal suffixesadd=.py
 au filetype python :setlocal suffixesadd=.py
 
@@ -286,7 +286,7 @@ au filetype python :setlocal suffixesadd=.py
 " r - Autoinsert comment leader with <Enter>
 " o - Autointert comment leader with 'o' 'O'
 au FileType python setlocal formatoptions=cqlr textwidth=80
-au FileType text setlocal formatoptions=n12 nocindent textwidth=78 spell spelllang=en_us
+au FileType text setlocal formatoptions=tn12 nocindent textwidth=78 spell spelllang=en_us
 
 "" Filetype handling
 au FileType help :nmap <buffer> q :q<CR>

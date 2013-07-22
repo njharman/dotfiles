@@ -99,6 +99,33 @@ dif & difs
 fname
     Case insensitive find file with 'foo' in name.
 
+gh
+    Grep bash command history. Too lazy to type ``history|grep``.
+
+myhistory
+    Twenty most typed command lines.  Apparently I hit return (no command) often. ::
+
+   7004 vim
+   6418 cd
+   3888 svn
+   2282 ls
+   1500
+   1285 git
+   1252 ack
+   1200 rm
+   1162 ssh
+   1154 mv
+    904 ansible
+    695 scp
+    583 python
+    542 cp
+    517 cat
+    484 ./test
+    481 go
+    451 apt-get
+    351 find
+    279 pip
+
 nukepyc
     Recursively remove ``.pyc`` and ``.pyo`` files.
 

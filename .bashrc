@@ -40,9 +40,12 @@ function cdp() { cd $(python -c"import os,sys;print os.path.dirname(__import__(s
 function dif { svn diff $@ | cdiff }
 function difs { svn diff $@ | cdiff -s }
 function fname() { find . -iname "*$@*"; }
+alias gh='history|grep'
 alias ll='ls -lF'
 alias la='ls -A'
 alias lt='ls -ltrsa'
+# Top 20 most run commands.
+alias myhistory='sed "s|sudo ||g" ~/.bash_history|cut -d " " -f 1|sort|uniq -c|sort -n|tail -20'
 # Recursively remove compiled python files.
 alias nukepyc="find . -name '*py[co]' -exec rm -f {} ';';find . -name '__pycache__' -exec rm -rf {} ';'"
 # Alternative pgrep.
