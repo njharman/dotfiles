@@ -35,21 +35,21 @@ alias :e=vim
 # It's called ack, dammit!
 which ack &> /dev/null || alias ack="ack-grep"
 # Chdir to Python module source.
-function cdp() { cd $(python -c"import os,sys;print os.path.dirname(__import__(sys.argv[1]).__file__)" $1) }
+function cdp { cd $(python -c"import os,sys;print os.path.dirname(__import__(sys.argv[1]).__file__)" $1); }
 # Color diffs, requires cdiff.
-function dif { svn diff $@ | cdiff }
-function difs { svn diff $@ | cdiff -s }
-function fname() { find . -iname "*$@*"; }
+function dif { svn diff $@ | cdiff; }
+function difs { svn diff $@ | cdiff -s; }
+function fname { find . -iname "*$@*"; }
 alias gh='history|grep'
 alias ll='ls -lF'
 alias la='ls -A'
 alias lt='ls -ltrsa'
 # Top 20 most run commands.
-alias myhistory='sed "s|sudo ||g" ~/.bash_history|cut -d " " -f 1|sort|uniq -c|sort -n|tail -20'
+alias myhistory='sed "s|sudo ||g" ~/.bash_history|cut -d " " -f 1|sort|uniq -c|sort -rn|head -20'
 # Recursively remove compiled python files.
 alias nukepyc="find . -name '*py[co]' -exec rm -f {} ';';find . -name '__pycache__' -exec rm -rf {} ';'"
 # Alternative pgrep.
-function psgrep() { ps axuf | grep -v grep | grep "$@" -i --color=auto; }
+function psgrep { ps axuf | grep -v grep | grep "$@" -i --color=auto; }
 # Hate nano, very much.
 alias visudo="sudo EDITOR=$EDITOR visudo"
 
