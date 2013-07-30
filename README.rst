@@ -15,13 +15,15 @@ This is how I do things, YMMV. ::
 
 Things to install
 -----------------
-ag; apt-get install automake liblzma
-
 apt-get vim, meld, build-essential
 
-pip install nosecomplete
+ag
+apt-get install automake liblzma-dev libpcre3-dev;
+git clone https://github.com/ggreer/the_silver_searcher
 
-Copy bash_completion.d/ to /etc/
+pip install -U nosecomplete
+
+Copy bash_completion.d/ to /etc/.
 
 Contents
 ========

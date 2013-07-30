@@ -5,19 +5,19 @@
 # @author: Sampson L. Chen (sampson-chen / slchen)
 # @date: 2013-01-25
 #
-# @description: 
+# @description:
 # s(hortcut)-ag - wrapper to use ag instead of ack as the
 # underlying search tool
-# 
+#
 # For more details:
 # https://github.com/sampson-chen/sack
-# 
+#
 # @dependencies:
 # - ag
 # - tee
 # - awk
 # - sed (GNU sed)
-# 
+#
 # @version:
 # 1.0
 #
@@ -30,4 +30,6 @@
 # ==============================================================
 # ==============================================================
 
-sack -ag $@
+# Wrap first param with quotes.  Allows searching for phrase, sack "fox jumped over".
+first="$1";shift
+sack -ag "$first" $@
