@@ -17,13 +17,16 @@ Things to install
 -----------------
 apt-get vim, meld, build-essential
 
-ag
-apt-get install automake liblzma-dev libpcre3-dev;
-git clone https://github.com/ggreer/the_silver_searcher
+ag ::
+    apt-get install automake pkg-config libpcre3-dev zlib1g-dev liblzma-dev
+    git clone https://github.com/ggreer/the_silver_searcher
+    cd the_silver_searcher
+    ./build.sh
 
 pip install -U nosecomplete
 
 Copy bash_completion.d/ to /etc/.
+
 
 Contents
 ========
@@ -58,10 +61,7 @@ __ http://beyondgrep.com/
 
 ag
     Faster than ack. Download, build and install locally.
-    https://github.com/ggreer/the_silver_searcher.git ::
-
-        apt-get install automake liblzma
-        ./build.sh
+    https://github.com/ggreer/the_silver_searcher.git
 
 cdiff
     Colorize svn diffs. Used by bash aliases *dif* & *difs*.
