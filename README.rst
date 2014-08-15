@@ -15,15 +15,18 @@ This is how I do things, YMMV. ::
 
 Things to install
 -----------------
-apt-get vim, meld, build-essential
+apt-get install aptitude tree vim meld build-essential
 
 ag ::
     apt-get install automake pkg-config libpcre3-dev zlib1g-dev liblzma-dev
     git clone https://github.com/ggreer/the_silver_searcher
     cd the_silver_searcher
     ./build.sh
+    mv ag ~/bin/
 
 pip install -U nosecomplete
+
+git clone https://github.com/licenses/lice.git
 
 Copy bash_completion.d/ to /etc/.
 

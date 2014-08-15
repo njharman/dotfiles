@@ -25,7 +25,10 @@ else
 fi
 
 
-if [[ "$target" == "vroom" ]]; then
+if [[ "$target" == "support" ]]; then
+    ## Support Site
+    ssh -i ~/Dropbox/keys/dfm-ubuntu-key.pem root@support.broadwaytechnology.com
+elif [[ "$target" == "vroom" ]]; then
     # web/db performance view
     # bwayweb atop left
     tmux new-window   -n "$target" "ssh root@bwayweb"

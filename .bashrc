@@ -51,6 +51,7 @@ alias gh='history|/bin/grep'
 alias la='/bin/ls -A'
 alias ll='/bin/ls -lF'
 alias lt='/bin/ls -ltrsa'
+alias st='svn st'
 # Top 20 most run commands.
 alias myhistory='/bin/sed "s|/usr/bin/sudo ||g" ~/.bash_history|/usr/bin/cut -d " " -f 1|/usr/bin/sort|/usr/bin/uniq -c|/usr/bin/sort -rn|/usr/bin/head -20'
 # Recursively remove compiled python files.
@@ -59,6 +60,8 @@ alias nukepyc="/usr/bin/find . -name '*py[co]' -exec /bin/rm -f {} ';';/usr/bin/
 function psgrep { /bin/ps axuf | /bin/grep -v grep | /bin/grep "$@" -i --color=auto; }
 # Hate nano, very much.
 alias visudo="/usr/bin/sudo EDITOR=$EDITOR /usr/sbin/visudo"
+# Cause git pull is broke or some shit: http://stackoverflow.com/questions/15316601/is-git-pull-the-least-problematic-way-of-updating-a-git-repository
+git config --global alias.up '!git remote update -p; git merge --ff-only @{u}'
 
 
 ## Colors & Prompt
@@ -96,9 +99,9 @@ if [ "$color_prompt" = yes ]; then
     _WHITE="\[\033[1;37m\]"
     _BLACK="\[\033[00m\]"
     if [ 0 -eq $UID ]; then
-        export PS1="$_RED\u$_GREEN@\h:$_BLUE\w$_BLACK\$(parse_git_branch) $_RED\$(prompt_or_jobs '$') $_BLACK"
+        export PS1="$_RED\u$_GREEN@\h:$_BLUE\w$_BLACK\$(parse_git_branch)$_RED\$(prompt_or_jobs '$') $_BLACK"
     else
-        export PS1="$_TEAL\u$_GREEN@\h:$_BLUE\w$_BLACK\$(parse_git_branch) \$(prompt_or_jobs '#') "
+        export PS1="$_TEAL\u$_GREEN@\h:$_BLUE\w$_BLACK\$(parse_git_branch)\$(prompt_or_jobs '#') "
     fi
 else
     PS1='\h:\w\$ '

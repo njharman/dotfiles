@@ -152,7 +152,7 @@ nmap Y y$
 cmap w!! w !sudo tee % >/dev/null
 
 " Page down w/ space.
-nmap <space> <pagedown>
+"nmap <space> <pagedown>
 
 " Jump to matching pairs easily, with Tab.
 nnoremap <tab> %
@@ -286,7 +286,7 @@ au filetype python :setlocal suffixesadd=.py
 " r - Autoinsert comment leader with <Enter>
 " o - Autointert comment leader with 'o' 'O'
 au FileType python setlocal formatoptions=cqlr textwidth=80
-au FileType text setlocal formatoptions=tn12 nocindent textwidth=78 spell spelllang=en_us
+au FileType text setlocal formatoptions=n12 nocindent textwidth=78 spell spelllang=en_us
 
 "" Filetype handling
 au FileType help :nmap <buffer> q :q<CR>
