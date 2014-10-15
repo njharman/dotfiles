@@ -217,9 +217,9 @@ bash_completion.d
 
     Remove submodule::
 
+      git rm --cached path_to_submodule (no trailing slash)
       Delete from .gitmodules
       Delete from .git/config
-      git rm --cached path_to_submodule (no trailing slash)
 
     Get upstream updates::
 
