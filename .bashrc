@@ -21,13 +21,13 @@ stty ixany
 export PAGER=/usr/bin/less
 export MANPAGER=/usr/bin/less
 export EDITOR=/usr/bin/vim
-FOO=`which svneditor`
+FOO=`which svneditor 2> /dev/null`
 if [ -e "$FOO" ]; then
     export SVN_EDITOR="$FOO"
 else
     export SVN_EDITOR="$EDITOR"
 fi
-FOO=`which meld`
+FOO=`which meld 2> /dev/null`
 if [ -e "$FOO" ]; then
     export SVN_MERGE="$FOO"
     export SVN_DIFF="$FOO"
@@ -84,7 +84,7 @@ else
     export TERM='xterm-color'
 fi
 
-if [ -x /usr/bin/tput ] && tput setaf 1 >&/dev/null; then
+if [ -x /usr/bin/tput ] && tput setaf 1 >& /dev/null; then
     color_prompt=yes
 else
     color_prompt=
