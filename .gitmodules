@@ -12,7 +12,7 @@
 	url = https://github.com/tpope/vim-surround.git
 [submodule ".vim/bundle/matchit"]
 	path = .vim/bundle/matchit
-	url = https://github.com/tsaleh/vim-matchit.git
+	url = https://github.com/tmhedberg/matchit.git
 [submodule ".vim/bundle/python_calltips"]
 	path = .vim/bundle/python_calltips
 	url = https://github.com/vim-scripts/python_calltips

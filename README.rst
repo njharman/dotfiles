@@ -15,7 +15,7 @@ This is how I do things, YMMV. ::
 
 Things to install
 -----------------
-apt-get install aptitude tree vim meld build-essential
+apt-get install aptitude tree vim meld build-essential tmux
 
 ag ::
     apt-get install automake pkg-config libpcre3-dev zlib1g-dev liblzma-dev
@@ -51,7 +51,7 @@ All in ``~/bin/``.
 rockme [<session>]
     Create (or connect to existing) *tmux* session.
 
-go <target>
+jo <target>
     Open *tmux* window with 3 panes ssh'd to target.
 
 256colors2.pl & colortest.pl
