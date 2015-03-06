@@ -41,7 +41,7 @@ alias :e=/usr/bin/vim
 # It's called ack, dammit!
 which ack &> /dev/null || alias ack="ack-grep"
 # Chdir to Python module source.
-function cdp { cd $(python -c"import os,sys;print os.path.dirname(__import__(sys.argv[1]).__file__)" $1); }
+function cdp { cd $(python -c"from __future__ import print_function;import os,sys;print(os.path.dirname(__import__(sys.argv[1]).__file__))" $1); }
 # Color diffs, requires cdiff.
 function dif { svn diff $@ | cdiff; }
 function difs { svn diff $@ | cdiff -s; }
