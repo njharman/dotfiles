@@ -18,6 +18,7 @@
     br = branch
     lg = log --graph --pretty=format:'%Cred%h%Creset %Cred%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
     llg = log --graph --pretty=format:'%Cred%h%Creset %Cred%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset%+b' --abbrev-commit --name-status
+	up = "!git remote update -p; git merge --ff-only @{u}"
     #lgp = log -p
 
     #df = diff
@@ -41,3 +42,5 @@
     added = yellow
     changed = green
     untracked = cyan
+[push]
+	default = simple

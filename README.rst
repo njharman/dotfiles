@@ -15,15 +15,18 @@ This is how I do things, YMMV. ::
 
 Things to install
 -----------------
-apt-get vim, meld, build-essential
+apt-get install aptitude tree vim meld build-essential tmux
 
 ag ::
     apt-get install automake pkg-config libpcre3-dev zlib1g-dev liblzma-dev
     git clone https://github.com/ggreer/the_silver_searcher
     cd the_silver_searcher
     ./build.sh
+    mv ag ~/bin/
 
 pip install -U nosecomplete
+
+git clone https://github.com/licenses/lice.git
 
 Copy bash_completion.d/ to /etc/.
 
@@ -48,7 +51,7 @@ All in ``~/bin/``.
 rockme [<session>]
     Create (or connect to existing) *tmux* session.
 
-go <target>
+jo <target>
     Open *tmux* window with 3 panes ssh'd to target.
 
 256colors2.pl & colortest.pl
@@ -214,9 +217,9 @@ bash_completion.d
 
     Remove submodule::
 
+      git rm --cached path_to_submodule (no trailing slash)
       Delete from .gitmodules
       Delete from .git/config
-      git rm --cached path_to_submodule (no trailing slash)
 
     Get upstream updates::
 
