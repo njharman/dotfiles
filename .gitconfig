@@ -13,15 +13,15 @@
 
 [alias]
     st = status
+	  up = "!git remote update -p; git merge --ff-only @{u}"
     ci = commit
     co = checkout
     br = branch
     lg = log --graph --pretty=format:'%Cred%h%Creset %Cred%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
     llg = log --graph --pretty=format:'%Cred%h%Creset %Cred%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset%+b' --abbrev-commit --name-status
-	up = "!git remote update -p; git merge --ff-only @{u}"
     #lgp = log -p
 
-    #df = diff
+    dif = diff
     #dc = diff --cached
     #ls = ls-files
     ## Show files ignored by git:

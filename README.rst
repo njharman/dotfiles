@@ -13,9 +13,12 @@ This is how I do things, YMMV. ::
     wget https://raw.github.com/njharman/dotfiles/master/engage.sh
     ./engage.sh && rm engage.sh
 
+
 Things to install
 -----------------
-apt-get install aptitude tree vim meld build-essential tmux
+Ubuntu ::
+    apt-get install build-essential aptitude
+    apt-get install zsh tmux git vim meld slocate tree
 
 ag ::
     apt-get install automake pkg-config libpcre3-dev zlib1g-dev liblzma-dev
@@ -24,7 +27,19 @@ ag ::
     ./build.sh
     mv ag ~/bin/
 
-pip install -U nosecomplete
+sack/sag ::
+
+Python ::
+
+    https://github.com/mitsuhiko/pipsi
+    sudo -H pip install -U percol
+    sudo -H pip install -U vex virtualenv pip
+    sudo -H pip install -U tox nose nosecomplete pep8 pep8-naming flake8 pyflakes coverage cprofilev isort
+    sudo -H pip install -U ipython memory_profiler line_profiler
+    #sudo -H pip install -U bpython   # better docstrings
+    #sudo -H pip install -U ptpython  # vim input, customizable
+    #sudo -H pip install -U ohmu
+    #sudo -H pip install -U pdbpp wdb
 
 git clone https://github.com/licenses/lice.git
 
@@ -34,14 +49,15 @@ Copy bash_completion.d/ to /etc/.
 Contents
 ========
 engage.sh
-    Read the source. Briefly,
-      - Creates directories
-      - Creates symlinks to *.dotfiles/foo*.
-      - Creates .ipython profile
-      - Creates .subversion
-      - Creates .vim et al
-      - Moves existing files to ``~/tmp/.dotfile_preserve``.
-      - Updates from git repo https://github.com/njharman/dotfiles
+    Read the source. Briefly it...
+
+    - Creates directories
+    - Creates symlinks to *.dotfiles/foo*.
+    - Creates .ipython profile
+    - Creates .subversion
+    - Creates .vim et al
+    - Moves existing files to ``~/tmp/.dotfile_preserve``.
+    - Updates from git repo https://github.com/njharman/dotfiles
 
 
 Binaries
@@ -73,11 +89,6 @@ sack / sag
     Wrapper__ for ack / ag.
 
 __ https://github.com/sampson-chen/sack
-
-sicp
-    Uses *screen* for poor man's slime__.
-
-__ http://en.wikipedia.org/wiki/SLIME
 
 svneditor
     It's rad.
@@ -134,8 +145,8 @@ myhistory
 nukepyc
     Recursively remove ``.pyc`` and ``.pyo`` files.
 
-psgrep
-    Kind of like ``pgrep -fl`` with more "stuff".
+psg
+    Like ``pgrep -fl`` with more "stuff".
 
 
 Configs
@@ -206,46 +217,31 @@ bash_completion.d
    - Thesaurus word look up using online thesaurus.
 
 .vim/
-    Colors and pathogen managed plugins. Initialize submodules on fresh clone::
+    git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
 
-      git submodule init
-      git submodule update
+    Vundel managed plugins::
 
-    Add new submodule::
-
-      git submodule add <link> .vim/bundle/<name>
-
-    Remove submodule::
-
-      git rm --cached path_to_submodule (no trailing slash)
-      Delete from .gitmodules
-      Delete from .git/config
-
-    Get upstream updates::
-
-      git submodule foreach git pull origin master
+        :PluginList             - lists configured plugins.
+        :PluginInstall foo      - installs plugins.
+        :PluginUpdate           - updates plugins.
+        :PluginSearch foo       - append ! to referesh local cache.
 
     Plugins
 
-    - ctrlp: Fuzzy finder. ``:h ctrlp-commands``, ``:h ctrlp-extensions``
-    - dbext: Database shell. ``:h dbext-tutorial``
-    - gundo: Undo.
-    - help_nav: Better help navigation, *<enter>* to "follow" link.
-    - matchit: Better % matching.
-    - pep8: Map to *<F8>* for code style nirvana.
-    - pydoc: `Pydoc re.compile`.
-    - pyflakes: Dynamically reveal your incompetence.
-    - python_calltips: *<tab>* to show function signature, etc.
-    - slime-vim:
-    - supertab: This is awesome.
-    - surround: *ds"* delete, *cs])* change, *ysiw)* surround motion/text object, *dst* "html tag"
-    - vim-abolish:
-      coerce case; *crs* (snake_case), *crm* (MixedCase), *cru* (UPPER_CASE).
-      Subvert/address{,es}/reference{,s}/
-    - vim-commentary: (un)comment lines (gcc, gcu).
-    - vim-pathogen: Vim package manager.
-    - vim-repeat:
-    - vim-speeddating: increment dates properly (*<C-a>*, *<C-x>*, *d<C-a>* utc, *d<C-x>* local).
+    - https://github.com/airblade/vim-gitgutter
+    - https://github.com/bling/vim-airline
+    - https://github.com/bronson/vim-trailing-whitespace   *:FixWhitespace* (visual selection or whole file)
+    - https://github.com/chrisbra/csv.vim
+    - https://github.com/christoomey/vim-tmux-navigator unified tmux/vim nav.
+    - https://github.com/davidhalter/jedi-vim python completion, docstring, renaming, more.
+    - https://github.com/ervandew/supertab    awesome tab completion.
+    - https://github.com/fs111/pydoc.vim      *pw* *pW* *ps*
+    - https://github.com/kien/ctrlp.vim       *<C-p>* Fuzzy file opener
+    - https://github.com/nvie/vim-flake8      *<F8>* for code style nirvana.
+    - https://github.com/sjl/gundo.vim        *<leader>u* Undo tree
+    - https://github.com/tomtom/tcomment_vim  *gc* (un)comment, *g<* explicit uncomment, *g>* explicit comment
+    - https://github.com/tpope/vim-fugitive
+    - https://github.com/voithos/vim-python-matchit
 
 
 Templates

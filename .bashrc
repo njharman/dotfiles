@@ -1,7 +1,6 @@
 # If not running interactively, don't do anything
 [ -z "$PS1" ] && return
 
-
 export HISTSIZE=999999
 export HISTFILESIZE=999999
 export HISTIGNORE='[bf]g:cd:cd -:cd ~:l[sal]:ls -al:history:exit::'
@@ -9,7 +8,6 @@ export HISTCONTROL=erasedups
 # Require three consecutive ^D (eof) to exit terminal.
 export IGNOREEOF=2
 export PATH=$HOME/bin:/sbin:/usr/sbin:$PATH
-export CDPATH='.:~/work/'
 shopt -s cdspell        # Automatically fix 'cd folder' spelling mistakes.
 shopt -s checkwinsize   # Resize window after each command, updating the values of LINES and COLUMNS.
 # Limit terminal "locking" from ^S et al.
@@ -34,14 +32,24 @@ if [ -e "$FOO" ]; then
 fi
 unset FOO
 
+## A "work" aka dev box.
+if [ -e $HOME/work ]; then
+    export CDPATH='.:~/work/'
+    export WORKON_HOME=$HOME/work/.virtualenvs
+    export PROJECT_HOME=$HOME/work
+fi
+
 
 ## Aliases and Such
+#alias ipython="ptipython --vi"
+#alias ipython=bpython
 # Muscle memory.
 alias :e=/usr/bin/vim
 # It's called ack, dammit!
 which ack &> /dev/null || alias ack="ack-grep"
 # Chdir to Python module source.
 function cdp { cd $(python -c"from __future__ import print_function;import os,sys;print(os.path.dirname(__import__(sys.argv[1]).__file__))" $1); }
+function cd3 { cd $(python3 -c"import os,sys;print(os.path.dirname(__import__(sys.argv[1]).__file__))" $1); }
 # Color diffs, requires cdiff.
 function dif { svn diff $@ | cdiff; }
 function difs { svn diff $@ | cdiff -s; }
@@ -51,17 +59,14 @@ alias gh='history|/bin/grep'
 alias la='/bin/ls -A'
 alias ll='/bin/ls -lF'
 alias lt='/bin/ls -ltrsa'
-alias st='svn st'
 # Top 20 most run commands.
 alias myhistory='/bin/sed "s|/usr/bin/sudo ||g" ~/.bash_history|/usr/bin/cut -d " " -f 1|/usr/bin/sort|/usr/bin/uniq -c|/usr/bin/sort -rn|/usr/bin/head -20'
 # Recursively remove compiled python files.
 alias nukepyc="/usr/bin/find . -name '*py[co]' -exec /bin/rm -f {} ';';/usr/bin/find . -name '__pycache__' -exec /bin/rm -rf {} ';'"
-# Alternative pgrep.
-function psgrep { /bin/ps axuf | /bin/grep -v grep | /bin/grep "$@" -i --color=auto; }
-# Hate nano, very much.
+# Alternative to "pgrep -fl".
+function psg { /bin/ps axuf | /bin/grep -v grep | /bin/grep "$@" -i --color=auto; }
+# Hate nano very, very much.
 alias visudo="/usr/bin/sudo EDITOR=$EDITOR /usr/sbin/visudo"
-# Cause git pull is broke or some shit: http://stackoverflow.com/questions/15316601/is-git-pull-the-least-problematic-way-of-updating-a-git-repository
-git config --global alias.up '!git remote update -p; git merge --ff-only @{u}'
 
 
 ## Colors & Prompt
@@ -70,12 +75,17 @@ git config --global alias.up '!git remote update -p; git merge --ff-only @{u}'
 function parse_git_dirty {
     [[ $(git status 2> /dev/null | tail -n1) != "nothing to commit (working directory clean)" ]] && echo "*"
     }
-function parse_git_branch {
+function prompt_git_branch {
     git branch --no-color 2> /dev/null | sed -e '/^[^*]/d' -e "s/* \(.*\)/(\1$(parse_git_dirty))/"
     }
 function prompt_or_jobs {
-    count=`jobs|wc -l`
-    [ 0 -eq $count ] && echo "$1" || echo "($count)"
+    jcnt=`jobs|wc -l`
+    [ 0 -eq $jcnt ] && echo "$1" || echo "[$jcnt]"
+    }
+function prompt_virtualenv() {
+    if [ -n "$VIRTUAL_ENV" ]; then
+        echo "(${VIRTUAL_ENV##*/})"
+    fi
     }
 
 if [ -e /lib/terminfo/x/xterm-256color ]; then
@@ -99,9 +109,9 @@ if [ "$color_prompt" = yes ]; then
     _WHITE="\[\033[1;37m\]"
     _BLACK="\[\033[00m\]"
     if [ 0 -eq $UID ]; then
-        export PS1="$_RED\u$_GREEN@\h:$_BLUE\w$_BLACK\$(parse_git_branch)$_RED\$(prompt_or_jobs '$') $_BLACK"
+        export PS1="$_RED\u$_GREEN@\h:$_BLUE\w$_RED\$(prompt_or_jobs '$') $_BLACK"
     else
-        export PS1="$_TEAL\u$_GREEN@\h:$_BLUE\w$_BLACK\$(parse_git_branch)\$(prompt_or_jobs '#') "
+        export PS1="$_TEAL\u$_GREEN@\h:$_BLUE\w$_BLACK\$(prompt_virtualenv)\$(prompt_git_branch)\$(prompt_or_jobs '#') "
     fi
 else
     PS1='\h:\w\$ '
@@ -139,7 +149,6 @@ export LESS_TERMCAP_ue=$'\E[0m'
 if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
     source /etc/bash_completion
 fi
-#FIGNORE A  colon-separated  list  of suffixes to ignore when performing filename completion (see READLINE below).  A filename whose suffix matches one of the entries in FIGNORE is excluded from the list of matched filenames.  A sample value is ".o:~" (Quoting is needed when assigning a value to this variable, which contains tildes).
 
 
 # Pip bash completions.
