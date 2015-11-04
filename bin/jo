@@ -25,7 +25,29 @@ else
 fi
 
 
-if [[ "$target" == "support" ]]; then
+if [[ "${target:0:2}" == "ud" ]]; then
+    ## New local 3way
+    tmux new-window    -n "$target"
+    tmux split-window  -t "$session:$target".1 -v -l 30
+    tmux split-window  -t "$session:$target".1 -h -l 100
+    tmux select-pane   -t "$session:$target".1
+elif [[ "$target" == "bws" ]]; then
+    ## 4 way bws machines
+    tmux new-window    -n "$target" "ssh bws-control1"
+    tmux split-window  -t "$session:$target".1 -v -l 40  "ssh bws-compute3"
+    tmux split-window  -t "$session:$target".1 -h -l 110 "ssh bws-network1"
+    tmux split-window  -t "$session:$target".2 -h -l 110 "ssh bws-compute1"
+    tmux split-window  -t "$session:$target".2 -v -l 20  "ssh bws-compute4"
+    tmux split-window  -t "$session:$target".4 -v -l 20  "ssh bws-compute2"
+    sleep 1
+    tmux send-keys     -t "$sesion:$target".1 'sudo bash' C-m
+    tmux send-keys     -t "$sesion:$target".2 'sudo bash' C-m
+    tmux send-keys     -t "$sesion:$target".3 'sudo bash' C-m
+    tmux send-keys     -t "$sesion:$target".4 'sudo bash' C-m
+    tmux send-keys     -t "$sesion:$target".5 'sudo bash' C-m
+    tmux send-keys     -t "$sesion:$target".6 'sudo bash' C-m
+    tmux select-pane   -t "$session:$target".1
+elif [[ "$target" == "support" ]]; then
     ## Support Site
     ssh -i ~/Dropbox/keys/dfm-ubuntu-key.pem root@support.broadwaytechnology.com
 elif [[ "$target" == "vroom" ]]; then

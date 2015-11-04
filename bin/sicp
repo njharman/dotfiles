@@ -1,6 +1,0 @@
-#!/bin/bash
-# open screen session named "sicp" running scheme
-# so this vim command can send code snippets to it.
-# map <silent> <F10> vip<CR>"ry:call system("screen -S sicp -X stuff '" . @r . "'")
-
-screen -S sicp rlwrap scheme -large -load /home/norman.harman/Dropbox/src/SICP/unittest.scm
