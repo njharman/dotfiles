@@ -54,7 +54,6 @@ call vundle#begin()
 "" Avoid a name conflict with L9
 "Plugin 'user/L9', {'name': 'newL9'}
 
-
 Plugin 'VundleVim/Vundle.vim'
 Plugin 'bling/vim-airline'
 Plugin 'bronson/vim-trailing-whitespace'
@@ -76,7 +75,6 @@ Plugin 'chrisbra/csv.vim'
 "Plugin 'tpope/vim-repeat'
 
 " not sold on usefulness yet
-"Plugin 'airblade/vim-gitgutter'
 "Plugin 'vim-scripts/YankRing.vim'
 "generate airline like status lines
 " Plugin 'edkolev/promptline.vim'
@@ -114,18 +112,9 @@ let g:airline#extensions#default#layout = [
 let g:airline_section_a = airline#section#create(['paste', 'iminsert', 'crypt'])
 
 
-"" Pydoc
-":pyd foo
-" switch these edit source
-" <leader>pw <leader>pW
-nmap <leader>ps :PydocSearch
-" open with most of the window
-let g:pydoc_window_lines=0.7
-" open vertical instead
-let g:pydoc_open_cmd = 'vsplit'
-
 "" Gundo.
 nmap <silent> <leader>u :GundoToggle<CR>
+
 
 "" CtrlP
 "<c-z> to mark/unmark multiple files and <c-o> to open them.
@@ -144,6 +133,9 @@ let g:ctrlp_by_filename = 1
 let g:ctrlp_regexp = 1
 " 1 - follow but ignore looped internal symlinks to avoid duplicates.
 let g:ctrlp_follow_symlinks = 1
+let g:ctrlp_map = '<c-p>'
+let g:ctrlp_working_path_mode = 'a'
+
 
 "" Flake8
 "Should be the F8 key, OBVIOUSLY!
@@ -152,6 +144,18 @@ au FileType python imap <buffer> <F8> <ESC>:call Flake8()<CR>
 let g:flake8_quickfix_height=12
 "let g:flake8_show_in_gutter=1
 "let g:flake8_show_in_file=1
+
+
+"" Pydoc
+":pyd foo
+" switch these edit source
+" <leader>pw <leader>pW
+nmap <leader>ps :PydocSearch
+" open with most of the window
+let g:pydoc_window_lines=0.7
+" open vertical instead
+let g:pydoc_open_cmd = 'vsplit'
+
 
 "" Tab completion
 
@@ -162,7 +166,7 @@ let g:flake8_quickfix_height=12
 "<leader>r Rename
 "<leader>n shows all the usages of a name
 "K Show Documentation/Pydoc
-"let g:jedi#show_call_signatures = "2"
+let g:jedi#show_call_signatures = "2"
 "let g:jedi#use_splits_not_buffers = "left"
 "let g:jedi#use_tabs_not_buffers = 1
 "" don't popup on .
@@ -173,26 +177,12 @@ let g:flake8_quickfix_height=12
 "" SuperTab
 map <S-Tab> <C-x><C-p>
 set completeopt=menuone,longest,preview
-let g:SuperTabDefaultCompletionType = "context"
-let g:SuperTabContextDefaultCompletionType = "<c-p>"       " Secondary completion type
-let g:SuperTabContextTextOmniPrecedence = ['&completefunc']
-"let g:SuperTabContextTextOmniPrecedence = ['&omnifunc', '&completefunc']
+"let g:SuperTabContextDefaultCompletionType = "<c-p>"
+let g:SuperTabContextTextOmniPrecedence = ['&omnifunc', '&completefunc']
 let g:SuperTabNoCompleteAfter = [':', ',', '\s', '^']
 let g:SuperTabLongestEnhanced = 0
 let g:SuperTabLongestHighlight = 1
 let g:SuperTabClosePreviewOnPopupClose = 1
-au FileType *
-  \ if &omnifunc != '' |
-  \   call SuperTabChain(&omnifunc, "<c-p>") |
-  \ endif
-
-"" CtrlP
-let g:ctrlp_map = '<c-p>'
-let g:ctrlp_cmd = 'CtrlP'
-let g:ctrlp_working_path_mode = 'a'
-
-"" Flake8
-"let g:flake8_quickfix_height=7
 
 "" Syntastic
 "let g:syntastic_always_populate_loc_list = 1
@@ -381,8 +371,8 @@ match ErrorMsg '^\(<\|=\|>\)\{7\}\([^=].\+\)\?$'
 nmap <silent> <leader>c /^\(<\\|=\\|>\)\{7\}\([^=].\+\)\?$<CR>
 
 " error-list nav
-nnoremap <leader>[ :cnext<CR>
-nnoremap <leader>] :cprev<CR>
+nnoremap <leader>[ :cprev<CR>
+nnoremap <leader>] :cnext<CR>
 
 " Buffer navigation.
 ":ls list
@@ -410,7 +400,7 @@ iab teh the
 iab adn and
 iab Todo TODO:
 iab todo TODO:
-iab todo: TODO:
+iab todo: TODO
 iab months- January February March April May June July August September October November December
 iab mths- Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec
 iab 80- 12345678901234567890123456789012345678901234567890123456789012345678901234567890
@@ -435,13 +425,14 @@ cab spellon setlocal spell spelllang=en_us<CR>
 " 2 - Support 1st line indent
 " r - Autoinsert comment leader with <Enter>
 " o - Autointert comment leader with 'o' 'O'
-au FileType python        :setlocal formatoptions=qln1r textwidth=180
-au FileType text          :setlocal formatoptions=tqan12 nocindent textwidth=78 ts=2 sw=2 sts=2 spell spelllang=en_us
+au FileType python        :setlocal formatoptions=qln1r textwidth=78
+au FileType text          :setlocal formatoptions=tqn12 nocindent textwidth=78 ts=2 sw=2 sts=2 spell spelllang=en_us
 au FileType python        :setlocal omnifunc=pythoncomplete#Complete ts=4 sw=4 sts=4
 au FileType javascript    :setlocal omnifunc=javascriptcomplete#CompleteJS
 au FileType html,markdown :setlocal omnifunc=htmlcomplete#CompleteTags
 au FileType css           :setlocal omnifunc=csscomplete#CompleteCSS
 au FileType xml           :setlocal omnifunc=xmlcomplete#CompleteTags
+au BufNewFile,BufRead *.rst         :setlocal filetype=text
 au BufNewFile,BufRead *.html        :setlocal filetype=html
 au BufNewFile,BufRead *.scss        :setlocal filetype=scss.css
 au BufNewFile,BufRead *.sass        :setlocal filetype=sass.css

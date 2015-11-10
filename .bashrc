@@ -21,100 +21,101 @@ export MANPAGER=/usr/bin/less
 export EDITOR=/usr/bin/vim
 FOO=`which svneditor 2> /dev/null`
 if [ -e "$FOO" ]; then
-    export SVN_EDITOR="$FOO"
+  export SVN_EDITOR="$FOO"
 else
-    export SVN_EDITOR="$EDITOR"
+  export SVN_EDITOR="$EDITOR"
 fi
 FOO=`which meld 2> /dev/null`
 if [ -e "$FOO" ]; then
-    export SVN_MERGE="$FOO"
-    export SVN_DIFF="$FOO"
+  export SVN_MERGE="$FOO"
+  export SVN_DIFF="$FOO"
 fi
 unset FOO
 
 ## A "work" aka dev box.
 if [ -e $HOME/work ]; then
-    export CDPATH='.:~/work/'
-    export WORKON_HOME=$HOME/work/.virtualenvs
-    export PROJECT_HOME=$HOME/work
+  export CDPATH='.:~/work/'
+  export WORKON_HOME=$HOME/work/.virtualenvs
+  export PROJECT_HOME=$HOME/work
 fi
 
 
 ## Aliases and Such
-#alias ipython="ptipython --vi"
-#alias ipython=bpython
+# Hate nano very, very much.
+alias visudo="/usr/bin/sudo EDITOR=$EDITOR /usr/sbin/visudo"
 # Muscle memory.
 alias :e=/usr/bin/vim
-# It's called ack, dammit!
-which ack &> /dev/null || alias ack="ack-grep"
+#alias ipython="ptipython --vi"
+#alias ipython=bpython
+# Recursively remove compiled python files.
+alias nukepyc="/usr/bin/find . -name '*py[co]' -exec /bin/rm -f {} ';';/usr/bin/find . -name '__pycache__' -exec /bin/rm -rf {} ';'"
 # Chdir to Python module source.
 function cdp { cd $(python -c"from __future__ import print_function;import os,sys;print(os.path.dirname(__import__(sys.argv[1]).__file__))" $1); }
 function cd3 { cd $(python3 -c"import os,sys;print(os.path.dirname(__import__(sys.argv[1]).__file__))" $1); }
+# It's called ack, dammit!
+which ack &> /dev/null || alias ack="ack-grep"
 # Color diffs, requires cdiff.
 function dif { svn diff $@ | cdiff; }
 function difs { svn diff $@ | cdiff -s; }
 # Find file with 'foo' in name.
 function f { /usr/bin/find . -iname "*$@*"; }
+# Alternative to "pgrep -fl".
+function psg { /bin/ps axuf | /bin/grep -v grep | /bin/grep "$@" -i --color=auto; }
+function pp { /bin/ps axuf | percol; }
 alias gh='history|/bin/grep'
 alias la='/bin/ls -A'
 alias ll='/bin/ls -lF'
 alias lt='/bin/ls -ltrsa'
 # Top 20 most run commands.
 alias myhistory='/bin/sed "s|/usr/bin/sudo ||g" ~/.bash_history|/usr/bin/cut -d " " -f 1|/usr/bin/sort|/usr/bin/uniq -c|/usr/bin/sort -rn|/usr/bin/head -20'
-# Recursively remove compiled python files.
-alias nukepyc="/usr/bin/find . -name '*py[co]' -exec /bin/rm -f {} ';';/usr/bin/find . -name '__pycache__' -exec /bin/rm -rf {} ';'"
-# Alternative to "pgrep -fl".
-function psg { /bin/ps axuf | /bin/grep -v grep | /bin/grep "$@" -i --color=auto; }
-# Hate nano very, very much.
-alias visudo="/usr/bin/sudo EDITOR=$EDITOR /usr/sbin/visudo"
 
 
 ## Colors & Prompt
 
 # Git enhance prompt.
 function parse_git_dirty {
-    [[ $(git status 2> /dev/null | tail -n1) != "nothing to commit (working directory clean)" ]] && echo "*"
-    }
+  [[ $(git status 2> /dev/null | tail -n1) != "nothing to commit (working directory clean)" ]] && echo "*"
+  }
 function prompt_git_branch {
-    git branch --no-color 2> /dev/null | sed -e '/^[^*]/d' -e "s/* \(.*\)/(\1$(parse_git_dirty))/"
-    }
+  git branch --no-color 2> /dev/null | sed -e '/^[^*]/d' -e "s/* \(.*\)/(\1$(parse_git_dirty))/"
+  }
 function prompt_or_jobs {
-    jcnt=`jobs|wc -l`
-    [ 0 -eq $jcnt ] && echo "$1" || echo "[$jcnt]"
-    }
+  jcnt=`jobs|wc -l`
+  [ 0 -eq $jcnt ] && echo "$1" || echo "[$jcnt]"
+  }
 function prompt_virtualenv() {
-    if [ -n "$VIRTUAL_ENV" ]; then
-        echo "(${VIRTUAL_ENV##*/})"
-    fi
-    }
+  if [ -n "$VIRTUAL_ENV" ]; then
+    echo "(${VIRTUAL_ENV##*/})"
+  fi
+  }
 
 if [ -e /lib/terminfo/x/xterm-256color ]; then
-    export TERM='xterm-256color'
+  export TERM='xterm-256color'
 else
-    export TERM='xterm-color'
+  export TERM='xterm-color'
 fi
 
 if [ -x /usr/bin/tput ] && tput setaf 1 >& /dev/null; then
-    color_prompt=yes
+  color_prompt=yes
 else
-    color_prompt=
+  color_prompt=
 fi
 if [ "$color_prompt" = yes ]; then
-    _RED="\[\033[0;31m\]"
-    _LTRED="\[\033[1;31m\]"
-    _BLUE="\[\033[0;34m\]"
-    _TEAL="\[\e[0;36m\]"
-    _GREEN="\[\033[0;32m\]"
-    _LTGREEN="\[\033[1;32m\]"
-    _WHITE="\[\033[1;37m\]"
-    _BLACK="\[\033[00m\]"
-    if [ 0 -eq $UID ]; then
-        export PS1="$_RED\u$_GREEN@\h:$_BLUE\w$_RED\$(prompt_or_jobs '$') $_BLACK"
-    else
-        export PS1="$_TEAL\u$_GREEN@\h:$_BLUE\w$_BLACK\$(prompt_virtualenv)\$(prompt_git_branch)\$(prompt_or_jobs '#') "
-    fi
+  _RED="\[\033[0;31m\]"
+  _LTRED="\[\033[1;31m\]"
+  _BLUE="\[\033[0;34m\]"
+  _TEAL="\[\e[0;36m\]"
+  _GREEN="\[\033[0;32m\]"
+  _LTGREEN="\[\033[1;32m\]"
+  _WHITE="\[\033[1;37m\]"
+  _BLACK="\[\033[00m\]"
+  if [ 0 -eq $UID ]; then
+    export PS1="$_RED\u$_GREEN@\h:$_BLUE\w$_RED\$(prompt_or_jobs '$') $_BLACK"
+  else
+    export PS1="$_TEAL\u$_GREEN@\h:$_BLUE\w$_BLACK\$(prompt_virtualenv)\$(prompt_git_branch)\$(prompt_or_jobs '#') "
+  fi
 else
-    PS1='\h:\w\$ '
+  PS1='\h:\w\$ '
 fi
 
 PROMPT_DIRTRIM=2
@@ -126,12 +127,11 @@ export PS4='+ '
 # ls colors.
 export CLICOLORS=1
 if [ -x /usr/bin/dircolors ]; then
-    test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
-    alias ls='ls --color=auto'
+  test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
+  alias ls='ls --color=auto'
 fi
 
 # grep colors.
-export GREP_OPTIONS='--color=auto'
 export GREP_COLOR='1;32'
 
 # less/man colors.
@@ -147,40 +147,10 @@ export LESS_TERMCAP_ue=$'\E[0m'
 
 ## Tab Completions
 if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
-    source /etc/bash_completion
+  source /etc/bash_completion
 fi
-
-
-# Pip bash completions.
-function _pip_completion() {
-    COMPREPLY=( $( COMP_WORDS="${COMP_WORDS[*]}" COMP_CWORD=$COMP_CWORD PIP_AUTO_COMPLETE=1 $1 ) )
-    }
-complete -o default -F _pip_completion pip
-
-# Nosetests bash completions. Requires pip install nosecomplete
-__ltrim_colon_completions() {
-    # If word-to-complete contains a colon,
-    # and bash-version < 4,
-    # or bash-version >= 4 and COMP_WORDBREAKS contains a colon
-    if [[ "$1" == *:* && ( ${BASH_VERSINFO[0]} -lt 4 || (${BASH_VERSINFO[0]} -ge 4 && "$COMP_WORDBREAKS" == *:*)) ]]; then
-        # Remove colon-word prefix from COMPREPLY items
-        local colon_word=${1%${1##*:}}
-        local i=${#COMPREPLY[*]}
-        while [ $((--i)) -ge 0 ]; do
-            COMPREPLY[$i]=${COMPREPLY[$i]#"$colon_word"}
-        done
-    fi
-}
-_nosetests()
-{
-    cur="${COMP_WORDS[COMP_CWORD]}"
-    COMPREPLY=(`nosecomplete ${cur} 2>/dev/null`)
-    __ltrim_colon_completions "$cur"
-}
-complete -o nospace -F _nosetests nosetests
-
 
 ## Local Things
 if [ -f ~/.bash_local ]; then
-    source ~/.bash_local
+  source ~/.bash_local
 fi

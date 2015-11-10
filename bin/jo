@@ -1,30 +1,31 @@
 #!/bin/bash
-# tmux "workspaces"
+# Create tmux "workspaces"
 
-
-while getopts "b" option; do
-    case $option in
-        b) build_host='true';;
-    esac
-done
-shift $((OPTIND-1))
+# Kept so I don't hafta google how to do this again.
+# while getopts "b" option; do
+#     case $option in
+#         b) build_host='true';;
+#     esac
+# done
+# shift $((OPTIND-1))
 
 
 if [[ "$2" == "" ]]; then
-    session="amadeus"
+    session="amadeus"  # Default 'rockme' session.
 else
     session="$1"
     shift
 fi
 
 if [[ "$1" == "" ]]; then
-    echo Ur doin it wrong.
+    echo Read the source.
     exit
 else
     target="$1"
 fi
 
 
+# ud == Ubuntu Desktop, my main workstation either bare metal or virtual machine.
 if [[ "${target:0:2}" == "ud" ]]; then
     ## New local 3way
     tmux new-window    -n "$target"
@@ -47,9 +48,6 @@ elif [[ "$target" == "bws" ]]; then
     tmux send-keys     -t "$sesion:$target".5 'sudo bash' C-m
     tmux send-keys     -t "$sesion:$target".6 'sudo bash' C-m
     tmux select-pane   -t "$session:$target".1
-elif [[ "$target" == "support" ]]; then
-    ## Support Site
-    ssh -i ~/Dropbox/keys/dfm-ubuntu-key.pem root@support.broadwaytechnology.com
 elif [[ "$target" == "vroom" ]]; then
     # web/db performance view
     # bwayweb atop left
@@ -68,18 +66,6 @@ elif [[ "$target" == "vroom" ]]; then
     tmux split-window -t "$sesion:$target".1 -dh -p 50 "ssh root@bwaywebdb"
     sleep 1
     tmux send-keys    -t "$sesion:$target".2 'atop' C-m
-elif [[ "$build_host" == "true" ]]; then
-    tmux new-window   -n "$target" "ssh ${target}a || bash"
-    # host below
-    tmux split-window -t "$sesion:$target".1 -dv -l 16 "ssh $target"
-    # rest of slaves
-    tmux split-window -t "$sesion:$target".1 -dh -p 50 "ssh ${target}e || bash"
-    tmux split-window -t "$sesion:$target".2 -dv -l 11 "ssh ${target}h || bash"
-    tmux split-window -t "$sesion:$target".3 -dv -l 11 "ssh ${target}g || bash"
-    tmux split-window -t "$sesion:$target".4 -dv -l 11 "ssh ${target}f || bash"
-    tmux split-window -t "$sesion:$target".1 -dv -l 11 "ssh ${target}d || bash"
-    tmux split-window -t "$sesion:$target".1 -dv -l 11 "ssh ${target}c || bash"
-    tmux split-window -t "$sesion:$target".1 -dv -l 11 "ssh ${target}b || bash"
 else
     # "work" pane
     tmux new-window   -n "$target" "ssh $target"
