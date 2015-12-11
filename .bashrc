@@ -149,6 +149,10 @@ export LESS_TERMCAP_ue=$'\E[0m'
 if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
   source /etc/bash_completion
 fi
+# osX
+if [ -f `brew --prefix`/etc/bash_completion ]; then
+    . `brew --prefix`/etc/bash_completion
+fi
 
 ## Local Things
 if [ -f ~/.bash_local ]; then
