@@ -87,12 +87,28 @@ function init_the_dotfiles {
   fi
   }
 
+function shared_install {
+  echo  Python needfulls
+  sudo -H pip install -U pip
+  sudo -H pip install -U vex virtualenv
+  sudo -H pip install -U tox nose nosecomplete pep8 pep8-naming flake8 pyflakes coverage cprofilev isort
+
+  echo command line tools
+  sudo -H pip install -U percol
+
+  if [ ! -d ~/.vim/bundle/Vundle.vim ]; then
+    echo Vundle for Vim
+    mkdir -f ~/.vim/bundle
+    git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
+  fi
+  }
+
 
 function ubuntu_install {
   # Install the one time things for Ubuntu.
   echo Basics
   sudo apt-get -y install build-essential aptitude
-  sudo apt-get -y install zsh tmux git vim meld tree
+  sudo apt-get -y install zsh tmux git git-flow vim meld tree bash-completion
 
   echo Silver Searcher
   sudo apt-get -y --force-yes install automake pkg-config libpcre3-dev zlib1g-dev liblzma-dev
@@ -104,21 +120,26 @@ function ubuntu_install {
   mv ag ~/bin/
   cd ~
 
-  echo  Python needfulls
+  echo  Python Packages
   sudo apt-get -y install python-pip
-  sudo -H pip install -U vex virtualenv pip
-  sudo -H pip install -U tox nose nosecomplete pep8 pep8-naming flake8 pyflakes coverage cprofilev isort
   sudo apt-get -y install python-dev
+
   sudo -H pip install -U ipython memory_profiler line_profiler
+  }
 
-  echo command line tools
-  sudo -H pip install -U percol
 
-  if [ ! -d ~/.vim/bundle/Vundle.vim ]; then
-    echo Vundle for Vim
-    mkdir -f ~/.vim/bundle
-    git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
-  fi
+function osx_install {
+  ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+  brew install wget tmux git git-flow tree bash-completion
+  #brew install meld x11?
+  brew install the_silver_searcher
+  wget https://bootstrap.pypa.io/get-pip.py
+  python get-pip.py
+  rm get-pip.py
+  shared_install
+  # Requires python-dev
+  #sudo -H pip install -U ipython memory_profiler line_profiler
+  bash ~/.dotfiles/osx
   }
 
 
@@ -208,6 +229,8 @@ $prog all  - all of the above plus more
 USAGE
 elif [[ "$1" == "ubuntu" ]]; then
   ubuntu_install
+elif [[ "$1" == "osx" ]]; then
+  osx_install
 elif [[ "$1" == "up" ]]; then
   engage_up
 elif [[ "$1" == "vim" ]]; then
