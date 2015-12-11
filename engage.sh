@@ -95,7 +95,7 @@ function ubuntu_install {
   sudo apt-get -y install zsh tmux git vim meld tree
 
   echo Silver Searcher
-  sudo apt-get -y install automake pkg-config libpcre3-dev zlib1g-dev liblzma-dev
+  sudo apt-get -y --force-yes install automake pkg-config libpcre3-dev zlib1g-dev liblzma-dev
   cd ~/tmp/
   rm -rf the_silver_searcher
   git clone https://github.com/ggreer/the_silver_searcher
@@ -151,7 +151,6 @@ function engage_sym {
   chown -fR $USER ~/.ssh
 
   ## ~/.keys
-  ln -s ~/Dropbox/keys ~/.keys
   chmod -f 600 ~/.keys/*
   chown -fR $USER ~/.keys
 
