@@ -172,7 +172,6 @@ function engage_sym {
   chown -fR $USER ~/.ssh
 
   ## ~/.keys
-  ln -s ~/Dropbox/keys ~/.keys
   chmod -f 600 ~/.keys/*
   chown -fR $USER ~/.keys
 

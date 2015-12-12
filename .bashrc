@@ -60,9 +60,9 @@ function difs { svn diff $@ | cdiff -s; }
 # Find file with 'foo' in name.
 function f { /usr/bin/find . -iname "*$@*"; }
 # Alternative to "pgrep -fl".
-function psg { /bin/ps axuf | /bin/grep -v grep | /bin/grep "$@" -i --color=auto; }
+function psg { /bin/ps axuf | `which grep` -v grep | `which grep` "$@" -i --color=auto; }
 function pp { /bin/ps axuf | percol; }
-alias gh='history|/bin/grep'
+alias gh='history|grep'
 alias la='/bin/ls -A'
 alias ll='/bin/ls -lF'
 alias lt='/bin/ls -ltrsa'
@@ -150,7 +150,7 @@ if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
   source /etc/bash_completion
 fi
 # osX
-if [ -f `brew --prefix`/etc/bash_completion ]; then
+if [[ `which brew` && -f `brew --prefix`/etc/bash_completion ]]; then
     . `brew --prefix`/etc/bash_completion
 fi
 

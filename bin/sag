@@ -32,4 +32,22 @@
 
 # Wrap first param with quotes.  Allows searching for phrase, sack "fox jumped over".
 first="$1";shift
-sack -ag "$first" $@
+if [[ "$first" == "-h" || "$first" == "--help" ]]; then
+  sack -h
+elif [ "$first" == "-wp" ]; then
+  sack -wp $@
+elif [ "$first" == "-lp" ]; then
+  sack -lp $@
+elif [ "$first" == "-sp" ]; then
+  sack -sp $@
+elif [ "$first" == "-rp" ]; then
+  sack -rp $@
+elif [ "$first" == "-anp" ]; then
+  sack -anp $@
+elif [ "$first" == "-sd" ]; then
+  sack -sd $@
+elif [ "$first" == "-sf" ]; then
+  sack -sf $@
+else
+  sack -ag "$first" $@
+fi
