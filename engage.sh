@@ -14,7 +14,6 @@ function symtastico {
     if [ -f "$file" ]; then
       name=`basename "$file"`
       case $name in
-        ".gitignore") continue;;
         ".gitmodules") continue;;
         ".osx") continue;;
         *swp) continue;;

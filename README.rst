@@ -51,6 +51,7 @@ Python ::
     sudo -H pip install -U ipython memory_profiler line_profiler
     #sudo -H pip install -U bpython   # better docstrings
     #sudo -H pip install -U ptpython  # vim input, customizable
+    #sudo -H pip install -U pipdeptree # dependencies in graph
     #https://github.com/mitsuhiko/pipsi
 
 Other tools ::

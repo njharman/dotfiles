@@ -1,10 +1,10 @@
 Thumbs.db
+TAGS
+tags
 .DS_Store
 .gitconfig
-.DS_Store
 *~
 .*.swp
 .svn
 .pyc
 .pyo
-tags
