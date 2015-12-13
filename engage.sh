@@ -14,7 +14,6 @@ function symtastico {
     if [ -f "$file" ]; then
       name=`basename "$file"`
       case $name in
-        ".gitignore") continue;;
         ".gitmodules") continue;;
         ".osx") continue;;
         *swp) continue;;
@@ -151,7 +150,6 @@ function engage_sym {
   chown -fR $USER ~/.ssh
 
   ## ~/.keys
-  ln -s ~/Dropbox/keys ~/.keys
   chmod -f 600 ~/.keys/*
   chown -fR $USER ~/.keys
 

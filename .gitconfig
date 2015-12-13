@@ -1,46 +1,48 @@
 # http://cheat.errtheblog.com/s/git/
-
 [user]
-    name = Norman J. Harman Jr.
-    email = njharman@gmail.com
+  name = Norman J. Harman Jr.
+  email = njharman@gmail.com
+[apply]
+  whitespace=warn
 [core]
-    filemode = true
-    autocrlf = false
+  filemode = true
+  autocrlf = false
 [http]
-    sslVerify = false
+#  sslVerify = false
 [branch]
-    autosetupmerge = true
+  autosetupmerge = true
+[push]
+  default = simple
 
 [alias]
-    st = status
-	  up = "!git remote update -p; git merge --ff-only @{u}"
-    ci = commit
-    co = checkout
-    br = branch
-    lg = log --graph --pretty=format:'%Cred%h%Creset %Cred%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
-    llg = log --graph --pretty=format:'%Cred%h%Creset %Cred%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset%+b' --abbrev-commit --name-status
-    #lgp = log -p
+  rl = reflog
+  ls = log -S
+  st = status --short
+  ci = commit --verbose
+  co = checkout
+  up = "!git remote update -p; git merge --ff-only @{u}"
+  lg = log --graph --pretty=format:'%Cred%h%Creset %Cred%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
+  llg = log --graph --pretty=format:'%Cred%h%Creset %Cred%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset%+b' --abbrev-commit --name-status
+  #lgp = log -p
 
-    dif = diff
-    #dc = diff --cached
-    #ls = ls-files
-    ## Show files ignored by git:
-    #ign = ls-files -o -i --exclude-standard
+  dif = diff HEAD
+  #dc = diff --cached
+  #ls = ls-files
+  ## Show files ignored by git:
+  #ign = ls-files -o -i --exclude-standard
 
 [color]
-    ui = auto
+  ui = auto
 [color "branch"]
-    current = yellow reverse
-    local = yellow
-    remote = green
+  current = yellow reverse
+  local = yellow
+  remote = green
 [color "diff"]
-    meta = yellow bold
-    frag = magenta bold
-    old = red bold
-    new = green bold
+  meta = yellow bold
+  frag = magenta bold
+  old = red bold
+  new = green bold
 [color "status"]
-    added = yellow
-    changed = green
-    untracked = cyan
-[push]
-	default = simple
+  added = yellow
+  changed = green
+  untracked = cyan

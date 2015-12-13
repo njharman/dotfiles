@@ -17,13 +17,11 @@
 "set nomodeline
 "set secure
 
-"" Key Bindings
-":map normal, insert, visual, command
-":nmap normal
-":imap insert
-":vmap visual
-":cmap command
 
+
+" Edit / reload .vimrc
+nmap <silent> <leader>ve :e $MYVIMRC<CR>
+nmap <silent> <leader>vr :so $MYVIMRC<CR>
 
 set nocompatible
 filetype off
@@ -58,7 +56,7 @@ Plugin 'VundleVim/Vundle.vim'
 Plugin 'bling/vim-airline'
 Plugin 'bronson/vim-trailing-whitespace'
 Plugin 'christoomey/vim-tmux-navigator'
-Plugin 'davidhalter/jedi-vim'
+"Plugin 'davidhalter/jedi-vim'
 Plugin 'ervandew/supertab'
 Plugin 'fs111/pydoc.vim'
 Plugin 'kien/ctrlp.vim'
@@ -111,10 +109,8 @@ let g:airline#extensions#default#layout = [
   \ ]
 let g:airline_section_a = airline#section#create(['paste', 'iminsert', 'crypt'])
 
-
 "" Gundo.
 nmap <silent> <leader>u :GundoToggle<CR>
-
 
 "" CtrlP
 "<c-z> to mark/unmark multiple files and <c-o> to open them.
@@ -136,15 +132,13 @@ let g:ctrlp_follow_symlinks = 1
 let g:ctrlp_map = '<c-p>'
 let g:ctrlp_working_path_mode = 'a'
 
-
 "" Flake8
 "Should be the F8 key, OBVIOUSLY!
 au FileType python map <buffer> <F8> :call Flake8()<CR>
 au FileType python imap <buffer> <F8> <ESC>:call Flake8()<CR>
 let g:flake8_quickfix_height=12
-"let g:flake8_show_in_gutter=1
+let g:flake8_show_in_gutter=1
 "let g:flake8_show_in_file=1
-
 
 "" Pydoc
 ":pyd foo
@@ -156,7 +150,6 @@ let g:pydoc_window_lines=0.7
 " open vertical instead
 let g:pydoc_open_cmd = 'vsplit'
 
-
 "" Tab completion
 
 "" Jedi
@@ -166,6 +159,7 @@ let g:pydoc_open_cmd = 'vsplit'
 "<leader>r Rename
 "<leader>n shows all the usages of a name
 "K Show Documentation/Pydoc
+"
 let g:jedi#show_call_signatures = "2"
 "let g:jedi#use_splits_not_buffers = "left"
 "let g:jedi#use_tabs_not_buffers = 1
@@ -174,22 +168,42 @@ let g:jedi#show_call_signatures = "2"
 "" no docstring popup
 "autocmd FileType python setlocal completeopt-=preview
 
-"" SuperTab
-map <S-Tab> <C-x><C-p>
-set completeopt=menuone,longest,preview
-"let g:SuperTabContextDefaultCompletionType = "<c-p>"
-let g:SuperTabContextTextOmniPrecedence = ['&omnifunc', '&completefunc']
-let g:SuperTabNoCompleteAfter = [':', ',', '\s', '^']
-let g:SuperTabLongestEnhanced = 0
-let g:SuperTabLongestHighlight = 1
-let g:SuperTabClosePreviewOnPopupClose = 1
-
 "" Syntastic
 "let g:syntastic_always_populate_loc_list = 1
 "let g:syntastic_auto_loc_list = 1
 "let g:syntastic_check_on_open = 1
 "let g:syntastic_check_on_wq = 0
 "let g:syntastic_quiet_messages = { "type": "style" }
+
+
+"" SuperTab
+" tab to start completion
+map <S-Tab> <C-x><C-p>
+set completeopt=menuone,longest,preview
+"let g:SuperTabContextDefaultCompletionType = "<c-p>"
+let g:SuperTabContextTextOmniPrecedence = ['&omnifunc', '&completefunc']
+let g:SuperTabNoCompleteAfter = [':', ',', '\s', '^']
+let g:SuperTabLongestEnhanced = 0
+let g:SuperTabClosePreviewOnPopupClose = 1
+
+
+" Freakin awesome file completion.
+set wildmenu
+set wildmode=longest:full,full
+set wildignore=*.pyc,*.pyo,*.o,*.obj,*.swp
+set wildignore+=.hg,.git,.svn,*.DS_Store
+set wildignore+=*.jpg,*.jpeg,*.png,*.gif,*.bmp,*.ico
+set wildignore+=*.tgz,*.gz,*.zip,*.bz2,*.exe,*.bin
+
+" :o <file> open file in path.
+cab o find
+" gf edit file even if it doesn't exist.
+"map gf :edit <cfile><CR>
+" Search file's directory, then up from file's directory, then vim's cwd.
+set path+=.,./**,,
+" If line has 'include' replace dots with slashes and try gf again.
+set includeexpr=substitute(v:fname,'\\.','/','g')
+au filetype python setlocal suffixesadd=.py
 
 
 syntax on
@@ -204,6 +218,9 @@ colo lucius
 "colo norm
 "colo xterm16
 
+set modeline
+set modelines=10
+set nobomb              " no Byte Order Mark
 set ttimeout
 set ttimeoutlen=100
 set encoding=utf-8
@@ -211,8 +228,10 @@ set termencoding=utf-8
 set title               " Change terminal's title.
 set showcmd             " Show command as you type it.
 set showmode            " Show current mode.
-"set noshowmode          " if mode is in airline
+"set noshowmode          " if mode is in airline.
 set nohlsearch          " Don't uglify just cause I searched.
+set ignorecase          " ignore case in search.
+set smartcase           " unless search term includes caps.
 set noshowmatch         " Don't show matching brackets.
 set matchtime=0         " Blink matching chars for 0 seconds.
 set nrformats-=octal    " Octals, wat?
@@ -235,9 +254,9 @@ set backspace=indent,eol,start
 set nowrap              " Don't wrap lines.
 set linebreak           " Wrap lines at convenient points.
 set more                " Use more prompt.
+set noswapfile          " Live dangerously.
 set nobackup            " Live dangerously.
 set nowritebackup
-set noswapfile          " Live dangerously.
 set hidden              " Hide buffers instead of closing them.
 set shortmess=ato       " Shorten messages and no splash screen.
 set viewoptions=unix,slash
@@ -255,10 +274,32 @@ set nocindent
 set autoindent
 
 set smarttab
+set expandtab
 set tabstop=2
 set softtabstop=2
 set shiftwidth=2
-set expandtab
+
+
+" GUI
+set selectmode=mouse    " Don't enter visual mode cause I touch mouse!
+set mouse=hr            " Let me copy/past dammit.
+set mousehide           " Hide the mouse pointer while typing.
+set guioptions=a        " Hide scrollbar/menu/tabs/etc.
+if has('gui_running')
+  set encoding=utf-8
+  "set guifont=Monospace\ Bold\ 9
+  set guifont=Bitstream\ Vera\ Sans\ Mono\ 8
+  " Turn off toolbar and menu.
+  set guioptions-=T
+  set guioptions-=m
+end
+
+
+" Remember stuff after quiting: marks, registers, searches, buffer list.
+set viminfo='20,<50,s10,h,%
+" When opening, jump to the last known cursor position.
+au BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$") | exe "normal g'\"" | endif
+
 
 "" Splits
 " :sv <filename> vert split
@@ -272,78 +313,42 @@ nnoremap <C-L> <C-W><C-L>
 nnoremap <C-H> <C-W><C-H>
 
 
-" Edit / reload .vimrc
-nmap <silent> <leader>ve :e $MYVIMRC<CR>
-nmap <silent> <leader>vr :so $MYVIMRC<CR>
-
-
-" Freakin awesome file completion.
-set wildmenu
-set wildmode=longest:full,full
-set wildignore=*.pyc,*.pyo,*.o,*.obj,*.swp
-set wildignore+=.hg,.git,.svn,*.DS_Store
-set wildignore+=*.jpg,*.jpeg,*.png,*.gif,*.bmp,*.ico
-set wildignore+=*.tgz,*.gz,*.zip,*.bz2,*.exe,*.bin
-
-" Complete filenames/lines with a quicker shortcut.
-imap <C-f> <C-x><C-f>
-imap <C-l> <C-x><C-l>
-" :o <file> open file in path.
-cab o find
-" gf edit file even if it doesn't exist.
-"map gf :edit <cfile><CR>
-" Search file's directory, then up from file's directory, then vim's cwd.
-set path+=.,./**,,
-" If line has 'include' replace dots with slashes and try gf again.
-set includeexpr=substitute(v:fname,'\\.','/','g')
-au filetype python setlocal suffixesadd=.py
-
-" When opening, jump to the last known cursor position.
-au BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$") | exe "normal g'\"" | endif
-" Remember stuff after quiting: marks, registers, searches, buffer list.
-set viminfo='20,<50,s10,h,%
-" Remove any trailing whitespace that is in the file.
-" This is awesome but makes commandmits bad unless everyone on team ensures no
-" trailing whitespace. Alternative is to fix whitespace only on lines modifed
-" using visual select and :FixWhitespace
-"au BufRead,BufWrite * if ! &bin | silent! %s/\s\+$//ge | endif
-
-" GUI
-set mouse=a
-set mousehide           " Hide the mouse pointer while typing.
-set guioptions=a        " Hide scrollbar/menu/tabs/etc.
-if has('gui_running')
-  set encoding=utf-8
-  "set guifont=Monospace\ Bold\ 9
-  set guifont=Bitstream\ Vera\ Sans\ Mono\ 8
-  " Turn off toolbar and menu.
-  set guioptions-=T
-  set guioptions-=m
-end
-
+"F1 showing help is not helpful
+au filetype python map <buffer> <F1> <ESC>
+au filetype python imap <buffer> <F1> <ESC>
 "F5 is not compile
 "au filetype python map <buffer> <F5> :w<CR>:!flake8 %<CR>
 "au filetype python imap <buffer> <F5> <ESC>:w<CR>:!flake8 %<CR>
 au filetype python map <buffer> <F5> <ESC>
 au filetype python imap <buffer> <F5> <ESC>
-" Switch to alternate file *and* correct column.
-nmap <C-6> <C-6>`"
 
-";=: jj=ESC
 nmap ; :
 imap jj <ESC>
 cmap jj <up>
 cmap kk <down>
 
+" Switch to alternate file *and* correct column.
+nnoremap <C-6> <C-6>`"
+
 " Swap these keys cause ` is cooler but ' is easier to type.
 nmap ' `
+
 " Make Y consistent with C and D.
 nmap Y y$
+
 " Reflow paragraph with Q in normal and visual mode.
 nmap Q gqap
 vmap Q gq
+" Vmap for maintain Visual Mode after shifting > and <
+"vmap < <gv
+"vmap > >gv
+
 " Sudo write.
 cmap w!! w !sudo tee % >/dev/null
+
+" Complete filenames/lines with a quicker shortcut.
+imap <C-f> <C-x><C-f>
+imap <C-l> <C-x><C-l>
 
 " Jump to matching pairs easily, with Tab.
 nmap <tab> %
@@ -353,9 +358,6 @@ vmap <tab> %
 nmap <leader><space> >>
 vmap <leader><space> >>
 
-" Jump to other window
-nmap <leader>w <C-W><C-W>
-
 " ReST titles
 nmap <silent> <leader>* yypVr*
 nmap <silent> <leader># yypVr#
@@ -364,15 +366,20 @@ nmap <silent> <leader>- yypVr-
 nmap <silent> <leader>~ yypVr~
 nmap <silent> <leader>^ yypVr^
 
+" Jump to other window
+nmap <leader>w <C-W><C-W>
 
 " Highlight merge conflict markers.
 match ErrorMsg '^\(<\|=\|>\)\{7\}\([^=].\+\)\?$'
 " Shortcut to jump to next merge conflict marker.
 nmap <silent> <leader>c /^\(<\\|=\\|>\)\{7\}\([^=].\+\)\?$<CR>
 
-" error-list nav
+" Error-list nav
 nnoremap <leader>[ :cprev<CR>
 nnoremap <leader>] :cnext<CR>
+" Having leader=<space> and insert mode leader defined is annoying as all hell.
+"inoremap <leader>[ :cprev<CR>
+"inoremap <leader>] :cnext<CR>
 
 " Buffer navigation.
 ":ls list
@@ -390,26 +397,29 @@ au FileType help :nnoremap <buffer> s /\|\zs\S\+\ze\|<CR>
 au FileType help :nnoremap <buffer> S ?\|\zs\S\+\ze\|<CR>
 
 
-" Sloppy fingers
-command! WQ wq
-command! Wq wq
-command! W w
-command! Q q
-command! E e
-iab teh the
-iab adn and
-iab Todo TODO:
-iab todo TODO:
-iab todo: TODO
-iab months- January February March April May June July August September October November December
-iab mths- Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec
-iab 80- 12345678901234567890123456789012345678901234567890123456789012345678901234567890
-iab hr- --------------------------------------------------------------------------------
-iab me- Norman J. Harman Jr.
-iab time- <C-R>=strftime("%H:%M:%S")<CR>
-iab date- <C-R>=strftime("%a, %d %b %Y")<CR>
-iab now- <C-R>=strftime("%a, %d %b %Y %H:%M:%S %z")<CR>
 cab spellon setlocal spell spelllang=en_us<CR>
+" Sloppy fingers
+cnorea W! w!
+cnorea Q! q!
+cnorea WQ wq
+cnorea Wq wq
+cnorea W w
+cnorea Q q
+cnorea E e
+inorea teh the
+inorea adn and
+inorea Todo TODO:
+inorea todo TODO:
+inorea todo: TODO:
+" Things I never remember to use.
+inorea months- January February March April May June July August September October November December
+inorea mths- Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec
+inorea 80- 12345678901234567890123456789012345678901234567890123456789012345678901234567890
+inorea hr- --------------------------------------------------------------------------------
+inorea me- Norman J. Harman Jr.
+inorea time- <C-R>=strftime("%H:%M:%S")<CR>
+inorea date- <C-R>=strftime("%a, %d %b %Y")<CR>
+inorea now- <C-R>=strftime("%a, %d %b %Y %H:%M:%S %z")<CR>
 
 
 "" Filetype handling
@@ -425,9 +435,18 @@ cab spellon setlocal spell spelllang=en_us<CR>
 " 2 - Support 1st line indent
 " r - Autoinsert comment leader with <Enter>
 " o - Autointert comment leader with 'o' 'O'
-au FileType python        :setlocal formatoptions=qln1r textwidth=78
-au FileType text          :setlocal formatoptions=tqn12 nocindent textwidth=78 ts=2 sw=2 sts=2 spell spelllang=en_us
-au FileType python        :setlocal omnifunc=pythoncomplete#Complete ts=4 sw=4 sts=4
+
+" Remove any trailing whitespace that is in the file.
+"au BufRead,BufWrite * if ! &bin | silent! %s/\s\+$//ge | endif
+" Which is awesome but creates commit noise unless everyone on team ensures no
+" trailing whitespace.
+" Alternative is to fix whitespace only on lines modifed using visual select
+" and :FixWhitespace
+
+au BufEnter * :syntax sync fromstart
+au FileType python        :setlocal formatoptions=qln1r textwidth=78 ts=4 sw=4 sts=4
+au FileType text          :setlocal formatoptions=tcqn12 nocindent textwidth=78 ts=2 sw=2 sts=2 spell spelllang=en_us
+au FileType python        :setlocal omnifunc=pythoncomplete#Complete
 au FileType javascript    :setlocal omnifunc=javascriptcomplete#CompleteJS
 au FileType html,markdown :setlocal omnifunc=htmlcomplete#CompleteTags
 au FileType css           :setlocal omnifunc=csscomplete#CompleteCSS
