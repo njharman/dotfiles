@@ -15,21 +15,19 @@
   default = simple
 
 [alias]
-  rl = reflog
-  ls = log -S
-  st = status --short
+  br = branch -a
   ci = commit --verbose
   co = checkout
+  dc = diff --cached
+  dh = diff HEAD
+  ls = log -S
+  rl = reflog
+  st = status --short
   up = "!git remote update -p; git merge --ff-only @{u}"
   lg = log --graph --pretty=format:'%Cred%h%Creset %Cred%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
   llg = log --graph --pretty=format:'%Cred%h%Creset %Cred%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset%+b' --abbrev-commit --name-status
-  #lgp = log -p
-
-  dif = diff HEAD
-  #dc = diff --cached
-  #ls = ls-files
-  ## Show files ignored by git:
-  #ign = ls-files -o -i --exclude-standard
+  # Show files ignored by git:
+  ign = ls-files -o -i --exclude-standard
 
 [color]
   ui = auto
@@ -46,3 +44,5 @@
   added = yellow
   changed = green
   untracked = cyan
+[push]
+  default = simple

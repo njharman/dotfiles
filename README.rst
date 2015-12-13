@@ -22,18 +22,27 @@ Things to install
 
 Ubuntu ::
     apt-get install build-essential aptitude
-    apt-get install zsh tmux vim git subversion meld tree
-
-sack/sag/ag ::
+    apt-get install zsh tmux vim git git-flow meld tree bash-completion
+    #apt-get install subversion
+    ## sack/sag/ag
     apt-get install automake pkg-config libpcre3-dev zlib1g-dev liblzma-dev
     git clone https://github.com/ggreer/the_silver_searcher
     cd the_silver_searcher
     ./build.sh
     mv ag ~/bin/
 
+OSX ::
+    ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+    brew install wget tmux git git-flow tree bash-completion
+    #brew install meld x11?
+    brew install the_silver_searcher
+    wget https://bootstrap.pypa.io/get-pip.py
+    python get-pip.py
+    rm get-pip.py
+    bash ~/.dotfiles/osx
+
 Python ::
     sudo apt-get -y install python-dev
-    https://github.com/mitsuhiko/pipsi
     sudo apt-get -y install python-pip
     sudo -H pip install -U vex virtualenv pip
     sudo -H pip install -U tox nose nosecomplete pep8 pep8-naming flake8 pyflakes coverage cprofilev isort
@@ -43,6 +52,7 @@ Python ::
     #sudo -H pip install -U bpython   # better docstrings
     #sudo -H pip install -U ptpython  # vim input, customizable
     #sudo -H pip install -U pipdeptree # dependencies in graph
+    #https://github.com/mitsuhiko/pipsi
 
 Other tools ::
     sudo -H pip install -U percol  # visual grep

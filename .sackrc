@@ -31,20 +31,21 @@ sack__default_editor=vim
 # # # # # # sack profiles # # # # # #
 # (Note: do not edit the beacon tags)
 # sack__beacon_tag_profiles
+#
+sack__profile_name=no_profile
+sack__profile_preset_flags="--ignore '*locale' --ignore '*pdf' --ignore '*min.js' --ignore '*min.css'"
+sack__profile_preset_directory=""
+#
+sack__profile_name=work
+sack__profile_preset_flags="--ignore '*locale' --ignore '*pdf' --ignore '*min.js' --ignore '*min.css'"
+sack__profile_preset_directory="~/work"
+#
+# sack__beacon_tag_new_profiles
+
 # sack__beacon_tag_current_profile BEGIN
 #
 sack__profile_name=no_profile
-sack__profile_preset_flags="--ignore '*locale' --ignore '*pdf'"
+sack__profile_preset_flags="--ignore '*locale' --ignore '*pdf' --ignore '*min.js' --ignore '*min.css'"
 sack__profile_preset_directory=""
 #
 # sack__beacon_tag_current_profile END
-#
-sack__profile_name=rpg
-sack__profile_preset_flags=""
-sack__profile_preset_directory="~/Dropbox/code/rpg/"
-#
-sack__profile_name=work
-sack__profile_preset_flags=""
-sack__profile_preset_directory="~/work/"
-#
-# sack__beacon_tag_new_profiles
