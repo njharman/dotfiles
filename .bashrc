@@ -68,6 +68,9 @@ alias ll='/bin/ls -lF'
 alias lt='/bin/ls -ltrsa'
 # Top 20 most run commands.
 alias myhistory='/bin/sed "s|/usr/bin/sudo ||g" ~/.bash_history|/usr/bin/cut -d " " -f 1|/usr/bin/sort|/usr/bin/uniq -c|/usr/bin/sort -rn|/usr/bin/head -20'
+alias gt='git st'
+alias gd='git diff'
+alias ga='git add'
 
 
 ## Colors & Prompt

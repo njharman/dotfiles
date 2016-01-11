@@ -45,7 +45,8 @@ Python ::
     sudo apt-get -y install python-dev
     sudo apt-get -y install python-pip
     sudo -H pip install -U vex virtualenv pip
-    sudo -H pip install -U tox nose nosecomplete pep8 pep8-naming flake8 pyflakes coverage cprofilev isort
+    sudo -H pip install -U tox isort autopep8 pep8 pep8-naming flake8 pyflakes coverage cprofilev
+    #sudo -H pip install -U nose nosecomplete
     #sudo -H pip install -U pdbpp wdb # pdb++, web debugger
     # Three python repls
     sudo -H pip install -U ipython memory_profiler line_profiler

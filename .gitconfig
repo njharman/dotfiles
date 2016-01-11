@@ -1,33 +1,37 @@
-# http://cheat.errtheblog.com/s/git/
 [user]
   name = Norman J. Harman Jr.
   email = njharman@gmail.com
+
 [apply]
   whitespace=warn
+
 [core]
   filemode = true
   autocrlf = false
-[http]
-#  sslVerify = false
+
 [branch]
   autosetupmerge = true
+
 [push]
   default = simple
 
 [alias]
+  b = branch
   br = branch -a
   ci = commit --verbose
   co = checkout
-  dc = diff --cached
+  ds = diff --staged
   dh = diff HEAD
-  ls = log -S
   rl = reflog
   st = status --short
-  up = "!git remote update -p; git merge --ff-only @{u}"
+  #up = "!git remote update -p; git merge --ff-only @{u}"
+  # log graph
   lg = log --graph --pretty=format:'%Cred%h%Creset %Cred%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
+  # long log graph
   llg = log --graph --pretty=format:'%Cred%h%Creset %Cred%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset%+b' --abbrev-commit --name-status
   # Show files ignored by git:
-  ign = ls-files -o -i --exclude-standard
+  ignored = ls-files -o -i --exclude-standard
+
 
 [color]
   ui = auto

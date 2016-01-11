@@ -90,7 +90,7 @@ function shared_install {
   echo  Python needfulls
   sudo -H pip install -U pip
   sudo -H pip install -U vex virtualenv
-  sudo -H pip install -U tox nose nosecomplete pep8 pep8-naming flake8 pyflakes coverage cprofilev isort
+  sudo -H pip install -U tox isort pep8 pep8-naming autopep8 flake8 pyflakes coverage cprofilev
 
   echo command line tools
   sudo -H pip install -U percol

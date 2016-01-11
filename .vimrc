@@ -56,7 +56,7 @@ Plugin 'VundleVim/Vundle.vim'
 Plugin 'bling/vim-airline'
 Plugin 'bronson/vim-trailing-whitespace'
 Plugin 'christoomey/vim-tmux-navigator'
-"Plugin 'davidhalter/jedi-vim'
+Plugin 'davidhalter/jedi-vim'
 Plugin 'ervandew/supertab'
 Plugin 'fs111/pydoc.vim'
 Plugin 'kien/ctrlp.vim'
@@ -343,6 +343,7 @@ vmap Q gq
 "vmap < <gv
 "vmap > >gv
 
+
 " Sudo write.
 cmap w!! w !sudo tee % >/dev/null
 
@@ -357,6 +358,11 @@ vmap <tab> %
 " Indent with spacebar.
 nmap <leader><space> >>
 vmap <leader><space> >>
+
+" isort visual selection
+vmap  <leader>i :!isort -<CR>
+" autopep8 visual selection
+vmap  <leader>8 :!autopep8 -<CR>
 
 " ReST titles
 nmap <silent> <leader>* yypVr*
@@ -436,12 +442,16 @@ inorea now- <C-R>=strftime("%a, %d %b %Y %H:%M:%S %z")<CR>
 " r - Autoinsert comment leader with <Enter>
 " o - Autointert comment leader with 'o' 'O'
 
-" Remove any trailing whitespace that is in the file.
+" Hi-light long lines.
+au BufWinEnter * let w:m1=matchadd('Search','\%>120v.\+', -1)
+au BufWinEnter * let w:m2=matchadd('ErrorMsg','\%<121v.\%>101v', -1)
+
+"" Remove any trailing whitespace that is in the file.
 "au BufRead,BufWrite * if ! &bin | silent! %s/\s\+$//ge | endif
-" Which is awesome but creates commit noise unless everyone on team ensures no
-" trailing whitespace.
-" Alternative is to fix whitespace only on lines modifed using visual select
-" and :FixWhitespace
+"" Which is awesome but creates commit noise unless everyone on team ensures no
+"" trailing whitespace.
+"" Alternative is to fix whitespace only on lines modifed using visual select
+"" and :FixWhitespace
 
 au BufEnter * :syntax sync fromstart
 au FileType python        :setlocal formatoptions=qln1r textwidth=78 ts=4 sw=4 sts=4
@@ -457,7 +467,6 @@ au BufNewFile,BufRead *.scss        :setlocal filetype=scss.css
 au BufNewFile,BufRead *.sass        :setlocal filetype=sass.css
 au BufNewFile,BufRead *SConscript   :setlocal filetype=python
 au BufNewFile,BufRead *SConstruct   :setlocal filetype=python
-
 "python with virtualenv support
 py << EOF
 import os
@@ -467,3 +476,5 @@ if 'VIRTUAL_ENV' in os.environ:
   activate_this = os.path.join(project_base_dir, 'bin/activate_this.py')
   execfile(activate_this, dict(__file__=activate_this))
 EOF
+
+"abbreviate dopdb import ipdb; ipdb.set_trace()
