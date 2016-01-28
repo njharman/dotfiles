@@ -56,7 +56,7 @@ Plugin 'VundleVim/Vundle.vim'
 Plugin 'bling/vim-airline'
 Plugin 'bronson/vim-trailing-whitespace'
 Plugin 'christoomey/vim-tmux-navigator'
-Plugin 'davidhalter/jedi-vim'
+"Plugin 'davidhalter/jedi-vim'
 Plugin 'ervandew/supertab'
 Plugin 'fs111/pydoc.vim'
 Plugin 'kien/ctrlp.vim'
@@ -202,6 +202,7 @@ cab o find
 " Search file's directory, then up from file's directory, then vim's cwd.
 set path+=.,./**,,
 " If line has 'include' replace dots with slashes and try gf again.
+"set isfname+=32         " Filenames have spaces. Kind of broken.
 set includeexpr=substitute(v:fname,'\\.','/','g')
 au filetype python setlocal suffixesadd=.py
 
@@ -245,7 +246,6 @@ set noerrorbells
 set ttyfast             " 1980 is long past.
 set lazyredraw          " Don't redraw in macros.
 set autoread            " Watch for file changes.
-"set isfname+=32         " Filenames have spaces. Kind of broken.
 set spellsuggest=10
 set fileformat=unix
 set shiftround          " Use multiple of shiftwidth when indenting with '<' and '>'.
@@ -461,6 +461,7 @@ au FileType javascript    :setlocal omnifunc=javascriptcomplete#CompleteJS
 au FileType html,markdown :setlocal omnifunc=htmlcomplete#CompleteTags
 au FileType css           :setlocal omnifunc=csscomplete#CompleteCSS
 au FileType xml           :setlocal omnifunc=xmlcomplete#CompleteTags
+au Filetype gitcommit     :setlocal spell textwidth=72
 au BufNewFile,BufRead *.rst         :setlocal filetype=text
 au BufNewFile,BufRead *.html        :setlocal filetype=html
 au BufNewFile,BufRead *.scss        :setlocal filetype=scss.css

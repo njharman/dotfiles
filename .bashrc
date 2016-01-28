@@ -113,9 +113,9 @@ if [ "$color_prompt" = yes ]; then
   _WHITE="\[\033[1;37m\]"
   _BLACK="\[\033[00m\]"
   if [ 0 -eq $UID ]; then
-    export PS1="$_RED\u$_GREEN@\h:$_BLUE\w$_RED\$(prompt_or_jobs '$') $_BLACK"
+    export PS1="$_RED\u$_GREEN@\h:$_BLUE\w$_RED\$(prompt_or_jobs '#') $_BLACK"
   else
-    export PS1="$_TEAL\u$_GREEN@\h:$_BLUE\w$_BLACK\$(prompt_virtualenv)\$(prompt_git_branch)\$(prompt_or_jobs '#') "
+    export PS1="$_TEAL\u$_GREEN@\h:$_BLUE\w$_BLACK\$(prompt_virtualenv)\$(prompt_git_branch)\$(prompt_or_jobs '$') "
   fi
 else
   PS1='\h:\w\$ '
