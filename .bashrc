@@ -60,8 +60,13 @@ function difs { svn diff $@ | cdiff -s; }
 # Find file with 'foo' in name.
 function f { /usr/bin/find . -iname "*$@*"; }
 # Alternative to "pgrep -fl".
-function psg { /bin/ps axuf | `which grep` -v grep | `which grep` "$@" -i --color=auto; }
-function pp { /bin/ps axuf | percol; }
+if [[ "$OSTYPE" = "darwin14" ]]; then
+  function psg { /bin/ps axu | `which grep` -v grep | `which grep` "$@" -i --color=auto; }
+  function pp { /bin/ps axu | percol; }
+else
+  function psg { /bin/ps axuf | `which grep` -v grep | `which grep` "$@" -i --color=auto; }
+  function pp { /bin/ps axuf | percol; }
+fi
 alias gh='history|grep'
 alias la='/bin/ls -A'
 alias ll='/bin/ls -lF'

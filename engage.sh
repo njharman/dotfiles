@@ -90,16 +90,10 @@ function shared_install {
   echo  Python needfulls
   sudo -H pip install -U pip
   sudo -H pip install -U vex virtualenv
-  sudo -H pip install -U tox isort pep8 pep8-naming autopep8 flake8 pyflakes coverage cprofilev
+  # in a venv sudo -H pip install -U tox isort pep8 pep8-naming autopep8 flake8 pyflakes coverage cprofilev
 
   echo command line tools
   sudo -H pip install -U percol
-
-  if [ ! -d ~/.vim/bundle/Vundle.vim ]; then
-    echo Vundle for Vim
-    mkdir -f ~/.vim/bundle
-    git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
-  fi
   }
 
 
@@ -107,7 +101,8 @@ function ubuntu_install {
   # Install the one time things for Ubuntu.
   echo Basics
   sudo apt-get -y install build-essential aptitude
-  sudo apt-get -y install zsh tmux git git-flow vim meld tree bash-completion
+  sudo apt-get -y install zsh tmux git git-flow vim tree bash-completion
+  #  meld is gui sudo apt-get -y install meld
 
   echo Silver Searcher
   sudo apt-get -y --force-yes install automake pkg-config libpcre3-dev zlib1g-dev liblzma-dev
@@ -122,8 +117,8 @@ function ubuntu_install {
   echo  Python Packages
   sudo apt-get -y install python-pip
   sudo apt-get -y install python-dev
-
   sudo -H pip install -U ipython memory_profiler line_profiler
+  shared_install
   }
 
 
@@ -204,9 +199,18 @@ function engage_up {
 
 
 function engage_vim {
+  if [ ! -d ~/.vim/bundle/Vundle.vim ]; then
+    echo Vundle for Vim
+    mkdir -p ~/.vim/bundle
+    git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
+  fi
+  if [ ! -d ~/.vim/bundle/Vundle.vim ]; then
+    echo Failed to find / install Vundel
+    exit 1
+  fi
   # Update vim plugins.
   cd ~/.vim/bundle/Vundle.vim
-  git merge
+  git pull
   cd -
   vim +PluginUpdate +qall
 #  cd $WORK
@@ -218,15 +222,19 @@ function engage_vim {
 
 init_the_dotfiles
 
-if [[ "$1" == "help" ]]; then
+if [[ "$1" == "help" || "$1" == "--help" || "$1" == "-h" ]]; then
   prog=`basename $0`
   cat <<USAGE
 $prog      - (re)create symbolic links, directories, etc.
+$prog ubu  - initial install for Ubuntu
+$prog osx  - initial install for OSX
 $prog up   - git pull
 $prog vim  - vim
 $prog all  - all of the above plus more
 USAGE
 elif [[ "$1" == "ubuntu" ]]; then
+  ubuntu_install
+elif [[ "$1" == "ubu" ]]; then
   ubuntu_install
 elif [[ "$1" == "osx" ]]; then
   osx_install

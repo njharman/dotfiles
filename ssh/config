@@ -18,7 +18,8 @@ Host *
 
   # All for speed / multiple connections
   Compression=yes
-  CompressionLevel=6 #1 fast, 9 slow(best)
+  # 1 fast, 9 slow(best)
+  CompressionLevel=6
   TCPKeepAlive=no
   ConnectTimeout=5
   ServerAliveInterval=60
@@ -32,20 +33,18 @@ Host *
 
 
 Host local
-  hostname
-  user njharman
   # Weak(fast) security for local.
   Ciphers arcfour256
   MACS umac-64@openssh.com
 
 Host github.com
-  hostname github.com
-  user njharman
+  Hostname github.com
+  User njharman
   PreferredAuthentications publickey
   IdentityFile ~/.keys/github_rsa
 
 Host knog
-  hostname knoggin.com
-  user njharman
+  Hostname knoggin.com
+  User njharman
   PreferredAuthentications publickey
   IdentityFile ~/.keys/home_rsa
