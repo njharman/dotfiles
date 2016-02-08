@@ -88,7 +88,7 @@ function prompt_git_branch {
   git branch --no-color 2> /dev/null | sed -e '/^[^*]/d' -e "s/* \(.*\)/(\1$(parse_git_dirty))/"
   }
 function prompt_or_jobs {
-  jcnt=`jobs|wc -l`
+  jcnt=`jobs|wc -l|sed "s/ //g"`
   [ 0 -eq $jcnt ] && echo "$1" || echo "[$jcnt]"
   }
 function prompt_virtualenv() {
