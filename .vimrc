@@ -5,6 +5,7 @@
 " :2match :3match
 " :setlocal spell spelllang=en_us suggest "z=", addword "zg", next/prev "]s"/"[s"
 " searches # * g# g* g, gd
+" non-ascii search: /[^\x00-\x7F]
 
 " Secuure file editing
 "set nobackup
@@ -16,8 +17,6 @@
 "set history=0
 "set nomodeline
 "set secure
-
-
 
 " Edit / reload .vimrc
 nmap <silent> <leader>ve :e $MYVIMRC<CR>
@@ -57,7 +56,7 @@ Plugin 'vim-airline/vim-airline'
 Plugin 'vim-airline/vim-airline-themes'
 Plugin 'bronson/vim-trailing-whitespace'
 Plugin 'christoomey/vim-tmux-navigator'
-"Plugin 'davidhalter/jedi-vim'
+Plugin 'davidhalter/jedi-vim'
 Plugin 'ervandew/supertab'
 Plugin 'fs111/pydoc.vim'
 Plugin 'kien/ctrlp.vim'
@@ -154,20 +153,19 @@ let g:pydoc_open_cmd = 'vsplit'
 "" Tab completion
 
 "" Jedi
-":Pyimport os    open os.py
 "<leader>g typical goto function
 "<leader>d follow identifier as far as possible, includes "imports and statements)
 "<leader>r Rename
 "<leader>n shows all the usages of a name
 "K Show Documentation/Pydoc
-"
+
 let g:jedi#show_call_signatures = "2"
-"let g:jedi#use_splits_not_buffers = "left"
-"let g:jedi#use_tabs_not_buffers = 1
-"" don't popup on .
-"let g:jedi#popup_on_dot = 0
-"" no docstring popup
-"autocmd FileType python setlocal completeopt-=preview
+let g:jedi#use_splits_not_buffers = "left"
+let g:jedi#use_tabs_not_buffers = 1
+" don't popup on .
+let g:jedi#popup_on_dot = 0
+" no docstring popup
+autocmd FileType python setlocal completeopt-=preview
 
 "" Syntastic
 "let g:syntastic_always_populate_loc_list = 1
@@ -209,6 +207,7 @@ au filetype python setlocal suffixesadd=.py
 
 
 syntax on
+set synmaxcol=300
 set t_Co=256
 set background=light
 let g:lucius_style='light'
@@ -324,7 +323,7 @@ au filetype python map <buffer> <F5> <ESC>
 au filetype python imap <buffer> <F5> <ESC>
 
 nmap ; :
-imap jj <ESC>
+imap kk <ESC>
 cmap jj <up>
 cmap kk <down>
 

@@ -20,7 +20,7 @@ $if mode=vi
     "\C-e": end-of-line
     "\C-d": delete-char
     # jj Return to command mode.
-    "jj": vi-movement-mode
+    "kk": vi-movement-mode
 #endif
 
 set completion-query-items 250

@@ -97,6 +97,30 @@ function shared_install {
   }
 
 
+function debiean_install {
+  # Install the one time things for Ubuntu.
+  echo Basics
+  sudo apt-get -y install build-essential aptitude
+  sudo apt-get -y install zsh tmux git-core git-flow vim tree bash-completion
+
+  echo Silver Searcher
+  sudo apt-get -y --force-yes install automake pkg-config libpcre3-dev zlib1g-dev liblzma-dev
+  cd ~/tmp/
+  rm -rf the_silver_searcher
+  git clone https://github.com/ggreer/the_silver_searcher
+  cd the_silver_searcher
+  ./build.sh
+  mv ag ~/bin/
+  cd ~
+
+  echo  Python Packages
+  sudo apt-get -y install python-pip
+  sudo apt-get -y install python-dev
+  sudo -H pip install -U ipython memory_profiler line_profiler
+  shared_install
+  }
+
+
 function ubuntu_install {
   # Install the one time things for Ubuntu.
   echo Basics

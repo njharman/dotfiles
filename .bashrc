@@ -48,7 +48,7 @@ alias :e=/usr/bin/vim
 #alias ipython="ptipython --vi"
 #alias ipython=bpython
 # Recursively remove compiled python files.
-alias nukepyc="/usr/bin/find . -name '*py[co]' -exec /bin/rm -f {} ';';/usr/bin/find . -name '__pycache__' -exec /bin/rm -rf {} ';'"
+alias nukepyc="/usr/bin/find -d . \( -name '*.py[co]' -or -name '__pycache__' \) -exec /bin/rm -rf {} ';'"
 # Chdir to Python module source.
 function cdp { cd $(python -c"from __future__ import print_function;import os,sys;print(os.path.dirname(__import__(sys.argv[1]).__file__))" $1); }
 function cd3 { cd $(python3 -c"import os,sys;print(os.path.dirname(__import__(sys.argv[1]).__file__))" $1); }
@@ -93,7 +93,7 @@ function prompt_or_jobs {
   }
 function prompt_virtualenv() {
   if [ -n "$VIRTUAL_ENV" ]; then
-    echo "(${VIRTUAL_ENV##*/})"
+    echo "[${VIRTUAL_ENV##*/}]"
   fi
   }
 

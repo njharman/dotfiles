@@ -18,6 +18,10 @@ This is how I do things, YMMV. ::
 
 Things to install
 -----------------
+Sudoers ::
+
+  njharman   ALL=NOPASSWD: ALL
+
 ./engage.sh ubuntu  # Installs the following...
 
 Ubuntu ::
@@ -93,7 +97,7 @@ cdp
 dif & difs
     Colorized svn diff and side by side diff.
 
-fname
+f
     Case insensitive find file with 'foo' in name.
 
 gh
@@ -271,6 +275,7 @@ __ http://meldmerge.org/
     - https://github.com/ervandew/supertab      awesome tab completion.
     - https://github.com/tomtom/tcomment_vim    *gc* (un)comment, *g<* explicit uncomment, *g>* explicit comment
     - https://github.com/bling/vim-airline
+    - https://github.com/bling/vim-airline-themes
     - https://github.com/nvie/vim-flake8        *<F8>* for code style nirvana.
     - https://github.com/tpope/vim-fugitive
     - https://github.com/airblade/vim-gitgutter

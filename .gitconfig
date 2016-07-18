@@ -32,7 +32,6 @@
   # Show files ignored by git:
   ignored = ls-files -o -i --exclude-standard
 
-
 [color]
   ui = auto
 [color "branch"]
@@ -48,3 +47,7 @@
   added = green
   changed = red
   untracked = cyan
+[fetrch]
+  prune = true
+[rerere]
+  enabled = true
