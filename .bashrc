@@ -14,6 +14,8 @@ shopt -s checkwinsize   # Resize window after each command, updating the values 
 stty -ixon
 stty ixany
 
+# Just work dammit
+export PYTHONIOENCODING=UTF-8
 
 ## Preferred tools
 export PAGER=/usr/bin/less
@@ -48,15 +50,15 @@ alias :e=/usr/bin/vim
 #alias ipython="ptipython --vi"
 #alias ipython=bpython
 # Recursively remove compiled python files.
-alias nukepyc="/usr/bin/find -d . \( -name '*.py[co]' -or -name '__pycache__' \) -exec /bin/rm -rf {} ';'"
+alias nukepyc="/usr/bin/find . -depth \( -name '*.py[co]' -or -name '__pycache__' \) -exec /bin/rm -rf {} ';'"
 # Chdir to Python module source.
 function cdp { cd $(python -c"from __future__ import print_function;import os,sys;print(os.path.dirname(__import__(sys.argv[1]).__file__))" $1); }
 function cd3 { cd $(python3 -c"import os,sys;print(os.path.dirname(__import__(sys.argv[1]).__file__))" $1); }
 # It's called ack, dammit!
 which ack &> /dev/null || alias ack="ack-grep"
 # Color diffs, requires cdiff.
-function dif { svn diff $@ | cdiff; }
-function difs { svn diff $@ | cdiff -s; }
+#function dif { svn diff $@ | cdiff; }
+#function difs { svn diff $@ | cdiff -s; }
 # Find file with 'foo' in name.
 function f { /usr/bin/find . -iname "*$@*"; }
 # Alternative to "pgrep -fl".
@@ -76,6 +78,7 @@ alias myhistory='/bin/sed "s|/usr/bin/sudo ||g" ~/.bash_history|/usr/bin/cut -d 
 alias gt='git st'
 alias gd='git diff'
 alias ga='git add'
+function ge { $EDITOR $(git diff --name-only --relative $@); }
 
 
 ## Colors & Prompt
@@ -100,7 +103,7 @@ function prompt_virtualenv() {
 if [ -e /lib/terminfo/x/xterm-256color ]; then
   export TERM='xterm-256color'
 else
-  export TERM='xterm-color'
+  export TERM='xterm'
 fi
 
 if [ -x /usr/bin/tput ] && tput setaf 1 >& /dev/null; then
@@ -133,7 +136,7 @@ export PS2='> '
 export PS4='+ '
 
 # ls colors.
-export CLICOLORS=1
+export CLICOLOR=1
 if [ -x /usr/bin/dircolors ]; then
   test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
   alias ls='ls --color=auto'

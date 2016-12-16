@@ -39,8 +39,6 @@ c = get_config()
 
 # A list of dotted module names of IPython extensions to load.
 c.InteractiveShellApp.extensions = [
-    'line_profiler_ext',
-    'memory_profiler_ext',
     ]
 
 # Run the module as a script.
@@ -118,8 +116,6 @@ c.InteractiveShellApp.extensions = [
 
 # A list of dotted module names of IPython extensions to load.
 c.TerminalIPythonApp.extensions = [
-    'line_profiler_ext',
-    'memory_profiler_ext',
     ]
 
 # The Logging format template

@@ -56,7 +56,7 @@ Plugin 'vim-airline/vim-airline'
 Plugin 'vim-airline/vim-airline-themes'
 Plugin 'bronson/vim-trailing-whitespace'
 Plugin 'christoomey/vim-tmux-navigator'
-Plugin 'davidhalter/jedi-vim'
+"Plugin 'davidhalter/jedi-vim'
 Plugin 'ervandew/supertab'
 Plugin 'fs111/pydoc.vim'
 Plugin 'kien/ctrlp.vim'
@@ -443,8 +443,30 @@ inorea now- <C-R>=strftime("%a, %d %b %Y %H:%M:%S %z")<CR>
 " o - Autointert comment leader with 'o' 'O'
 
 " Hi-light long lines.
-au BufWinEnter * let w:m1=matchadd('Search','\%>120v.\+', -1)
-au BufWinEnter * let w:m2=matchadd('ErrorMsg','\%<121v.\%>101v', -1)
+"au BufWinEnter * let w:m1=matchadd('Search','\%>120v.\+', -1)
+"au BufWinEnter * let w:m2=matchadd('ErrorMsg','\%<121v.\%>101v', -1)
+au FileType python let w:m1=matchadd('Search','\%>120v.\+', -1)
+au FileType python let w:m2=matchadd('ErrorMsg','\%<121v.\%>101v', -1)
+
+"" Remove any trailing whitespace that is in the file.
+"au BufRead,BufWrite * if ! &bin | silent! %s/\s\+$//ge | endif
+"" Which is awesome but creates commit noise unless everyone on team ensures no
+"" trailing whitespace.
+"" Alternative is to fix whitespace only on lines modifed using visual select
+"" and :FixWhitespace
+
+au BufEnter * :syntax sync fromstart
+au FileType python        :setlocal formatoptions=qln1r textwidth=78 ts=4 sw=4 sts=4
+au FileType text          :setlocal formatoptions=tcqn12 nocindent textwidth=78 ts=2 sw=2 sts=2 spell spelllang=en_us
+au FileType python        :setlocal omnifunc=pythoncomplete#Complete
+au FileType javascript    :setlocal omnifunc=javascriptcomplete#CompleteJS
+au FileType html,markdown :setlocal omnifunc=htmlcomplete#CompleteTags
+au FileType css           :setlocal omnifunc=csscomplete#CompleteCSS
+au FileType xml           :setlocal omnifunc=xmlcomplete#CompleteTags
+au Filetype gitcommit     :setlocal spell textwidth=72
+au BufNewFile,BufRead *.rst         :setlocal filetype=text
+au BufNewFile,BufRead *.html        :setlocal filetype=html
+au BufNewFile,BufRead *.scss        :setlocal filetype=scss.css
 
 "" Remove any trailing whitespace that is in the file.
 "au BufRead,BufWrite * if ! &bin | silent! %s/\s\+$//ge | endif
@@ -478,4 +500,4 @@ if 'VIRTUAL_ENV' in os.environ:
   execfile(activate_this, dict(__file__=activate_this))
 EOF
 
-"abbreviate dopdb import ipdb; ipdb.set_trace()
+abbreviate dopdb import ipdb; ipdb.set_trace()

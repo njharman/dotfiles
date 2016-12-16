@@ -7,13 +7,13 @@ else
     session="$1"
 fi
 
-tmux has-session -t "$session"
+tmux has-session -t "$session" &> /dev/null
 if [ $? != 0 ]; then
-    tmux new-session -s "$session" -n "desktop" -d
+    tmux -2 new-session -s "$session" -n "desktop" -d
 
     tmux split-window -t "$session":1 -v -l 30
     tmux select-pane  -t "$session":1 -l
-    tmux split-window -t "$session":1 -h -l 100
+    tmux split-window -t "$session":1 -h
     tmux select-pane  -t "$session":1 -l
 
     tmux select-window -t "$session":1

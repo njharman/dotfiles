@@ -8,6 +8,7 @@
 [core]
   filemode = true
   autocrlf = false
+  editor = vim
 
 [branch]
   autosetupmerge = true
@@ -31,6 +32,12 @@
   llg = log --graph --pretty=format:'%Cred%h%Creset %Cred%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset%+b' --abbrev-commit --name-status
   # Show files ignored by git:
   ignored = ls-files -o -i --exclude-standard
+  oldbranch = for-each-ref --sort=-authorname --format='%(refname) %(authorname) %(committerdate) ' refs/remotes/origin/
+  # git log --no-merges master..
+  # See only the file names that has changed in current branch
+  # git diff --no-commit-id --name-only --no-merges origin/master...
+  # Similar to above, but see statistics on what files have changed and how
+  # git diff --stat #Your diff condition
 
 [color]
   ui = auto

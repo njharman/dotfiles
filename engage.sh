@@ -97,7 +97,7 @@ function shared_install {
   }
 
 
-function debiean_install {
+function debian_install {
   # Install the one time things for Ubuntu.
   echo Basics
   sudo apt-get -y install build-essential aptitude
