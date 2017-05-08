@@ -150,16 +150,18 @@ remove_escaped_chars() {
 create_shortcut_cmd_vim() {
     # @todo: add support for other editors as well
     # The following literally writes the shorcut command and makes it executable
-    sack__shortcut_cmd_path=~/bin/$sack__shortcut_cmd
+    sack__shortcut_cmd_path=$sack__shortcut_path/$sack__shortcut_cmd
     cat > $sack__shortcut_cmd_path <<SHORTCUT
 #!/bin/bash
 sack__vim_shortcut=\$(sed -n "\$1p" < $sack__shortcut_file)
+sack__line=\`echo \$sack__vim_shortcut | cut -d" " -f1\`
+sack__file=\`echo \$sack__vim_shortcut | sed 's/'\$sack__line' //'\`
 if [ -z "\$EDITOR" ]; then
     sack__editor="$sack__default_editor"
 else
     sack__editor="\$EDITOR"
 fi
-\$sack__editor +\$sack__vim_shortcut
+\$sack__editor +\$sack__line "\$sack__file"
 SHORTCUT
     chmod +x $sack__shortcut_cmd_path
 }
@@ -167,7 +169,7 @@ SHORTCUT
 # Open shortcut using sublime rsub (https://github.com/henrikpersson/rsub)
 create_shortcut_cmd_rsub() {
 
-    sack__shortcut_cmd_path=~/bin/$sack__shortcut_cmd
+    sack__shortcut_cmd_path=$sack__shortcut_path/$sack__shortcut_cmd
     echo "#!/bin/bash" > $sack__shortcut_cmd_path
     echo "sack__rsub_shortcut=\$(sed -n \"\$1p\" < $sack__shortcut_file)" >> $sack__shortcut_cmd_path
     echo "fp=\`echo \$sack__rsub_shortcut | awk '{ print \$2 }'\`" >> $sack__shortcut_cmd_path
@@ -559,7 +561,7 @@ echo "===> Searching parameters: $@"
 echo ""
 
 # The actual wrapper around ack
-$sack__default_tool $sack__color_param $sack__flags $@ "$sack__cwd" | tee >$sack__dev_null >(display_shortcuts) >(process_shorcut_paths | remove_escaped_chars > $sack__shortcut_file)
+$sack__default_tool $sack__color_param $sack__flags "$@" "$sack__cwd" | tee >$sack__dev_null >(display_shortcuts) >(process_shorcut_paths | remove_escaped_chars > $sack__shortcut_file)
 
 # Show usage instructions for first-time users; this can be turned off
 if [[ $sack__show_instructions -eq 0 ]]; then
@@ -572,7 +574,7 @@ else
     echo ""
 fi
 
-if [ $sack__default_editor == 'vim' ]; then
+if [ $sack__default_editor == 'vim' -o $sack__default_editor == 'gvim' ]; then
     create_shortcut_cmd_vim
 elif [ $sack__default_editor == 'rsub' ]; then
     create_shortcut_cmd_rsub

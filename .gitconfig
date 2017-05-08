@@ -17,7 +17,7 @@
   default = simple
 
 [alias]
-  b = branch
+  #up = "!git remote update -p; git merge --ff-only @{u}"
   br = branch -a
   ci = commit --verbose
   co = checkout
@@ -25,14 +25,11 @@
   dh = diff HEAD
   rl = reflog
   st = status --short
-  #up = "!git remote update -p; git merge --ff-only @{u}"
-  # log graph
-  lg = log --graph --pretty=format:'%Cred%h%Creset %Cred%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
-  # long log graph
-  llg = log --graph --pretty=format:'%Cred%h%Creset %Cred%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset%+b' --abbrev-commit --name-status
-  # Show files ignored by git:
+  lg = log --graph --abbrev-commit --decorate --format=format:'%C(red)%h %C(black)%s %C(green)(%ar) %C(bold blue)<%an> %C(bold red)%d'
+  alg = log --graph --abbrev-commit --decorate --all --format=format:'%C(red)%h %C(black)%s %C(green)(%ar) %C(bold blue)<%an> %C(bold red)%d'
+  llg = log --graph --abbrev-commit --name-status --pretty=format:'%Cred%h%Creset %Cred%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset%+b'
   ignored = ls-files -o -i --exclude-standard
-  oldbranch = for-each-ref --sort=-authorname --format='%(refname) %(authorname) %(committerdate) ' refs/remotes/origin/
+  oldbranch = for-each-ref --sort=-authorname --format='%(refname) %(authorname) %(committerdate)' refs/remotes/origin/
   # git log --no-merges master..
   # See only the file names that has changed in current branch
   # git diff --no-commit-id --name-only --no-merges origin/master...
@@ -54,7 +51,7 @@
   added = green
   changed = red
   untracked = cyan
-[fetrch]
+[fetch]
   prune = true
 [rerere]
   enabled = true
