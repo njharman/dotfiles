@@ -12,18 +12,18 @@
 
 function vexor {
 ## local 3way cd and vex into virtualenv
-    project=$1
-    tmux new-window    -n "$target"
-    tmux send-keys     -t "$session:$target".1 "vex $project" C-m
-    tmux send-keys     -t "$session:$target".1 "cd ~/work/samba_$project" C-m
-    tmux split-window  -t "$session:$target".1 -v -l 30
-    tmux send-keys     -t "$session:$target".2 "vex $project" C-m
-    tmux send-keys     -t "$session:$target".2 "cd ~/work/samba_$project" C-m
-    tmux split-window  -t "$session:$target".1 -h
-    tmux send-keys     -t "$session:$target".3 "vex $project" C-m
-    tmux send-keys     -t "$session:$target".3 "cd ~/work/samba_$project" C-m
-    tmux select-pane   -t "$session:$target".1
-}
+  project=$1
+  tmux new-window    -n "$target"
+  tmux send-keys     -t "$session:$target".1 "vex $project" C-m
+  tmux send-keys     -t "$session:$target".1 "cd ~/work/samba_$project" C-m
+  tmux split-window  -t "$session:$target".1 -v -l 30
+  tmux send-keys     -t "$session:$target".2 "vex $project" C-m
+  tmux send-keys     -t "$session:$target".2 "cd ~/work/samba_$project" C-m
+  tmux split-window  -t "$session:$target".1 -h
+  tmux send-keys     -t "$session:$target".3 "vex $project" C-m
+  tmux send-keys     -t "$session:$target".3 "cd ~/work/samba_$project" C-m
+  tmux select-pane   -t "$session:$target".1
+  }
 
 
 if [[ "$2" == "" ]]; then

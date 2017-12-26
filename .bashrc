@@ -7,7 +7,10 @@ export HISTIGNORE='[bf]g:cd:cd -:cd ~:l[sal]:ls -al:history:exit::'
 export HISTCONTROL=erasedups
 # Require three consecutive ^D (eof) to exit terminal.
 export IGNOREEOF=2
-export PATH=$HOME/bin:/sbin:/usr/sbin:$PATH
+[[ ":$PATH:" != *":$HOME/bin:"* ]] && PATH="$HOME/bin:${PATH}"
+[[ ":$PATH:" != *":/sbin:"* ]] && PATH="/sbin:${PATH}"
+[[ ":$PATH:" != *":/usr/sbin:"* ]] && PATH="/usr/sbin:${PATH}"
+export PATH
 shopt -s cdspell        # Automatically fix 'cd folder' spelling mistakes.
 shopt -s checkwinsize   # Resize window after each command, updating the values of LINES and COLUMNS.
 # Limit terminal "locking" from ^S et al.
@@ -77,6 +80,9 @@ alias lt='/bin/ls -ltrsa'
 alias myhistory='/bin/sed "s|/usr/bin/sudo ||g" ~/.bash_history|/usr/bin/cut -d " " -f 1|/usr/bin/sort|/usr/bin/uniq -c|/usr/bin/sort -rn|/usr/bin/head -20'
 alias gt='git st'
 alias gd='git diff'
+alias gn='git diff --stat'
+alias gdd='git diff develop'
+alias gdn='git diff --stat develop'
 alias ga='git add'
 function ge { $EDITOR $(git diff --name-only --relative $@); }
 

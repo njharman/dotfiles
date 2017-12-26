@@ -30,6 +30,7 @@
   llg = log --graph --abbrev-commit --name-status --pretty=format:'%Cred%h%Creset %Cred%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset%+b'
   ignored = ls-files -o -i --exclude-standard
   oldbranch = for-each-ref --sort=-authorname --format='%(refname) %(authorname) %(committerdate)' refs/remotes/origin/
+  stats = shortlog -sn --since='10 weeks' --until='2 weeks'
   # git log --no-merges master..
   # See only the file names that has changed in current branch
   # git diff --no-commit-id --name-only --no-merges origin/master...

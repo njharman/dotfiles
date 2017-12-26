@@ -181,6 +181,8 @@ function engage_sym {
   ## ~/.config
   mkdir -p ~/.config
   symtastico ~/.config "$WORK/.config/*"
+  mkdir -p ~/.config/pip
+  symtastico ~/.config/pip "$WORK/.config/pip/*"
 
   ## ~/.ssh
   # Just dirs & permissions. Don't want actual config in github.

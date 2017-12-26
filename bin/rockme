@@ -7,16 +7,19 @@ else
     session="$1"
 fi
 
-tmux has-session -t "$session" &> /dev/null
-if [ $? != 0 ]; then
-    tmux -2 new-session -s "$session" -n "desktop" -d
-
-    tmux split-window -t "$session":1 -v -l 30
-    tmux select-pane  -t "$session":1 -l
-    tmux split-window -t "$session":1 -h
-    tmux select-pane  -t "$session":1 -l
-
-    tmux select-window -t "$session":1
+tmux has-session -t "$session" >> /dev/null
+if [ $? -eq 0 ]; then
+  echo reconnect
+  tmux -2 attach-session -t "$session"
+  exit
 fi
 
-tmux -2 attach-session -t "$session"
+echo new
+tmux -2 new-session -s "$session" -n "desktop"
+
+# tmux split-window -t "$session":1 -v -l 30
+# tmux select-pane  -t "$session":1 -l
+# tmux split-window -t "$session":1 -h
+# tmux select-pane  -t "$session":1 -l
+#
+# tmux select-window -t "$session":1

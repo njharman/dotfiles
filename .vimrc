@@ -456,8 +456,8 @@ au FileType python let w:m2=matchadd('ErrorMsg','\%<121v.\%>101v', -1)
 "" and :FixWhitespace
 
 au BufEnter * :syntax sync fromstart
-au FileType python        :setlocal formatoptions=qln1r textwidth=78 ts=4 sw=4 sts=4
-au FileType text          :setlocal formatoptions=tcqn12 nocindent textwidth=78 ts=2 sw=2 sts=2 spell spelllang=en_us
+au FileType python        :setlocal formatoptions=rqln12 textwidth=78 ts=4 sw=4 sts=4
+au FileType text          :setlocal formatoptions=qln12 nocindent textwidth=78 ts=2 sw=2 sts=2 spell spelllang=en_us
 au FileType python        :setlocal omnifunc=pythoncomplete#Complete
 au FileType javascript    :setlocal omnifunc=javascriptcomplete#CompleteJS
 au FileType html,markdown :setlocal omnifunc=htmlcomplete#CompleteTags
