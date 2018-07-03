@@ -1,40 +1,55 @@
+$include /etc/inputrc
+
+# Search history for the string of characters between the start of the current line and the current cursor position.
+"\C-p":history-search-backward
+"\C-n":history-search-forward
+# Expand Globs without executing. Eg 'rm *x'.
+"\C-g": glob-expand-word
+# Display possible completions using different colors to indicate their file types.
+set colored-stats On
+# Append slash to symbolic links to a directory.
+set mark-symlinked-directories On
+# Completions listed immediately instead of ringing the bell, when more than one possible completion.
+set show-all-if-ambiguous On
+# Completions listed immediately instead of ringing the bell, when more than one possible completion but no partial completion can be made.
+set show-all-if-unmodified On
+# Completions to be appended by characters that indicate their file types reported by the stat system call.
+set visible-stats On
+# set completion-ignore-case On
+
+# Do not match files with leading '.' unless leading '.' supplied.
+set match-hidden-files Off
+# Lines being edited will scroll horizontally on a single screen line when they are longer than the width of the screen, instead of wrapping onto a new screen line.
+#set horizontal-scroll-mode On
+# set expand-tilde On
+set skip-completed-text On
+
+# Allow UTF-8 input and output, instead of showing stuff like $'\0123\0456'.
+set input-meta On
+set output-meta On
+set convert-meta Off
+
 # Bash VI mode
 set editing-mode vi
 $if mode=vi
-    set keymap vi-command
-    # Prefix history search, vi-command mode.
-    "j": history-search-backward
-    "k": history-search-forward
-    "gg": beginning-of-history
-    "G": end-of-history
-    set keymap vi-insert
-    # Prefix history search, vi-insert mode.
-    "\e[A": history-search-backward
-    "\e[B": history-search-forward
-    "\e[C": forward-char
-    "\e[D": backward-char
-    # Expand Globs without executing. Eg 'rm *x'.
-    "\C-g": glob-expand-word
-    # Muscle memory; ctrl-a ctrl-e ctrl-d.
-    "\C-a": beginning-of-line
-    "\C-e": end-of-line
-    "\C-d": delete-char
-    # jj Return to command mode.
-    "kk": vi-movement-mode
+  # Insert each paste into the editing buffer as a single string of characters, instead of treating each character as if it had been read from the keyboard.
+  set enable-bracketed-paste On
+  set keymap vi-command
+  # Prefix history search, vi-command mode.
+  "j": history-search-backward
+  "k": history-search-forward
+  "gg": beginning-of-history
+  "G": end-of-history
+  set keymap vi-insert
+  # Prefix history search, vi-insert mode.
+  "\e[A": history-search-backward
+  "\e[B": history-search-forward
+  "\e[C": forward-char
+  "\e[D": backward-char
+  # Muscle memory; ctrl-a ctrl-e ctrl-d.
+  "\C-a": beginning-of-line
+  "\C-e": end-of-line
+  "\C-d": delete-char
+  # kk to command mode.
+  "kk": vi-movement-mode
 #endif
-
-set completion-query-items 250
-set mark-symlinked-directories on
-set show-all-if-unmodified on
-set show-all-if-ambiguous on
-set skip-completed-text on
-set match-hidden-files off
-set visible-stats on
-#set completion-ignore-case on
-
-#set horizontal-scroll-mode on
-
-# Allow UTF-8 input and output, instead of showing stuff like $'\0123\0456'.
-set input-meta on
-set output-meta on
-set convert-meta off

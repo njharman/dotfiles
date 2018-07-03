@@ -2,19 +2,20 @@
   name = Norman J. Harman Jr.
   email = njharman@gmail.com
 
-[apply]
-  whitespace=warn
-
 [core]
   filemode = true
   autocrlf = false
   editor = vim
-
+[apply]
+  whitespace=warn
 [branch]
   autosetupmerge = true
-
 [push]
   default = simple
+[fetch]
+  prune = true
+[rerere]
+  enabled = true
 
 [alias]
   #up = "!git remote update -p; git merge --ff-only @{u}"
@@ -52,7 +53,3 @@
   added = green
   changed = red
   untracked = cyan
-[fetch]
-  prune = true
-[rerere]
-  enabled = true

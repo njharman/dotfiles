@@ -207,7 +207,8 @@ au filetype python setlocal suffixesadd=.py
 
 
 syntax on
-set synmaxcol=300
+set synmaxcol=200
+syntax on
 set t_Co=256
 set background=light
 let g:lucius_style='light'
@@ -221,7 +222,7 @@ colo lucius
 
 set modeline
 set modelines=10
-set nobomb              " no Byte Order Mark
+set nobomb              " No Byte Order Mark.
 set ttimeout
 set ttimeoutlen=100
 set encoding=utf-8
@@ -229,10 +230,10 @@ set termencoding=utf-8
 set title               " Change terminal's title.
 set showcmd             " Show command as you type it.
 set showmode            " Show current mode.
-"set noshowmode          " if mode is in airline.
+"set noshowmode          " If mode is in airline.
 set nohlsearch          " Don't uglify just cause I searched.
-set ignorecase          " ignore case in search.
-set smartcase           " unless search term includes caps.
+set ignorecase          " Ignore case in search.
+set smartcase           " Unless search term includes caps.
 set noshowmatch         " Don't show matching brackets.
 set matchtime=0         " Blink matching chars for 0 seconds.
 set nrformats-=octal    " Octals, wat?
@@ -456,40 +457,19 @@ au FileType python let w:m2=matchadd('ErrorMsg','\%<121v.\%>101v', -1)
 "" and :FixWhitespace
 
 au BufEnter * :syntax sync fromstart
-au FileType python        :setlocal formatoptions=rqln12 textwidth=78 ts=4 sw=4 sts=4
-au FileType text          :setlocal formatoptions=qln12 nocindent textwidth=78 ts=2 sw=2 sts=2 spell spelllang=en_us
-au FileType python        :setlocal omnifunc=pythoncomplete#Complete
-au FileType javascript    :setlocal omnifunc=javascriptcomplete#CompleteJS
-au FileType html,markdown :setlocal omnifunc=htmlcomplete#CompleteTags
-au FileType css           :setlocal omnifunc=csscomplete#CompleteCSS
-au FileType xml           :setlocal omnifunc=xmlcomplete#CompleteTags
-au Filetype gitcommit     :setlocal spell textwidth=72
-au BufNewFile,BufRead *.rst         :setlocal filetype=text
 au BufNewFile,BufRead *.html        :setlocal filetype=html
-au BufNewFile,BufRead *.scss        :setlocal filetype=scss.css
-
-"" Remove any trailing whitespace that is in the file.
-"au BufRead,BufWrite * if ! &bin | silent! %s/\s\+$//ge | endif
-"" Which is awesome but creates commit noise unless everyone on team ensures no
-"" trailing whitespace.
-"" Alternative is to fix whitespace only on lines modifed using visual select
-"" and :FixWhitespace
-
-au BufEnter * :syntax sync fromstart
-au FileType python        :setlocal formatoptions=qln1r textwidth=78 ts=4 sw=4 sts=4
-au FileType text          :setlocal formatoptions=tcqn12 nocindent textwidth=78 ts=2 sw=2 sts=2 spell spelllang=en_us
-au FileType python        :setlocal omnifunc=pythoncomplete#Complete
-au FileType javascript    :setlocal omnifunc=javascriptcomplete#CompleteJS
-au FileType html,markdown :setlocal omnifunc=htmlcomplete#CompleteTags
-au FileType css           :setlocal omnifunc=csscomplete#CompleteCSS
-au FileType xml           :setlocal omnifunc=xmlcomplete#CompleteTags
-au Filetype gitcommit     :setlocal spell textwidth=72
 au BufNewFile,BufRead *.rst         :setlocal filetype=text
-au BufNewFile,BufRead *.html        :setlocal filetype=html
-au BufNewFile,BufRead *.scss        :setlocal filetype=scss.css
 au BufNewFile,BufRead *.sass        :setlocal filetype=sass.css
-au BufNewFile,BufRead *SConscript   :setlocal filetype=python
-au BufNewFile,BufRead *SConstruct   :setlocal filetype=python
+au BufNewFile,BufRead *.scss        :setlocal filetype=scss.css
+au FileType css           :setlocal omnifunc=csscomplete#CompleteCSS
+au FileType html,markdown :setlocal omnifunc=htmlcomplete#CompleteTags
+au FileType javascript    :setlocal omnifunc=javascriptcomplete#CompleteJS
+au FileType python        :setlocal formatoptions=rqln12 textwidth=78 ts=4 sw=4 sts=4
+au FileType python        :setlocal omnifunc=pythoncomplete#Complete
+au FileType text          :setlocal formatoptions=tcqln12 nocindent textwidth=78 ts=2 sw=2 sts=2 spell spelllang=en_us
+au FileType xml           :setlocal omnifunc=xmlcomplete#CompleteTags
+au Filetype gitcommit     :setlocal spell textwidth=72
+
 "python with virtualenv support
 py << EOF
 import os
@@ -500,4 +480,4 @@ if 'VIRTUAL_ENV' in os.environ:
   execfile(activate_this, dict(__file__=activate_this))
 EOF
 
-abbreviate dopdb import ipdb; ipdb.set_trace()
+abbreviate ipdb import ipdb; ipdb.set_trace()

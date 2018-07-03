@@ -1,15 +1,19 @@
 # If not running interactively, don't do anything
 [ -z "$PS1" ] && return
 
+path_append ()  { path_remove $1; export PATH="$PATH:$1"; }
+path_prepend () { path_remove $1; export PATH="$1:$PATH"; }
+path_remove ()  { export PATH=`echo -n $PATH | awk -v RS=: -v ORS=: '$0 != "'$1'"' | sed 's/:$//'`; }
+
 export HISTSIZE=999999
 export HISTFILESIZE=999999
 export HISTIGNORE='[bf]g:cd:cd -:cd ~:l[sal]:ls -al:history:exit::'
 export HISTCONTROL=erasedups
 # Require three consecutive ^D (eof) to exit terminal.
 export IGNOREEOF=2
-[[ ":$PATH:" != *":$HOME/bin:"* ]] && PATH="$HOME/bin:${PATH}"
 [[ ":$PATH:" != *":/sbin:"* ]] && PATH="/sbin:${PATH}"
 [[ ":$PATH:" != *":/usr/sbin:"* ]] && PATH="/usr/sbin:${PATH}"
+path_prepend $HOME/bin
 export PATH
 shopt -s cdspell        # Automatically fix 'cd folder' spelling mistakes.
 shopt -s checkwinsize   # Resize window after each command, updating the values of LINES and COLUMNS.
@@ -73,9 +77,9 @@ else
   function pp { /bin/ps axuf | percol; }
 fi
 alias gh='history|grep'
-alias la='/bin/ls -A'
-alias ll='/bin/ls -lF'
-alias lt='/bin/ls -ltrsa'
+alias la='/bin/ls --color -A'
+alias ll='/bin/ls --color -lF'
+alias lt='/bin/ls --color -ltrsa'
 # Top 20 most run commands.
 alias myhistory='/bin/sed "s|/usr/bin/sudo ||g" ~/.bash_history|/usr/bin/cut -d " " -f 1|/usr/bin/sort|/usr/bin/uniq -c|/usr/bin/sort -rn|/usr/bin/head -20'
 alias gt='git st'

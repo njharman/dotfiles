@@ -3,9 +3,9 @@
 
 # Kept so I don't hafta google how to do this again.
 # while getopts "b" option; do
-#     case $option in
-#         b) build_host='true';;
-#     esac
+#   case $option in
+#     b) build_host='true';;
+#   esac
 # done
 # shift $((OPTIND-1))
 
@@ -13,63 +13,65 @@
 function vexor {
 ## local 3way cd and vex into virtualenv
   project=$1
-  tmux new-window    -n "$target"
-  tmux send-keys     -t "$session:$target".1 "vex $project" C-m
-  tmux send-keys     -t "$session:$target".1 "cd ~/work/samba_$project" C-m
-  tmux split-window  -t "$session:$target".1 -v -l 30
-  tmux send-keys     -t "$session:$target".2 "vex $project" C-m
-  tmux send-keys     -t "$session:$target".2 "cd ~/work/samba_$project" C-m
-  tmux split-window  -t "$session:$target".1 -h
-  tmux send-keys     -t "$session:$target".3 "vex $project" C-m
-  tmux send-keys     -t "$session:$target".3 "cd ~/work/samba_$project" C-m
-  tmux select-pane   -t "$session:$target".1
+  tmux new-window -n "$target"
+  tmux send-keys -t "$session:$target".1 "vex $project" C-m
+  tmux send-keys -t "$session:$target".1 "cd ~/work/samba_$project" C-m
+  tmux split-window -t "$session:$target".1 -v -l 30
+  tmux send-keys -t "$session:$target".2 "vex $project" C-m
+  tmux send-keys -t "$session:$target".2 "cd ~/work/samba_$project" C-m
+  tmux split-window -t "$session:$target".1 -h
+  tmux send-keys -t "$session:$target".3 "vex $project" C-m
+  tmux send-keys -t "$session:$target".3 "cd ~/work/samba_$project" C-m
+  tmux select-pane -t "$session:$target".1
   }
 
 
 if [[ "$2" == "" ]]; then
-    session="amadeus"  # Default 'rockme' session.
+  session="amadeus"  # Default 'rockme' session.
 else
-    session="$1"
-    shift
+  session="$1"
+  shift
 fi
 
 if [[ "$1" == "" ]]; then
-    echo Read the source.
-    exit
+  echo Read the source.
+  exit
 else
-    target="$1"
+  target="$1"
 fi
 
 
 if [[ "${target:0:2}" == "ud" ]]; then
-    ## 3way local
-    # ud == Ubuntu Desktop, each ud must be unique
-    tmux new-window    -n "$target"
-    tmux split-window  -t "$session:$target".1 -v -l 30
-    tmux split-window  -t "$session:$target".1 -h
-    tmux select-pane   -t "$session:$target".1
+  ## 3way local
+  # ud == Ubuntu Desktop, each ud must be unique
+  tmux new-window -n "$target"
+  tmux split-window -t "$session:$target".1 -v -l 30
+  tmux split-window -t "$session:$target".1 -h
+  tmux select-pane -t "$session:$target".1
 elif [[ "${target:0:4}" == "meta" ]]; then
-    vexor metadata
+  vexor metadata
+  tmux split-window -t "$session:$target".3 -h
+  tmux send-keys -t "$session:$target".4 "cd ~/dropbox/work/samba;vim standup.txt" C-m
 elif [[ "$target" == "ansible" ]]; then
-    vexor ansible
+  vexor ansible
 elif [[ "${target:0:4}" == "pack" ]]; then
-    vexor packaging
+  vexor packaging
 else
-    ## 3-way SSH to target
-    # "work" pane
-    tmux new-window   -n "$target" "ssh $target"
-    # wide log below
-    if [[ "$target" == "db" ]]; then
-        tmux split-window -t "$session:$target".1 -dv -l 20 "ssh root@$target"
-        sleep 1
-        tmux send-keys    -t "$session:$target".2 'pg_activity -h ""' C-m
-    else
-        tmux split-window -t "$session:$target".1 -dv -l 20 "ssh $target"
-        sleep 1
-        tmux send-keys    -t "$session:$target".2 'clear;cd /var/log;echo "tailing some logs";sudo tail --follow=name messages syslog kern.log' C-m
-    fi
-    # root shell right
-    tmux split-window -t "$session:$target".1 -dh -p 50 "ssh $target"
+  ## 3-way SSH to target
+  # "work" pane
+  tmux new-window   -n "$target" "ssh $target"
+  # wide log below
+  if [[ "$target" == "db" ]]; then
+    tmux split-window -t "$session:$target".1 -dv -l 20 "ssh root@$target"
     sleep 1
-    tmux send-keys    -t "$session:$target".2 'sudo bash' C-m
+    tmux send-keys  -t "$session:$target".2 'pg_activity -h ""' C-m
+  else
+    tmux split-window -t "$session:$target".1 -dv -l 20 "ssh $target"
+    sleep 1
+    tmux send-keys  -t "$session:$target".2 'clear;cd /var/log;echo "tailing some logs";sudo tail --follow=name messages syslog kern.log' C-m
+  fi
+  # root shell right
+  tmux split-window -t "$session:$target".1 -dh -p 50 "ssh $target"
+  sleep 1
+  tmux send-keys  -t "$session:$target".2 'sudo bash' C-m
 fi
