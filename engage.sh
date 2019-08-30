@@ -88,35 +88,22 @@ function init_the_dotfiles {
 
 function shared_install {
   echo  Python needfulls
-  sudo -H pip install -U pip
-  sudo -H pip install -U vex virtualenv
-  # in a venv sudo -H pip install -U tox isort pep8 pep8-naming autopep8 flake8 pyflakes coverage cprofilev
-
-  echo command line tools
-  sudo -H pip install -U percol
+  sudo -H pip3 install -U pip3
+  sudo -H pip3 install -U vex
+  # in a venv sudo -H pip3 install -U tox isort pep8 pep8-naming autopep8 flake8 pyflakes coverage cprofilev
+  echo Command line tools
+  # sudo -H pip3 install -U percol
   }
 
 
 function debian_install {
   # Install the one time things for Ubuntu.
   echo Basics
-  sudo apt-get -y install build-essential aptitude
-  sudo apt-get -y install zsh tmux git-core git-flow vim tree bash-completion
-
-  echo Silver Searcher
-  sudo apt-get -y --force-yes install automake pkg-config libpcre3-dev zlib1g-dev liblzma-dev
-  cd ~/tmp/
-  rm -rf the_silver_searcher
-  git clone https://github.com/ggreer/the_silver_searcher
-  cd the_silver_searcher
-  ./build.sh
-  mv ag ~/bin/
-  cd ~
-
+  sudo apt-get -y install build-essential
+  sudo apt-get -y install git tmux vim tree wget bash-completion ripgrep
   echo  Python Packages
-  sudo apt-get -y install python-pip
-  sudo apt-get -y install python-dev
-  sudo -H pip install -U ipython memory_profiler line_profiler
+  sudo apt-get -y install python3-dev
+  sudo -H pip3 install -U ipython3 memory_profiler line_profiler
   shared_install
   }
 
@@ -124,39 +111,23 @@ function debian_install {
 function ubuntu_install {
   # Install the one time things for Ubuntu.
   echo Basics
-  sudo apt-get -y install build-essential aptitude
-  sudo apt-get -y install zsh tmux git git-flow vim tree bash-completion
-  #  meld is gui sudo apt-get -y install meld
-
-  echo Silver Searcher
-  sudo apt-get -y --force-yes install automake pkg-config libpcre3-dev zlib1g-dev liblzma-dev
-  cd ~/tmp/
-  rm -rf the_silver_searcher
-  git clone https://github.com/ggreer/the_silver_searcher
-  cd the_silver_searcher
-  ./build.sh
-  mv ag ~/bin/
-  cd ~
-
+  sudo apt-get -y install build-essential
+  sudo apt-get -y install git tmux vim tree wget bash-completion ripgrep
   echo  Python Packages
-  sudo apt-get -y install python-pip
-  sudo apt-get -y install python-dev
-  sudo -H pip install -U ipython memory_profiler line_profiler
+  sudo apt-get -y install python3-dev
+  sudo -H pip3 install -U ipython3 memory_profiler line_profiler
   shared_install
   }
 
 
 function osx_install {
-  ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-  brew install wget tmux git git-flow tree bash-completion
-  #brew install meld x11?
-  brew install the_silver_searcher
-  wget https://bootstrap.pypa.io/get-pip.py
-  python get-pip.py
-  rm get-pip.py
+  # ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+  brew update
+  brew install git tmux vim tree wget bash-completion ripgrep
+  brew install python3
   shared_install
   # Requires python-dev
-  #sudo -H pip install -U ipython memory_profiler line_profiler
+  #sudo -H pip3 install -U ipython memory_profiler line_profiler
   bash ~/.dotfiles/osx
   }
 
@@ -206,14 +177,6 @@ function engage_sym {
   chmod 700 ~/.ipython ~/.ipython/extensions ~/.ipython/profile_default
   symtastico ~/.ipython/profile_default "$WORK/.ipython/profile_default/ipython_config.py"
   symtastico ~/.ipython/extensions "$WORK/.ipython/extensions/*"
-
-#  ## ~/.subversion
-#  mkdir -p ~/.subversion
-#  chmod 700 ~/.subversion
-#  chmod -Rf o-rw ~/.subversion/auth/*
-#  chown -fR $USER ~/.subversion
-#  symtastico ~/.subversion `ls -d "$WORK"/.subversion/*`
-
   }
 
 
@@ -256,7 +219,7 @@ $prog ubu  - initial install for Ubuntu
 $prog osx  - initial install for OSX
 $prog up   - git pull
 $prog vim  - vim
-$prog all  - all of the above plus more
+$prog all  - up, vim, symlinks
 USAGE
 elif [[ "$1" == "ubuntu" ]]; then
   ubuntu_install

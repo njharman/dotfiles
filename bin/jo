@@ -10,22 +10,6 @@
 # shift $((OPTIND-1))
 
 
-function vexor {
-## local 3way cd and vex into virtualenv
-  project=$1
-  tmux new-window -n "$target"
-  tmux send-keys -t "$session:$target".1 "vex $project" C-m
-  tmux send-keys -t "$session:$target".1 "cd ~/work/samba_$project" C-m
-  tmux split-window -t "$session:$target".1 -v -l 30
-  tmux send-keys -t "$session:$target".2 "vex $project" C-m
-  tmux send-keys -t "$session:$target".2 "cd ~/work/samba_$project" C-m
-  tmux split-window -t "$session:$target".1 -h
-  tmux send-keys -t "$session:$target".3 "vex $project" C-m
-  tmux send-keys -t "$session:$target".3 "cd ~/work/samba_$project" C-m
-  tmux select-pane -t "$session:$target".1
-  }
-
-
 if [[ "$2" == "" ]]; then
   session="amadeus"  # Default 'rockme' session.
 else
@@ -49,29 +33,54 @@ if [[ "${target:0:2}" == "ud" ]]; then
   tmux split-window -t "$session:$target".1 -h
   tmux select-pane -t "$session:$target".1
 elif [[ "${target:0:4}" == "meta" ]]; then
-  vexor metadata
+  # 4way
+  project=samba_metadata
+  tmux new-window -n "$target" "vex metadata"
+  tmux split-window -t "$session:$target".1 -v -l 30 "vex metadata"
+  tmux split-window -t "$session:$target".1 -h "vex metadata"
   tmux split-window -t "$session:$target".3 -h
-  tmux send-keys -t "$session:$target".4 "cd ~/dropbox/work/samba;vim standup.txt" C-m
-elif [[ "$target" == "ansible" ]]; then
-  vexor ansible
-elif [[ "${target:0:4}" == "pack" ]]; then
-  vexor packaging
+  tmux send-keys -t "$session:$target".1 "cd ~/work/$project;clear" C-m
+  tmux send-keys -t "$session:$target".2 "cd ~/work/$project;clear;gunicorn -b 0.0.0.0:8010 -w 1 -k gevent --reload sm.rest_api.app:app" C-m
+  tmux send-keys -t "$session:$target".3 "cd ~/work/$project;clear" C-m
+  tmux send-keys -t "$session:$target".4 "cd ~/dropbox/work/samba;clear;ls" C-m
+  tmux select-pane -t "$session:$target".1
+  # tmux send-keys -t "$session:$target".2 "ssh -nN las_tunnel" C-m
+  # tmux send-keys -t "$session:$target".2 "ssh -nN staging_tunnel"
+elif [[ "$target" == "deploy" ]]; then
+  # ansible work windows and ssh to prod.
+  tmux new-window -n "$target"
+  tmux split-window -t "$session:$target".1 -v -l 30 "vex ansible"
+  tmux split-window -t "$session:$target".1 -h
+  tmux split-window -t "$session:$target".2 -v
+  tmux send-keys -t "$session:$target".2 "ssh app1" C-m
+  tmux send-keys -t "$session:$target".2 "vimode" C-m
+  tmux send-keys -t "$session:$target".3 "ssh app2" C-m
+  tmux send-keys -t "$session:$target".3 "vimode" C-m
+  tmux send-keys -t "$session:$target".1 "cd ~/work/samba_ansible/roles/metadata_app;clear" C-m
+  tmux send-keys -t "$session:$target".4 "cd ~/work/samba_ansible;clear" C-m
+elif [[ "$target" == "prod" ]]; then
+  ## to app1 app2
+  tmux new-window -n "$target" "ssh app1"
+  tmux split-window -t "$session:$target".1 -v -l 30
+  tmux split-window -t "$session:$target".1 -h "ssh app2"
+  tmux send-keys -t "$session:$target".3 "curl https://api.metadata.samba.tv/m2check" C-m
+  tmux select-pane -t "$session:$target".3
 else
   ## 3-way SSH to target
   # "work" pane
-  tmux new-window   -n "$target" "ssh $target"
+  tmux new-window -n "$target" "ssh $target"
   # wide log below
   if [[ "$target" == "db" ]]; then
     tmux split-window -t "$session:$target".1 -dv -l 20 "ssh root@$target"
     sleep 1
-    tmux send-keys  -t "$session:$target".2 'pg_activity -h ""' C-m
+    tmux send-keys -t "$session:$target".2 'pg_activity -h ""' C-m
   else
     tmux split-window -t "$session:$target".1 -dv -l 20 "ssh $target"
     sleep 1
-    tmux send-keys  -t "$session:$target".2 'clear;cd /var/log;echo "tailing some logs";sudo tail --follow=name messages syslog kern.log' C-m
+    tmux send-keys -t "$session:$target".2 'clear;cd /var/log;echo "tailing some logs";sudo tail --follow=name messages syslog kern.log' C-m
   fi
   # root shell right
   tmux split-window -t "$session:$target".1 -dh -p 50 "ssh $target"
   sleep 1
-  tmux send-keys  -t "$session:$target".2 'sudo bash' C-m
+  tmux send-keys -t "$session:$target".2 'sudo bash' C-m
 fi

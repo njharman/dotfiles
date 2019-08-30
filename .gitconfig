@@ -53,3 +53,5 @@
   added = green
   changed = red
   untracked = cyan
+# [merge]
+#   conflictstyle = diff3

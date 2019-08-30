@@ -7,7 +7,7 @@
 " searches # * g# g* g, gd
 " non-ascii search: /[^\x00-\x7F]
 
-" Secuure file editing
+" Secure file editing
 "set nobackup
 "set nowritebackup
 "set noundofile
@@ -34,51 +34,34 @@ filetype off
 " :h vundle
 set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
-"call vundle#begin('~/some/path/here')
-
-"" Examples
-"" plugin on GitHub repo
-"Plugin 'tpope/vim-fugitive'
-"" plugin from http://vim-scripts.org/vim/scripts.html
-"Plugin 'L9'
-"" Git plugin not hosted on GitHub
-"Plugin 'git://git.wincent.com/command-t.git'
-"" git repos on your local machine (i.e. when working on your own plugin)
-"Plugin 'file:///home/gmarik/path/to/plugin'
-"" The sparkup vim script is in a subdirectory of this repo called vim.
-"" Pass the path to set the runtimepath properly.
-"Plugin 'rstacruz/sparkup', {'rtp': 'vim/'}
-"" Avoid a name conflict with L9
-"Plugin 'user/L9', {'name': 'newL9'}
 
 Plugin 'VundleVim/Vundle.vim'
 Plugin 'vim-airline/vim-airline'
 Plugin 'vim-airline/vim-airline-themes'
-Plugin 'bronson/vim-trailing-whitespace'
 Plugin 'christoomey/vim-tmux-navigator'
-"Plugin 'davidhalter/jedi-vim'
+
+Plugin 'bronson/vim-trailing-whitespace'
+"Plugin 'tpope/vim-surround'
+Plugin 'tpope/vim-repeat'
+Plugin 'davidhalter/jedi-vim'
 Plugin 'ervandew/supertab'
-Plugin 'fs111/pydoc.vim'
 Plugin 'kien/ctrlp.vim'
 Plugin 'nvie/vim-flake8'
 Plugin 'sjl/gundo.vim'
-Plugin 'tomtom/tcomment_vim'
-Plugin 'voithos/vim-python-matchit'
+Plugin 'tomtom/tcomment_vim' " un/comment.
+
+":Gstatus :Gblame :Gedit blob|tree|commit|tag :Ggrep :Glog
 Plugin 'tpope/vim-fugitive'
+Plugin 'tommcdo/vim-fubitive'
+" ]c [c jump to hunk. Operate on hunks <leader>h? [s]tage, [u]ndo, [p]review
 Plugin 'airblade/vim-gitgutter'
+
+Plugin 'prabirshrestha/async.vim'
+Plugin 'prabirshrestha/vim-lsp'
+
+" File types
 Plugin 'chrisbra/csv.vim'
-
-" I never remember to use these
-"Plugin 'tpope/vim-surround'
-"Plugin 'tpope/vim-repeat'
-
-" not sold on usefulness yet
-"Plugin 'vim-scripts/YankRing.vim'
-"generate airline like status lines
-" Plugin 'edkolev/promptline.vim'
-" Plugin 'edkolev/tmuxline.vim'
-"integrates with airline
-"Plugin 'jmcantrell/vim-virtualenv'
+Plugin 'lervag/vimtex'
 
 call vundle#end()
 filetype plugin indent on
@@ -88,9 +71,6 @@ let mapleader = " "
 "" Statusline / Airline
 set laststatus=2
 set statusline=%F%m%r%h%w%<\ \ %{&ff}%y%=0x\%02.2B\ /\ \%03.3b\ \ %04lr:%02vc\ \ [%p%%\ of\ %L]
-" "syntastic
-" set statusline+=%#warningmsg#
-" "set statusline+=%{SyntasticStatuslineFlag let python_highlight_all=1
 let g:airline_theme='dark'
 let g:airline_theme='sol'
 let g:airline_left_sep=''
@@ -113,19 +93,21 @@ let g:airline_section_a = airline#section#create(['paste', 'iminsert', 'crypt'])
 nmap <silent> <leader>u :GundoToggle<CR>
 
 "" CtrlP
-"<c-z> to mark/unmark multiple files and <c-o> to open them.
+"<F5> to purge the cache for the current directory to get new files, remove deleted files and apply new ignore options.
 "<c-j>, <c-k> or the arrow keys to navigate the result list.
+"<c-f> and <c-b> to cycle between modes.
 "<c-n>, <c-p> to select the next/previous string in the prompt's history.
 "<c-y> to create a new file and its parent directories.
 "<c-t> or <c-v>, <c-x> to open the selected entry in a new tab or in a new split.
-"<c-f> and <c-b> to cycle between modes.
 "<c-d> to switch to filename only search instead of full path.
 "<c-r> to switch to regexp mode.
-"<F5> to purge the cache for the current directory to get new files, remove deleted files and apply new ignore options.
-let g:ctrlp_cmd = 'CtrlP' "CtrlPMixed
-" default search by filename
-let g:ctrlp_by_filename = 1
-" default regex search, switch with <C-r>
+"<c-z> to mark/unmark multiple files and <c-o> to open them.
+"Submit two or more dots .. to go up the directory tree by one or multiple levels.
+" End the input string with a colon :
+let g:ctrlp_cmd = 'CtrlPMixed'
+" Default search by filename
+let g:ctrlp_by_filename = 0
+" Default regex search, switch with <C-r>
 let g:ctrlp_regexp = 1
 " 1 - follow but ignore looped internal symlinks to avoid duplicates.
 let g:ctrlp_follow_symlinks = 1
@@ -133,10 +115,10 @@ let g:ctrlp_map = '<c-p>'
 let g:ctrlp_working_path_mode = 'a'
 
 "" Flake8
-"Should be the F8 key, OBVIOUSLY!
+" Use the F8 key, OBVIOUSLY!
 au FileType python map <buffer> <F8> :call Flake8()<CR>
 au FileType python imap <buffer> <F8> <ESC>:call Flake8()<CR>
-let g:flake8_quickfix_height=12
+let g:flake8_quickfix_height=10
 let g:flake8_show_in_gutter=1
 "let g:flake8_show_in_file=1
 
@@ -156,23 +138,13 @@ let g:pydoc_open_cmd = 'vsplit'
 "<leader>g typical goto function
 "<leader>d follow identifier as far as possible, includes "imports and statements)
 "<leader>r Rename
-"<leader>n shows all the usages of a name
-"K Show Documentation/Pydoc
-
+"<leader>n usages of a name
+"<leader>K Show Documentation/Pydoc
 let g:jedi#show_call_signatures = "2"
-let g:jedi#use_splits_not_buffers = "left"
-let g:jedi#use_tabs_not_buffers = 1
-" don't popup on .
-let g:jedi#popup_on_dot = 0
-" no docstring popup
-autocmd FileType python setlocal completeopt-=preview
-
-"" Syntastic
-"let g:syntastic_always_populate_loc_list = 1
-"let g:syntastic_auto_loc_list = 1
-"let g:syntastic_check_on_open = 1
-"let g:syntastic_check_on_wq = 0
-"let g:syntastic_quiet_messages = { "type": "style" }
+let g:jedi#documentation_command = "K"
+" let g:jedi#use_splits_not_buffers = "right"
+" let g:jedi#popup_on_dot = 0
+autocmd FileType python setlocal completeopt-=preview  " No docstring popup.
 
 
 "" SuperTab
@@ -195,7 +167,6 @@ set wildignore+=*.jpg,*.jpeg,*.png,*.gif,*.bmp,*.ico
 set wildignore+=*.tgz,*.gz,*.zip,*.bz2,*.exe,*.bin
 
 " :o <file> open file in path.
-cab o find
 " gf edit file even if it doesn't exist.
 "map gf :edit <cfile><CR>
 " Search file's directory, then up from file's directory, then vim's cwd.
@@ -206,9 +177,21 @@ set includeexpr=substitute(v:fname,'\\.','/','g')
 au filetype python setlocal suffixesadd=.py
 
 
+if executable('pyls')
+  " pip install python-language-server
+  au User lsp_setup call lsp#register_server({
+    \ 'name': 'pyls',
+    \ 'cmd': {server_info->['pyls']},
+    \ 'whitelist': ['python'],
+    \ })
+  au FileType python setlocal omnifunc=lsp#complete
+else
+  au FileType python :setlocal omnifunc=pythoncomplete#Complete
+endif
+
+
 syntax on
 set synmaxcol=200
-syntax on
 set t_Co=256
 set background=light
 let g:lucius_style='light'
@@ -220,6 +203,8 @@ colo lucius
 "colo norm
 "colo xterm16
 
+set virtualedit=block
+set nojoinspaces        " single space after period
 set modeline
 set modelines=10
 set nobomb              " No Byte Order Mark.
@@ -255,9 +240,10 @@ set backspace=indent,eol,start
 set nowrap              " Don't wrap lines.
 set linebreak           " Wrap lines at convenient points.
 set more                " Use more prompt.
+set cryptmethod=blowfish2
+set nowritebackup       " Security.
+set nobackup            " Security.
 set noswapfile          " Live dangerously.
-set nobackup            " Live dangerously.
-set nowritebackup
 set hidden              " Hide buffers instead of closing them.
 set shortmess=ato       " Shorten messages and no splash screen.
 set viewoptions=unix,slash
@@ -313,16 +299,6 @@ nnoremap <C-K> <C-W><C-K>
 nnoremap <C-L> <C-W><C-L>
 nnoremap <C-H> <C-W><C-H>
 
-
-"F1 showing help is not helpful
-au filetype python map <buffer> <F1> <ESC>
-au filetype python imap <buffer> <F1> <ESC>
-"F5 is not compile
-"au filetype python map <buffer> <F5> :w<CR>:!flake8 %<CR>
-"au filetype python imap <buffer> <F5> <ESC>:w<CR>:!flake8 %<CR>
-au filetype python map <buffer> <F5> <ESC>
-au filetype python imap <buffer> <F5> <ESC>
-
 nmap ; :
 imap kk <ESC>
 cmap jj <up>
@@ -358,7 +334,7 @@ vmap <tab> %
 
 " Indent with spacebar.
 nmap <leader><space> >>
-vmap <leader><space> >>
+vmap <leader><space> >
 
 " isort visual selection
 vmap  <leader>i :!isort -<CR>
@@ -384,9 +360,6 @@ nmap <silent> <leader>c /^\(<\\|=\\|>\)\{7\}\([^=].\+\)\?$<CR>
 " Error-list nav
 nnoremap <leader>[ :cprev<CR>
 nnoremap <leader>] :cnext<CR>
-" Having leader=<space> and insert mode leader defined is annoying as all hell.
-"inoremap <leader>[ :cprev<CR>
-"inoremap <leader>] :cnext<CR>
 
 " Buffer navigation.
 ":ls list
@@ -417,7 +390,7 @@ inorea teh the
 inorea adn and
 inorea Todo TODO:
 inorea todo TODO:
-inorea todo: TODO:
+inorea todo: TOdsdfa
 " Things I never remember to use.
 inorea months- January February March April May June July August September October November December
 inorea mths- Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec
@@ -448,13 +421,12 @@ inorea now- <C-R>=strftime("%a, %d %b %Y %H:%M:%S %z")<CR>
 "au BufWinEnter * let w:m2=matchadd('ErrorMsg','\%<121v.\%>101v', -1)
 au FileType python let w:m1=matchadd('Search','\%>120v.\+', -1)
 au FileType python let w:m2=matchadd('ErrorMsg','\%<121v.\%>101v', -1)
-
-"" Remove any trailing whitespace that is in the file.
-"au BufRead,BufWrite * if ! &bin | silent! %s/\s\+$//ge | endif
-"" Which is awesome but creates commit noise unless everyone on team ensures no
-"" trailing whitespace.
-"" Alternative is to fix whitespace only on lines modifed using visual select
-"" and :FixWhitespace
+"F1 showing help is not helpful.
+au filetype python map <buffer> <F1> <ESC>
+au filetype python imap <buffer> <F1> <ESC>
+"F5 there is no compile.
+au filetype python map <buffer> <F5> <ESC>
+au filetype python imap <buffer> <F5> <ESC>
 
 au BufEnter * :syntax sync fromstart
 au BufNewFile,BufRead *.html        :setlocal filetype=html
@@ -465,19 +437,23 @@ au FileType css           :setlocal omnifunc=csscomplete#CompleteCSS
 au FileType html,markdown :setlocal omnifunc=htmlcomplete#CompleteTags
 au FileType javascript    :setlocal omnifunc=javascriptcomplete#CompleteJS
 au FileType python        :setlocal formatoptions=rqln12 textwidth=78 ts=4 sw=4 sts=4
-au FileType python        :setlocal omnifunc=pythoncomplete#Complete
 au FileType text          :setlocal formatoptions=tcqln12 nocindent textwidth=78 ts=2 sw=2 sts=2 spell spelllang=en_us
 au FileType xml           :setlocal omnifunc=xmlcomplete#CompleteTags
 au Filetype gitcommit     :setlocal spell textwidth=72
 
+
+" syntax spell toplevel
+" let g:tex_flavor='latex'
+" set grepprg=grep\ -nH\ $*
+
 "python with virtualenv support
-py << EOF
-import os
-import sys
-if 'VIRTUAL_ENV' in os.environ:
-  project_base_dir = os.environ['VIRTUAL_ENV']
-  activate_this = os.path.join(project_base_dir, 'bin/activate_this.py')
-  execfile(activate_this, dict(__file__=activate_this))
-EOF
+" py << EOF
+" import os
+" import sys
+" if 'VIRTUAL_ENV' in os.environ:
+"   project_base_dir = os.environ['VIRTUAL_ENV']
+"   activate_this = os.path.join(project_base_dir, 'bin/activate_this.py')
+"   execfile(activate_this, dict(__file__=activate_this))
+" EOF
 
 abbreviate ipdb import ipdb; ipdb.set_trace()

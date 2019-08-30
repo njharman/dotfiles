@@ -5,35 +5,42 @@ $include /etc/inputrc
 "\C-n":history-search-forward
 # Expand Globs without executing. Eg 'rm *x'.
 "\C-g": glob-expand-word
-# Display possible completions using different colors to indicate their file types.
-set colored-stats On
 # Append slash to symbolic links to a directory.
-set mark-symlinked-directories On
+set mark-symlinked-directories on
 # Completions listed immediately instead of ringing the bell, when more than one possible completion.
-set show-all-if-ambiguous On
+set show-all-if-ambiguous on
 # Completions listed immediately instead of ringing the bell, when more than one possible completion but no partial completion can be made.
-set show-all-if-unmodified On
+set show-all-if-unmodified on
+# Display possible completions using different colors to indicate their file types.
+set colored-stats on
 # Completions to be appended by characters that indicate their file types reported by the stat system call.
-set visible-stats On
+set visible-stats on
 # set completion-ignore-case On
+# sets 3 to be the maximum number of characters to be the common prefix to display for completions.
+set completion-prefix-display-length 3
+# attempts to place the point at the same location on each history line retrieved
+set history-preserve-point on
+set page-completion off
 
 # Do not match files with leading '.' unless leading '.' supplied.
-set match-hidden-files Off
+set match-hidden-files off
 # Lines being edited will scroll horizontally on a single screen line when they are longer than the width of the screen, instead of wrapping onto a new screen line.
 #set horizontal-scroll-mode On
-# set expand-tilde On
-set skip-completed-text On
+set expand-tilde off
+set skip-completed-text on
 
 # Allow UTF-8 input and output, instead of showing stuff like $'\0123\0456'.
-set input-meta On
-set output-meta On
-set convert-meta Off
+set input-meta on
+set output-meta on
+set convert-meta off
+
+# ctrl-J terminate incremental saearch
 
 # Bash VI mode
 set editing-mode vi
 $if mode=vi
   # Insert each paste into the editing buffer as a single string of characters, instead of treating each character as if it had been read from the keyboard.
-  set enable-bracketed-paste On
+  set enable-bracketed-paste on
   set keymap vi-command
   # Prefix history search, vi-command mode.
   "j": history-search-backward
@@ -46,10 +53,6 @@ $if mode=vi
   "\e[B": history-search-forward
   "\e[C": forward-char
   "\e[D": backward-char
-  # Muscle memory; ctrl-a ctrl-e ctrl-d.
-  "\C-a": beginning-of-line
-  "\C-e": end-of-line
-  "\C-d": delete-char
   # kk to command mode.
   "kk": vi-movement-mode
 #endif

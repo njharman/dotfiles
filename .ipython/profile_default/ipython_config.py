@@ -196,7 +196,7 @@ c.TerminalIPythonApp.extensions = [
 # c.TerminalInteractiveShell.screen_length = 0
 
 # Set the editor used by IPython (default to $EDITOR/vi/notepad).
-# c.TerminalInteractiveShell.editor = 'vim'
+c.TerminalInteractiveShell.editor = 'vim'
 
 # Deprecated, use PromptManager.justify
 # c.TerminalInteractiveShell.prompts_pad_left = True
@@ -251,7 +251,7 @@ c.TerminalIPythonApp.extensions = [
 # c.TerminalInteractiveShell.multiline_history = True
 
 #
-# c.TerminalInteractiveShell.readline_use = True
+c.TerminalInteractiveShell.readline_use = True
 
 # Start logging to the given file in append mode.
 # c.TerminalInteractiveShell.logappend = ''
@@ -465,3 +465,9 @@ c.TerminalIPythonApp.extensions = [
 # Only necessary for items in script_magics where the default path will not find
 # the right interpreter.
 # c.ScriptMagics.script_paths = {}
+
+c.TerminalInteractiveShell.confirm_exit = False
+c.InteractiveShellApp.exec_lines = [
+    '%load_ext autoreload',
+    '%autoreload 2',
+    ]
