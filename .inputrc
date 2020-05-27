@@ -18,9 +18,8 @@ set visible-stats on
 # set completion-ignore-case On
 # sets 3 to be the maximum number of characters to be the common prefix to display for completions.
 set completion-prefix-display-length 3
-# attempts to place the point at the same location on each history line retrieved
-set history-preserve-point on
-set page-completion off
+# Attempts to place the point at the same location on each history line retrieved
+#set history-preserve-point on
 
 # Do not match files with leading '.' unless leading '.' supplied.
 set match-hidden-files off

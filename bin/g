@@ -1,0 +1,5 @@
+#!/bin/bash
+sack__vim_shortcut=$(sed -n "$1p" < /Users/norman.harman/.sack_shortcuts)
+sack__line=`echo $sack__vim_shortcut | cut -d" " -f1`
+sack__file=`echo $sack__vim_shortcut | sed 's/'$sack__line' //'`
+vim +$sack__line "$sack__file"

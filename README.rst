@@ -65,7 +65,6 @@ Other tools ::
     git clone https://github.com/licenses/lice.git
 
     Edit .ssh/config based on ssh/config.
-    Install bash_completion.d/
 
 
 Contents
@@ -287,10 +286,6 @@ __ http://meldmerge.org/
 Templates
 ---------
 Things not automatically copied / installed.
-
-bash_completion.d
-    Copy to /etc/bash_completion.d/
-    ``vagrant`` from https://github.com/rjw1/vagrant-bash-completion
 
 osx
     Not a configuration file.  Execute it under osX to set bunch of crap.

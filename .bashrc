@@ -11,15 +11,9 @@ shopt -s checkwinsize   # Resize window after each command, updating the values 
 stty -ixon  # Limit terminal "locking" from ^S et al.
 stty ixany  # Allow any character to restart output.
 
-# Faster sorting
-export LC_COLLATE=C
-export LANG=C
-# Faster ls, don't colorize executable, suid, sgid, or capbilities
-export LS_COLORS='ex=00:su=00:sg=00:ca=00:'
-
 export HISTSIZE=999999
 export HISTFILESIZE=999999
-export HISTIGNORE='[bf]g:cd:cd -:cd ~:l[sal]:ls -al:history:exit::'
+export HISTIGNORE='[bf]g:cd:cd .:cd -:cd ~:l[sal]:ls -al:history:exit::'
 export HISTCONTROL=erasedups
 # Require three consecutive ^D (eof) to exit terminal.
 export IGNOREEOF=2
@@ -31,6 +25,7 @@ export PATH
 
 # Just work dammit
 export PYTHONIOENCODING=UTF-8
+export PIP_REQUIRE_VIRTUALENV=true
 
 ## Preferred tools
 export PAGER=/usr/bin/less
@@ -54,8 +49,6 @@ alias lt='/bin/ls -Gltrsa'
 alias visudo="/usr/bin/sudo EDITOR=$EDITOR /usr/sbin/visudo"
 # Muscle memory.
 alias :e=/usr/bin/vim
-# Recursively remove compiled python files.
-alias nukepyc="/usr/bin/find . -depth \( -name '*.py[co]' -or -name '__pycache__' \) -exec /bin/rm -rf {} ';'"
 # Shortify git commands.
 alias ga='git add'
 alias gt='git st'
@@ -63,15 +56,15 @@ alias gd='git diff'
 alias gn='git diff --stat'
 alias gdd='git diff develop'
 alias gdn='git diff --stat develop'
+alias gdm='git diff --stat master'
 function ge { $EDITOR $(git diff --name-only --relative $@); }
-# It's called ack, dammit!
-which ack &> /dev/null || alias ack="ack-grep"
+# Recursively remove compiled python files.
+alias nukepyc="/usr/bin/find . -depth \( -name '*.py[co]' -or -name '__pycache__' \) -exec /bin/rm -rf {} ';'"
 # Change dir to Python module source.
 function cdp { cd $(python3 -c"import os,sys;print(os.path.dirname(__import__(sys.argv[1]).__file__))" $1); }
-function cd2 { cd $(python -c"from __future__ import print_function;import os,sys;print(os.path.dirname(__import__(sys.argv[1]).__file__))" $1); }
 # Find file with 'foo' in name.
 function f { /usr/bin/find . -iname "*$@*"; }
-# Searchign running processes
+# Searching running processes
 if is_osx; then
   function psg { /bin/ps axu | `which grep` -v grep | `which grep` "$@" -i --color=auto; }
   function psp { /bin/ps axu | percol; }
@@ -82,6 +75,15 @@ fi
 
 
 ## Colors & Prompt
+
+# Faster sorting
+export LANG=C
+export LC_COLLATE=C
+# Faster ls, don't colorize executable, suid, sgid, or capbilities
+export LS_COLORS='ex=00:su=00:sg=00:ca=00:'
+
+# Shorten prompt paths.
+PROMPT_DIRTRIM=2
 
 # Git enhance prompt.
 function parse_git_dirty {
@@ -129,7 +131,6 @@ else
   PS1='\h:\w\$ '
 fi
 
-PROMPT_DIRTRIM=2
 unset color_prompt
 
 export PS2='> '
@@ -163,6 +164,8 @@ fi
 if is_osx; then
     . `brew --prefix`/etc/bash_completion
 fi
+eval "$(vex --shell-config bash)"
+eval "$(pip completion --bash)"
 
 ## Local Things
 if [ -f ~/.bash_local ]; then
