@@ -360,6 +360,8 @@ nmap <silent> <leader>c /^\(<\\|=\\|>\)\{7\}\([^=].\+\)\?$<CR>
 " Error-list nav
 nnoremap <leader>[ :cprev<CR>
 nnoremap <leader>] :cnext<CR>
+nnoremap <leader>k :cprev<CR>
+nnoremap <leader>j :cnext<CR>
 
 " Buffer navigation.
 ":ls list
