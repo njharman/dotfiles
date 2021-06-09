@@ -53,9 +53,11 @@ elif [[ "$target" == "deploy" ]]; then
   tmux -u split-window -t "$session:$target".1 -v -l 30 "vex ansible"
   tmux -u split-window -t "$session:$target".1 -h
   tmux -u split-window -t "$session:$target".2 -v
+  tmux -u send-keys -t "$session:$target".2 "cd ~/work/samba_ansible" C-m
   tmux -u send-keys -t "$session:$target".2 "ssh app1" C-m
   tmux -u send-keys -t "$session:$target".2 "vimode" C-m
   tmux -u send-keys -t "$session:$target".2 "restactivate" C-m
+  tmux -u send-keys -t "$session:$target".3 "cd ~/work/samba_ansible" C-m
   tmux -u send-keys -t "$session:$target".3 "ssh app2" C-m
   tmux -u send-keys -t "$session:$target".3 "vimode" C-m
   tmux -u send-keys -t "$session:$target".3 "restactivate" C-m

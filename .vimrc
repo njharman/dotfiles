@@ -8,6 +8,7 @@
 " non-ascii search: /[^\x00-\x7F]
 
 " Secure file editing
+:set cryptmethod=blowfish2
 "set nobackup
 "set nowritebackup
 "set noundofile
