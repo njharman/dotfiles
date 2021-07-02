@@ -40,10 +40,7 @@ Plugin 'VundleVim/Vundle.vim'
 Plugin 'vim-airline/vim-airline'
 Plugin 'vim-airline/vim-airline-themes'
 Plugin 'christoomey/vim-tmux-navigator'
-
 Plugin 'bronson/vim-trailing-whitespace'
-"Plugin 'tpope/vim-surround'
-Plugin 'tpope/vim-repeat'
 Plugin 'davidhalter/jedi-vim'
 Plugin 'ervandew/supertab'
 Plugin 'kien/ctrlp.vim'
@@ -53,7 +50,6 @@ Plugin 'tomtom/tcomment_vim' " un/comment.
 
 ":Gstatus :Gblame :Gedit blob|tree|commit|tag :Ggrep :Glog
 Plugin 'tpope/vim-fugitive'
-Plugin 'tommcdo/vim-fubitive'
 " ]c [c jump to hunk. Operate on hunks <leader>h? [s]tage, [u]ndo, [p]review
 Plugin 'airblade/vim-gitgutter'
 
@@ -61,8 +57,8 @@ Plugin 'prabirshrestha/async.vim'
 Plugin 'prabirshrestha/vim-lsp'
 
 " File types
-Plugin 'chrisbra/csv.vim'
-Plugin 'lervag/vimtex'
+"Plugin 'chrisbra/csv.vim'
+"Plugin 'lervag/vimtex'
 
 call vundle#end()
 filetype plugin indent on
@@ -152,7 +148,7 @@ autocmd FileType python setlocal completeopt-=preview  " No docstring popup.
 " tab to start completion
 map <S-Tab> <C-x><C-p>
 set completeopt=menuone,longest,preview
-"let g:SuperTabContextDefaultCompletionType = "<c-p>"
+let g:SuperTabContextDefaultCompletionType = "<c-x><c-o>"
 let g:SuperTabContextTextOmniPrecedence = ['&omnifunc', '&completefunc']
 let g:SuperTabNoCompleteAfter = [':', ',', '\s', '^']
 let g:SuperTabLongestEnhanced = 0

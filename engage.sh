@@ -86,36 +86,14 @@ function init_the_dotfiles {
   fi
   }
 
-function shared_install {
-  echo  Python needfulls
-  sudo -H pip3 install -U pip3
-  sudo -H pip3 install -U vex
-  # in a venv sudo -H pip3 install -U tox isort pep8 pep8-naming autopep8 flake8 pyflakes coverage cprofilev
-  echo Command line tools
-  # sudo -H pip3 install -U percol
-  }
-
-
-function debian_install {
-  # Install the one time things for Ubuntu.
-  echo Basics
-  sudo apt-get -y install build-essential
-  sudo apt-get -y install git tmux vim tree wget bash-completion ripgrep
-  echo  Python Packages
-  sudo apt-get -y install python3-dev
-  sudo -H pip3 install -U ipython3 memory_profiler line_profiler
-  shared_install
-  }
-
 
 function ubuntu_install {
   # Install the one time things for Ubuntu.
   echo Basics
-  sudo apt-get -y install build-essential
-  sudo apt-get -y install git tmux vim tree wget bash-completion ripgrep
+  sudo apt -y install build-essential
+  sudo apt -y install git tmux vim tree wget bash-completion ripgrep
   echo  Python Packages
-  sudo apt-get -y install python3-dev
-  sudo -H pip3 install -U ipython3 memory_profiler line_profiler
+  sudo apt -y install python3-pip
   shared_install
   }
 
@@ -129,6 +107,13 @@ function osx_install {
   # Requires python-dev
   #sudo -H pip3 install -U ipython memory_profiler line_profiler
   bash ~/.dotfiles/osx
+  }
+
+
+function shared_install {
+  echo  Python needfulls
+  sudo -H pip3 install -U pip
+  sudo -H pip3 install -U vex
   }
 
 
@@ -156,10 +141,12 @@ function engage_sym {
   symtastico ~/.config/pip "$WORK/.config/pip/*"
 
   ## ~/.ssh
-  # Just dirs & permissions. Don't want actual config in github.
   mkdir -p ~/.ssh/cm_socket/
   chmod -f 700 ~/.ssh ~/.ssh/cm_socket/
   chmod -f 600 ~/.ssh/authorized_keys
+  chmod -f 600 ~/.ssh/*pub
+  chmod -f 600 ~/.ssh/*pem
+  chmod -f 600 ~/.ssh/*rsa
   chown -fR $USER ~/.ssh
 
   ## ~/.keys
@@ -173,10 +160,10 @@ function engage_sym {
 
   ## ~/.ipython
   # ipython profile create
-  mkdir -p ~/.ipython/extensions ~/.ipython/profile_default
-  chmod 700 ~/.ipython ~/.ipython/extensions ~/.ipython/profile_default
-  symtastico ~/.ipython/profile_default "$WORK/.ipython/profile_default/ipython_config.py"
-  symtastico ~/.ipython/extensions "$WORK/.ipython/extensions/*"
+  #mkdir -p ~/.ipython/extensions ~/.ipython/profile_default
+  #chmod 700 ~/.ipython ~/.ipython/extensions ~/.ipython/profile_default
+  #symtastico ~/.ipython/profile_default "$WORK/.ipython/profile_default/ipython_config.py"
+  #symtastico ~/.ipython/extensions "$WORK/.ipython/extensions/*"
   }
 
 
@@ -225,8 +212,6 @@ elif [[ "$1" == "ubuntu" ]]; then
   ubuntu_install
 elif [[ "$1" == "ubu" ]]; then
   ubuntu_install
-elif [[ "$1" == "osx" ]]; then
-  osx_install
 elif [[ "$1" == "up" ]]; then
   engage_up
 elif [[ "$1" == "vim" ]]; then

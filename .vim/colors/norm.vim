@@ -11,7 +11,7 @@ if exists("syntax_on")
 endif
 let g:colors_name = "norm"
 
-hi Normal       ctermfg=Gray 
+hi Normal       ctermfg=Gray
 hi Comment      ctermfg=DarkGray
 hi Constant     ctermfg=Green
 hi Identifier   ctermfg=Blue

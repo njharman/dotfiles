@@ -17,34 +17,35 @@ Host *
   AddressFamily=inet
 
   # All for speed / multiple connections
+  PreferredAuthentications=publickey
   Compression=yes
   # 1 fast, 9 slow(best)
-  CompressionLevel=6
+  #CompressionLevel=6
   TCPKeepAlive=no
   ConnectTimeout=5
   ServerAliveInterval=60
   ServerAliveCountMax=60
   StrictHostKeyChecking=no
   GSSAPIAuthentication=no
-  # not in my ssh UseDNS=no
-  ControlPersist=8h
+  ControlPersist=2h
   ControlMaster auto
   ControlPath ~/.ssh/cm_socket/%r@%h:%p
 
 
 Host local
+  Hostname 127.0.0.1
+  User njharman
+  IdentityFile ~/.ssh/dev_rsa
   # Weak(fast) security for local.
-  Ciphers arcfour256
+  Ciphers aes128-ctr
   MACS umac-64@openssh.com
 
 Host github.com
   Hostname github.com
   User njharman
-  PreferredAuthentications publickey
-  IdentityFile ~/.keys/github_rsa
+  IdentityFile ~/.ssh/github_rsa
 
 Host knog
   Hostname knoggin.com
   User njharman
-  PreferredAuthentications publickey
-  IdentityFile ~/.keys/home_rsa
+  IdentityFile ~/.ssh/dev_rsa
