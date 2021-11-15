@@ -1,126 +1,194 @@
 #!/bin/bash
+#
+# @filename: sack
+#
+# @author: Sampson L. Chen (sampson-chen / slchen)
+# @date: 2012-10-14
+#
+# @description:
+# s(hortcut)-ack - a faster way to use ack (or grep)!
+#
+# For more details:
+# https://github.com/sampson-chen/sack
+#
+# @dependencies:
+# - ack (http://betterthangrep.com/)
+# - tee
+# - awk
+# - sed (GNU sed)
+#
+# @version:
+# 1.0
+#
+# @license:
+# - MIT as of this version.
+#
+# @usage:
+# - for additional usage information, see README.md
+
+# ==============================================================
+# ==============================================================
+
+# Script Functions
 
 # Print information about the current profile
 print_current_profile_info() {
-  echo ""
-  echo "===> Current Profile: $sack__profile_name"
-  echo "===> Using flags: $sack__profile_preset_flags"
-  echo "===> Searching under: $sack__profile_preset_directory"
-  }
+    echo ""
+    echo "===> Current Profile: $sack__profile_name"
+    echo "===> Using flags: $sack__profile_preset_flags"
+    echo "===> Searching under: $sack__profile_preset_directory"
+}
 
 # Print help / usage information about sack
 print_help() {
-  sp="   " # space
-  echo ""
-  echo "===============> sag Usage Information <==============="
-  echo ""
-  echo "===> To print this message: <==="
-  echo "$sp sag"
-  echo "$sp sag -h"
-  echo "$sp sag --help"
-  echo "$sp sag --info"
-  echo ""
-  echo "========> sag-specific commands <========"
-  echo ""
-  echo "===> Which Profile? <==="
-  echo "To find out which profile you are currently on:"
-  echo "$sp sag -wp"
-  echo "$sp sag --whichprofile"
-  echo ""
-  echo "===> Switch Profile <==="
-  echo "To switch to a different profile:"
-  echo "$sp sag -sp PROFILE_NAME"
-  echo "$sp sag --switchprofile no_profile"
-  echo ""
-  echo "===> Rename Profile <==="
-  echo "To rename the current profile:"
-  echo "$sp sag -rp NEW_PROFILE_NAME"
-  echo "$sp sag --renameprofile reviewboard"
-  echo ""
-  echo "===> Set Flags <==="
-  echo "To set new preset flags to use for the current profile:"
-  echo "(All searches run using this profile will use these flags)"
-  echo "$sp sag -sf NEW_FLAGS"
-  echo "$sp sag --setflags -ia -A 2 -B 3"
-  echo ""
-  echo "===> Set Directory <==="
-  echo "To set a new preset directory to use for the current profile:"
-  echo "(All searches will be run under this directory with this profile)"
-  echo "$sp sag -sd NEW_DIRECTORY"
-  echo "$sp sag --setdirectory ~/src/reviewboard"
-  echo ""
-  echo "===> Add New Profile <==="
-  echo "To add a new empty profile:"
-  echo "$sp sag -anp PROFILE_NAME"
-  echo "$sp sag --addnewprofile ReviewBoard"
-  echo ""
-  echo "===> List Profiles <==="
-  echo "To show the current available profiles:"
-  echo "$sp sag -lp"
-  echo "$sp sag --listprofiles"
-  print_current_profile_info
-  }
+    sp="   " # space
+    echo ""
+    echo "===============> sack Usage Information <==============="
+    echo ""
+    echo "===> To print this message: <==="
+    echo "$sp sack"
+    echo "$sp sack -h"
+    echo "$sp sack --help"
+    echo "$sp sack --info"
+    echo ""
+    echo "===> To learn more about ack: <==="
+    echo "$sp ack --help"
+    echo "$sp man ack-grep"
+    echo ""
+    echo "========> sack-specific commands <========"
+    echo ""
+    echo "===> Which Profile? <==="
+    echo "To find out which profile you are currently on:"
+    echo "$sp sack -wp"
+    echo "$sp sack --whichprofile"
+    echo ""
+    echo "===> Switch Profile <==="
+    echo "To switch to a different profile:"
+    echo "$sp sack -sp PROFILE_NAME"
+    echo "$sp sack --switchprofile no_profile"
+    echo ""
+    echo "===> Rename Profile <==="
+    echo "To rename the current profile:"
+    echo "$sp sack -rp NEW_PROFILE_NAME"
+    echo "$sp sack --renameprofile reviewboard"
+    echo ""
+    echo "===> Set Flags <==="
+    echo "To set new preset flags to use for the current profile:"
+    echo "(All searches run using this profile will use these flags)"
+    echo "$sp sack -sf NEW_FLAGS"
+    echo "$sp sack --setflags -ia -A 2 -B 3"
+    echo ""
+    echo "===> Set Directory <==="
+    echo "To set a new preset directory to use for the current profile:"
+    echo "(All searches will be run under this directory with this profile)"
+    echo "$sp sack -sd NEW_DIRECTORY"
+    echo "$sp sack --setdirectory ~/src/reviewboard"
+    echo ""
+    echo "===> Add New Profile <==="
+    echo "To add a new empty profile:"
+    echo "$sp sack -anp PROFILE_NAME"
+    echo "$sp sack --addnewprofile ReviewBoard"
+    echo ""
+    echo "===> List Profiles <==="
+    echo "To show the current available profiles:"
+    echo "$sp sack -lp"
+    echo "$sp sack --listprofiles"
+    print_current_profile_info
+}
 
 # Prefixes a shortcut tag to relevant output lines.
 display_shortcuts() {
-  # Note that by default ack uses the --nogroup -H option by default when
-  # output is piped or redirected, so we do get a file name on each line as $1
-  # We could have restored the default look for ack with the --group option, but
-  # it turns out that this is actually simpler to parse with --nogroup and then
-  # reformat the output to match the --group formats.
-  awk -v f_name=$sack__file_name -F':' '
-  BEGIN {x=1};
-  {
-    if ($1 != f_name) {
-      printf("\n%s\n", $1);
-      f_name=$1;
-    };
-    printf("[%s] ", x);
-    printf("%s", $2);
-    for (i=3; i<=NF; i++) {
-      printf(":%s", $i);
-    }
-    printf("\n");
-    x++;
-  };'
+    # Note that by default ack uses the --nogroup -H option by default when
+    # output is piped or redirected, so we do get a file name on each line as $1
+    # We could have restored the default look for ack with the --group option, but
+    # it turns out that this is actually simpler to parse with --nogroup and then
+    # reformat the output to match the --group formats.
+    awk -v f_name=$sack__file_name -F':' '
+    BEGIN {x=1};
+    {
+        if ($1 != f_name) {
+            printf("\n%s\n", $1);
+            f_name=$1;
+        };
+        printf("[%s] ", x);
+        printf("%s", $2);
+        for (i=3; i<=NF; i++) {
+            printf(":%s", $i);
+        }
+        printf("\n");
+        x++;
+    };'
 }
 
 # Processes the output that goes into the shortcut file:
 # Format: line_number:full_file_path
 process_shorcut_paths() {
-  # Using : as the delimiter here should be fine, because : is not used in file names
-  awk -F':' '
-  {
-    print $2 " " $1;
-  };'
+    # Using : as the delimiter here should be fine, because : is not used in file names
+    awk -F':' '
+    {
+        print $2 " " $1;
+    };'
 }
 
 # Remove the escaped characters that get piped from ack in order to preserve
 # colored output to stdout
 remove_escaped_chars() {
-  # Linux
-  if [[ $sack__OS == "Linux" ]]; then
-    sed -r "s/\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g"
-  # OS X
-  elif [[ $sack__OS == "Darwin" ]]; then
-    sed -E "s/\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g"
-  fi
-  }
+    # Need to do a check for the OS, because Linux uses a different sed
+    # than OS X
+
+    # Linux / Cygwin
+    if [[ $sack__OS == "Linux" ]] || [[ $sack__OS == "$CYGWIN_NT"* ]]; then
+        sed -r "s/\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g"
+    # OS X
+    elif [[ $sack__OS == "Darwin" ]]; then
+        sed -E "s/\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g"
+    fi
+    # @todo: implement support for other OSes at a later date
+}
 
 # Create the actual shortcut command to be used across terminals / shell sessions
 create_shortcut_cmd_vim() {
-  # The following literally writes the shorcut command and makes it executable
-  sack__shortcut_cmd_path=$sack__shortcut_path/$sack__shortcut_cmd
-  cat > $sack__shortcut_cmd_path <<SHORTCUT
+    # @todo: add support for other editors as well
+    # The following literally writes the shorcut command and makes it executable
+    sack__shortcut_cmd_path=$sack__shortcut_path/$sack__shortcut_cmd
+    cat > $sack__shortcut_cmd_path <<SHORTCUT
 #!/bin/bash
 sack__vim_shortcut=\$(sed -n "\$1p" < $sack__shortcut_file)
 sack__line=\`echo \$sack__vim_shortcut | cut -d" " -f1\`
 sack__file=\`echo \$sack__vim_shortcut | sed 's/'\$sack__line' //'\`
-vim +\$sack__line "\$sack__file"
+if [ -z "\$EDITOR" ]; then
+    sack__editor="$sack__default_editor"
+else
+    sack__editor="\$EDITOR"
+fi
+\$sack__editor +\$sack__line "\$sack__file"
 SHORTCUT
-  chmod +x $sack__shortcut_cmd_path
-  }
+    chmod +x $sack__shortcut_cmd_path
+}
 
+# Open shortcut using sublime rsub (https://github.com/henrikpersson/rsub)
+create_shortcut_cmd_rsub() {
+
+    sack__shortcut_cmd_path=$sack__shortcut_path/$sack__shortcut_cmd
+    echo "#!/bin/bash" > $sack__shortcut_cmd_path
+    echo "sack__rsub_shortcut=\$(sed -n \"\$1p\" < $sack__shortcut_file)" >> $sack__shortcut_cmd_path
+    echo "fp=\`echo \$sack__rsub_shortcut | awk '{ print \$2 }'\`" >> $sack__shortcut_cmd_path
+    echo "ln=\`echo \$sack__rsub_shortcut | awk '{ print \$1 }'\`" >> $sack__shortcut_cmd_path
+    echo "$sack__default_editor -l \$ln \$fp" >> $sack__shortcut_cmd_path
+    chmod +x $sack__shortcut_cmd_path
+}
+
+# Open shortcut using vscode
+create_shortcut_cmd_vscode() {
+
+    sack__shortcut_cmd_path=$sack__shortcut_path/$sack__shortcut_cmd
+    echo "#!/bin/bash" > $sack__shortcut_cmd_path
+    echo "sack__vscode_shortcut=\$(sed -n \"\$1p\" < $sack__shortcut_file)" >> $sack__shortcut_cmd_path
+    echo "fp=\`echo \$sack__vscode_shortcut | awk '{ print \$2 }'\`" >> $sack__shortcut_cmd_path
+    echo "ln=\`echo \$sack__vscode_shortcut | awk '{ print \$1 }'\`" >> $sack__shortcut_cmd_path
+    echo "$sack__default_editor -g \$fp:\$ln" >> $sack__shortcut_cmd_path
+    chmod +x $sack__shortcut_cmd_path
+}
 
 # Switch to a different profile
 switchprofile() {
@@ -414,18 +482,31 @@ sack__file_name="                                              "
 # Deal with the options that only have to do with sack instead of ack
 sack__option=$1
 
-# Determine which search tool to use
+# By default, use ack:
 sack__default_tool=rg
+
+# Color parameter is different for ack / ag than for grep:
+# sack__color_param='--color'
 sack__color_param='--smart-case --line-number --color always'
+
+echo "sack__option is: $sack__option"
+
+# Determine which search tool to use
 if [[ "$sack__option" == "-ag" ]]; then
     sack__default_tool=ag
-    sack__color_param='--color'
     shift
+# Determine which search tool to use
 elif [[ "$sack__option" == "-grep" ]]; then
     sack__default_tool='grep'
     sack__color_param='--color=always'
     shift
 # sack profiles - allow switching between different profiles
+# Show help printout
+elif [[ -z "$sack__option" || "$sack__option" == "-h" || "$sack__option" == "--help" || "$sack__option" == "--info" ]]; then
+    . $sack__config_path
+    print_help
+    echo ""
+    exit 0
 elif [[ "$sack__option" == "-wp" || "$sack__option" == "--whichprofile" ]]; then
     . $sack__config_path
     print_current_profile_info
@@ -462,11 +543,6 @@ elif [[ "$sack__option" == "-anp" || "$sack__option" == "--addnewprofile" ]]; th
 elif [[ "$sack__option" == "-lp" || "$sack__option" == "--listprofiles" ]]; then
     listprofiles
     exit 0
-elif [[ "$sack__option" == "-h" || "$sack__option" == "--help" ]]; then
-    . $sack__config_path
-    print_help
-    echo ""
-    exit 0
 fi
 
 # Set up the variables to use for sack
@@ -477,10 +553,10 @@ if [[ "$sack__profile_name" == "no_profile" ]]; then
     # We add the pwd as last argument to ack so the file names of output
     # are displayed as absolute paths, so that they can be shared across
     # multiple terminal / shell sessions
-    profile__flags=""
+    sack__flags=""
     sack__cwd=$(pwd)
 else
-    profile__flags="$sack__profile_preset_flags"
+    sack__flags="$sack__profile_preset_flags"
     sack__cwd="$sack__profile_preset_directory"
     # Add automatic tilda expansion if it's not in already
     sack__cwd=$(eval "echo $sack__cwd")
@@ -492,12 +568,31 @@ echo "============> running $sack__default_tool! <============"
 # Note that this is different from print_current_profile_info()
 echo ""
 echo "===> Current Profile: $sack__profile_name"
-echo "===> Using flags: $profile__flags"
+echo "===> Using flags: $sack__flags"
 echo "===> Searching under: $sack__cwd"
 echo "===> Searching parameters: $@"
 echo ""
 
 # The actual wrapper around ack
-$sack__default_tool $sack__color_param $profile__flags "$@" "$sack__cwd" | tee >$sack__dev_null >(display_shortcuts) >(process_shorcut_paths | remove_escaped_chars > $sack__shortcut_file)
+$sack__default_tool $sack__color_param $sack__flags "$@" "$sack__cwd" | tee >$sack__dev_null >(display_shortcuts) >(process_shorcut_paths | remove_escaped_chars > $sack__shortcut_file)
 
-create_shortcut_cmd_vim
+# Show usage instructions for first-time users; this can be turned off
+if [[ $sack__show_instructions -eq 0 ]]; then
+    # do nothing
+    echo ""
+else
+    echo ""
+    echo "===== Use: \"$sack__shortcut_cmd #\" to go directly to the search result!"
+    echo "===== Example: ( user@linux:~$ $sack__shortcut_cmd 25 )"
+    echo ""
+fi
+
+if [ $sack__default_editor == 'vim' -o $sack__default_editor == 'gvim' ]; then
+    create_shortcut_cmd_vim
+elif [ $sack__default_editor == 'rsub' ]; then
+    create_shortcut_cmd_rsub
+elif [ $sack__default_editor == 'code' ]; then
+    create_shortcut_cmd_vscode
+else
+    echo "Error: unsupported default editor specified in sack__default_editor"
+fi

@@ -23,16 +23,16 @@ export IGNOREEOF=2
 path_prepend $HOME/bin
 export PATH
 
-# Just work dammit
-export PYTHONIOENCODING=UTF-8
-export PIP_REQUIRE_VIRTUALENV=true
-
 ## Preferred tools
 export PAGER=/usr/bin/less
 export MANPAGER=/usr/bin/less
 export EDITOR=/usr/bin/vim
 
-## A "work" aka dev box.
+## Just work dammit
+export PYTHONIOENCODING=UTF-8
+export PIP_REQUIRE_VIRTUALENV=true
+
+## All the things go in work dir
 if [ -e $HOME/work ]; then
   export CDPATH='.:~/work/'
   export WORKON_HOME=$HOME/work/.virtualenvs
@@ -45,6 +45,7 @@ alias myhistory='sed "s|sudo ||g" ~/.bash_history|cut -d " " -f 1|sort|uniq -c|s
 alias gh='history|grep'
 alias la='/bin/ls -GA'
 alias ll='/bin/ls -lGF'
+# list by time
 alias lt='/bin/ls -Gltrsa'
 alias visudo="/usr/bin/sudo EDITOR=$EDITOR /usr/sbin/visudo"
 # Muscle memory.
@@ -57,10 +58,9 @@ alias gn='git diff --stat'
 alias gdd='git diff develop'
 alias gdn='git diff --stat develop'
 alias gdm='git diff --stat master'
-function ge { $EDITOR $(git diff --name-only --relative $@); }
 # Recursively remove compiled python files.
 alias nukepyc="/usr/bin/find . -depth \( -name '*.py[co]' -or -name '__pycache__' \) -exec /bin/rm -rf {} ';'"
-# Change dir to Python module source.
+# Change dir to Python module's source.
 function cdp { cd $(python3 -c"import os,sys;print(os.path.dirname(__import__(sys.argv[1]).__file__))" $1); }
 # Find file with 'foo' in name.
 function f { /usr/bin/find . -iname "*$@*"; }
