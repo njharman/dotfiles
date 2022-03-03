@@ -1,24 +1,94 @@
 #!/usr/bin/env python
-"""Calc subtotal for dev invoice.
-date, desc, hours, rate, subtotal
+"""Parse utt report --per-day --month <feb> into invoice.rst.
 """
+import datetime
 import re
 import sys
-from collections import defaultdict
 
 
-LINE = re.compile(r'^(.*  )(\d+\.\d+)\s*\$([\d.]+)?\s*$')
 RATE = 125
+# Started in Feb
+PRIMES =[1009, 1013, 1019, 1021, 1031, 1033, 1039, 1049, 1051, 1061, 1063, 1069, 1087, 1091, 1093, 1097, 1103, 1109, 1117, 1123, 1129, 1151, 1153, 1163, 1171, 1181, 1187, 1193, 1201, 1213]
 
-total = 0
-for line in sys.stdin.readlines():
-    match = LINE.match(line)
-    if not match:
-        print(line)
-        continue
-    pre, hours, rate = match.groups()
-    hours = float(hours)
-    rate = float(rate) or RATE
-    print(f"{pre}{hours:<5.1f} ${rate:<5.0f} ${(hours*rate):<.2f}")
-    total += hours
-print(f"      Total{' '*(len(pre)-11)}{total:<5.1f} ${rate:<5.0f} ${(total*rate):0.2f}")
+
+def print_header(number, date):
+    date = date.replace(day=28) + datetime.timedelta(days=4)
+    date = date.replace(day=1)
+    due = date.replace(day=28) + datetime.timedelta(days=4)
+    due = due - datetime.timedelta(days=due.day)
+    print(f"""Invoice
+=======
+
+| Norman J. Harman Jr.
+| 631 N. 5th Ave
+| Tucson, AZ 87505
+| njharman@gmail.com
+| 512-785-0168
+
+------
+
+:Client: News Revenue Hub
+:Invoice #: {number}
+:Invoice Date: {date}
+:Date Due: {due}
+
+
+------
+
+======= ====================================== ======= ====== ========
+Date    Description                            Hours   Rate   Subtotal
+======= ====================================== ======= ====== ========""")
+
+
+def parse_perday(month, lines):
+    def format_line(date, description, hours):
+        return f"{date:7} {description:38} {hours:>6.1f}   ${RATE:<4.0f} ${(hours*RATE):<8.2f}".strip()
+
+    LINE = re.compile(r'^\d\d\d\d-(\d\d-\d\d):\s*(\d+\.\d+)h\s*\([^)]+\)\s+-\s+-\s+(.*)$')
+
+    total = 0
+    for line in lines:
+        if not line.strip():
+            continue
+        match = LINE.match(line)
+        if not match:
+            print(line)
+            continue
+        date, hours, description = match.groups()
+        hours = float(hours)
+        total += hours
+        if len(description) > 38:
+            bits = description.split(', ')
+            description = ', '.join(bits[:-1])
+            print(format_line(date, description, hours))
+            print(f'        {bits[-1]}')
+        else:
+            print(format_line(date, description, hours))
+    print(format_line(month, 'Total', total))
+    print('======= ====================================== ======= ====== ========')
+
+
+def make_invoice(lines):
+    MONTH = re.compile(r'-+\s+\w+,\s+(\w+).*')
+
+    date = None
+    per_day = False
+    for line in lines:
+        if not line.strip():
+            continue
+        if not date and (match := MONTH.match(line)):
+            date = datetime.date(2022, {'Jan': 1, 'Feb':2, 'Mar':3, 'Apr':4, 'May':5}[match.group(1)], 1)
+            number = PRIMES[(date.month - 1) * (date.year - 2021)]
+            print_header(number, date)
+        if 'Per Day' in line:
+            per_day = ['', ]
+            continue
+        if 'Activities' in line:
+            parse_perday(f'{date:%b}', per_day)
+            break
+        if per_day:
+            per_day.append(line)
+    print('\n\n\nThank you')
+
+
+make_invoice(sys.stdin.readlines())

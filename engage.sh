@@ -120,10 +120,10 @@ function shared_install {
 function engage_sym {
   # Make directories, link dotfiles.
 
-  ## ~/bin
-  mkdir -p ~/bin
-  chmod 700 ~/bin
-  symtastico ~/bin `ls -d "$WORK"/bin/*`
+  ## ~/.local/bin
+  mkdir -p ~/.local/bin
+  chmod 700 ~/.local/bin
+  symtastico ~/.local/bin `ls -d "$WORK"/bin/*`
 
   ## ~/tmp ~/work
   mkdir -p ~/tmp

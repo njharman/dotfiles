@@ -1,6 +1,8 @@
 [user]
   name = Norman J. Harman Jr.
   email = njharman@gmail.com
+[includeIf "gitdir:~/work/news/"]
+  path = .gitconfig-news
 
 [core]
   filemode = true
@@ -32,9 +34,9 @@
   ignored = ls-files -o -i --exclude-standard
   oldbranch = for-each-ref --sort=-authorname --format='%(refname) %(authorname) %(committerdate)' refs/remotes/origin/
   stats = shortlog -sn --since='10 weeks' --until='2 weeks'
-  # git log --no-merges master..
+  # git log --no-merges main
   # See only the file names that has changed in current branch
-  # git diff --no-commit-id --name-only --no-merges origin/master...
+  # git diff --no-commit-id --name-only --no-merges origin/main
   # Similar to above, but see statistics on what files have changed and how
   # git diff --stat #Your diff condition
 
@@ -55,3 +57,5 @@
   untracked = cyan
 # [merge]
 #   conflictstyle = diff3
+[init]
+	defaultBranch = main

@@ -35,35 +35,34 @@ filetype off
 " :h vundle
 set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
-
 Plugin 'VundleVim/Vundle.vim'
 Plugin 'vim-airline/vim-airline'
 Plugin 'vim-airline/vim-airline-themes'
 Plugin 'christoomey/vim-tmux-navigator'
 Plugin 'bronson/vim-trailing-whitespace'
-Plugin 'davidhalter/jedi-vim'
 Plugin 'ervandew/supertab'
 Plugin 'kien/ctrlp.vim'
-Plugin 'nvie/vim-flake8'
 Plugin 'sjl/gundo.vim'
 Plugin 'tomtom/tcomment_vim' " un/comment.
-
+" Python
+Plugin 'davidhalter/jedi-vim'
+Plugin 'nvie/vim-flake8'
+Plugin 'vim-scripts/pydoc.vim'
+" Python real time B.S.
+" Plugin 'prabirshrestha/async.vim'
+" Plugin 'prabirshrestha/vim-lsp'
 ":Gstatus :Gblame :Gedit blob|tree|commit|tag :Ggrep :Glog
 Plugin 'tpope/vim-fugitive'
 " ]c [c jump to hunk. Operate on hunks <leader>h? [s]tage, [u]ndo, [p]review
 Plugin 'airblade/vim-gitgutter'
-
-Plugin 'prabirshrestha/async.vim'
-Plugin 'prabirshrestha/vim-lsp'
-
 " File types
 "Plugin 'chrisbra/csv.vim'
 "Plugin 'lervag/vimtex'
-
 call vundle#end()
 filetype plugin indent on
 
 let mapleader = " "
+
 
 "" Statusline / Airline
 set laststatus=2
@@ -119,15 +118,6 @@ let g:flake8_quickfix_height=10
 let g:flake8_show_in_gutter=1
 "let g:flake8_show_in_file=1
 
-"" Pydoc
-":pyd foo
-" switch these edit source
-" <leader>pw <leader>pW
-nmap <leader>ps :PydocSearch
-" open with most of the window
-let g:pydoc_window_lines=0.7
-" open vertical instead
-let g:pydoc_open_cmd = 'vsplit'
 
 "" Tab completion
 
@@ -176,15 +166,22 @@ au filetype python setlocal suffixesadd=.py
 
 if executable('pyls')
   " pip install python-language-server
-  au User lsp_setup call lsp#register_server({
-    \ 'name': 'pyls',
-    \ 'cmd': {server_info->['pyls']},
-    \ 'whitelist': ['python'],
-    \ })
-  au FileType python setlocal omnifunc=lsp#complete
-else
-  au FileType python :setlocal omnifunc=pythoncomplete#Complete
+  "au User lsp_setup call lsp#register_server({
+  "  \ 'name': 'pyls',
+  "  \ 'cmd': {server_info->['pyls']},
+  "  \ 'whitelist': ['python'],
+  "  \ })
+  "au FileType python setlocal omnifunc=lsp#complete
 endif
+
+"" Pydoc
+" <leader>pw <leader>pW search word under cursor
+nmap <leader>ps :PydocSearch
+" open with most of the window
+let g:pydoc_window_lines=0.7
+" open vertical instead
+let g:pydoc_open_cmd = 'vsplit'
+
 
 
 syntax on
@@ -419,8 +416,8 @@ inorea now- <C-R>=strftime("%a, %d %b %Y %H:%M:%S %z")<CR>
 " Hi-light long lines.
 "au BufWinEnter * let w:m1=matchadd('Search','\%>120v.\+', -1)
 "au BufWinEnter * let w:m2=matchadd('ErrorMsg','\%<121v.\%>101v', -1)
-au FileType python let w:m1=matchadd('Search','\%>120v.\+', -1)
-au FileType python let w:m2=matchadd('ErrorMsg','\%<121v.\%>101v', -1)
+au FileType python let w:m1=matchadd('Search','\%>140v.\+', -1)
+"au FileType python let w:m2=matchadd('ErrorMsg','\%<141v.\%>101v', -1)
 "F1 showing help is not helpful.
 au filetype python map <buffer> <F1> <ESC>
 au filetype python imap <buffer> <F1> <ESC>
@@ -445,15 +442,5 @@ au Filetype gitcommit     :setlocal spell textwidth=72
 " syntax spell toplevel
 " let g:tex_flavor='latex'
 " set grepprg=grep\ -nH\ $*
-
-"python with virtualenv support
-" py << EOF
-" import os
-" import sys
-" if 'VIRTUAL_ENV' in os.environ:
-"   project_base_dir = os.environ['VIRTUAL_ENV']
-"   activate_this = os.path.join(project_base_dir, 'bin/activate_this.py')
-"   execfile(activate_this, dict(__file__=activate_this))
-" EOF
 
 abbreviate ipdb import ipdb; ipdb.set_trace()

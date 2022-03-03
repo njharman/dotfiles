@@ -20,7 +20,7 @@ export IGNOREEOF=2
 # Ensure things are in path, but only once.
 [[ ":$PATH:" != *":/sbin:"* ]] && PATH="/sbin:${PATH}"
 [[ ":$PATH:" != *":/usr/sbin:"* ]] && PATH="/usr/sbin:${PATH}"
-path_prepend $HOME/bin
+path_prepend "$HOME/.local/bin"
 export PATH
 
 ## Preferred tools
@@ -34,7 +34,7 @@ export PIP_REQUIRE_VIRTUALENV=true
 
 ## All the things go in work dir
 if [ -e $HOME/work ]; then
-  export CDPATH='.:~/work/'
+  export CDPATH='.:~/work/:~/dropbox/code'
   export WORKON_HOME=$HOME/work/.virtualenvs
   export PROJECT_HOME=$HOME/work
 fi
@@ -52,12 +52,10 @@ alias visudo="/usr/bin/sudo EDITOR=$EDITOR /usr/sbin/visudo"
 alias :e=/usr/bin/vim
 # Shortify git commands.
 alias ga='git add'
-alias gt='git st'
 alias gd='git diff'
-alias gn='git diff --stat'
-alias gdd='git diff develop'
-alias gdn='git diff --stat develop'
-alias gdm='git diff --stat master'
+alias gt='git st'
+alias gdd='git diff --stat develop'
+alias gdm='git diff --stat main'
 # Recursively remove compiled python files.
 alias nukepyc="/usr/bin/find . -depth \( -name '*.py[co]' -or -name '__pycache__' \) -exec /bin/rm -rf {} ';'"
 # Change dir to Python module's source.
@@ -171,3 +169,34 @@ eval "$(pip completion --bash)"
 if [ -f ~/.bash_local ]; then
   source ~/.bash_local
 fi
+
+# Run something, muting output or redirecting it to the debug stream
+# depending on the value of _ARC_DEBUG.
+__python_argcomplete_run() {
+    if [[ -z "$_ARC_DEBUG" ]]; then
+        "$@" 8>&1 9>&2 1>/dev/null 2>&1
+    else
+        "$@" 8>&1 9>&2 1>&9 2>&1
+    fi
+}
+
+_python_argcomplete() {
+    local IFS=$'\013'
+    local SUPPRESS_SPACE=0
+    if compopt +o nospace 2> /dev/null; then
+        SUPPRESS_SPACE=1
+    fi
+    COMPREPLY=( $(IFS="$IFS" \
+                  COMP_LINE="$COMP_LINE" \
+                  COMP_POINT="$COMP_POINT" \
+                  COMP_TYPE="$COMP_TYPE" \
+                  _ARGCOMPLETE_COMP_WORDBREAKS="$COMP_WORDBREAKS" \
+                  _ARGCOMPLETE=1 \
+                  _ARGCOMPLETE_SUPPRESS_SPACE=$SUPPRESS_SPACE \
+                  __python_argcomplete_run "$1") )
+    if [[ $? != 0 ]]; then
+        unset COMPREPLY
+    elif [[ $SUPPRESS_SPACE == 1 ]] && [[ "$COMPREPLY" =~ [=/:]$ ]]; then
+        compopt -o nospace
+    fi
+}
