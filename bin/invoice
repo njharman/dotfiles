@@ -1,0 +1,24 @@
+#!/usr/bin/env python
+"""Calc subtotal for dev invoice.
+date, desc, hours, rate, subtotal
+"""
+import re
+import sys
+from collections import defaultdict
+
+
+LINE = re.compile(r'^(.*  )(\d+\.\d+)\s*\$([\d.]+)?\s*$')
+RATE = 125
+
+total = 0
+for line in sys.stdin.readlines():
+    match = LINE.match(line)
+    if not match:
+        print(line)
+        continue
+    pre, hours, rate = match.groups()
+    hours = float(hours)
+    rate = float(rate) or RATE
+    print(f"{pre}{hours:<5.1f} ${rate:<5.0f} ${(hours*rate):<.2f}")
+    total += hours
+print(f"      Total{' '*(len(pre)-11)}{total:<5.1f} ${rate:<5.0f} ${(total*rate):0.2f}")

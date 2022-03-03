@@ -4,12 +4,15 @@ import sys
 from collections import defaultdict
 
 
-NUMBA = re.compile(r'(-?[\d,\.]+)')
+NUMBA = re.compile(r'(-?\d[\d,\.]*)')
 
 total = defaultdict(int)
 unit = None
 for line in sys.stdin.readlines():
     print(line.rstrip())
     for i, match in enumerate(NUMBA.findall(line)):
-        total[i] += float(match.replace(',', ''))
-print(' '.join(str(x) for x in total.values()))
+        try:
+            total[i] += float(match.replace(',', ''))
+        except ValueError as e:
+            print(e, f'{i}:[{match}] "{line}"')
+print(' '.join(str(float(x)) for x in total.values()))
