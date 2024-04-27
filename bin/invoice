@@ -1,14 +1,32 @@
 #!/usr/bin/env python
 """Parse utt report --per-day --month <feb> into invoice.rst.
+
+utt report --per-day --month <month> | invoice > invoice-YYYYMMDD.rst
 """
 import datetime
 import re
 import sys
 
 
-RATE = 125
+RATE = 150
 # Started in Feb
-PRIMES =[1009, 1013, 1019, 1021, 1031, 1033, 1039, 1049, 1051, 1061, 1063, 1069, 1087, 1091, 1093, 1097, 1103, 1109, 1117, 1123, 1129, 1151, 1153, 1163, 1171, 1181, 1187, 1193, 1201, 1213]
+PRIMES = [1009, 1013, 1019, 1021, 1031, 1033, 1039, 1049, 1051, 1061, 1063, 1069,
+          1087, 1091, 1093, 1097, 1103, 1109,
+          1117, 1123, 1129, 1151, 1153, 1163, 1171, 1181, 1187, 1193, 1201, 1213,
+          1217, 1223, 1229, 1231, 1237, 1249, 1259, 1277, 1279, 1283, 1289, 1291,
+          1297, 1301, 1303, 1307, 1319, 1321, 1327, 1361, 1367, 1373, 1381, 1399,
+          1409, 1423, 1427, 1429, 1433, 1439, 1447, 1451, 1453, 1459, 1471, 1481,
+          1483, 1487, 1489, 1493, 1499, 1511, 1523, 1531, 1543, 1549, 1553, 1559,
+          1567, 1571, 1579, 1583, 1597, 1601, 1607, 1609, 1613, 1619, 1621, 1627,
+          1637, 1657, 1663, 1667, 1669, 1693, 1697, 1699, 1709, 1721, 1723, 1733,
+          1741, 1747, 1753, 1759, 1777, 1783, 1787, 1789, 1801, 1811, 1823, 1831,
+          1847, 1861, 1867, 1871, 1873, 1877, 1879, 1889, 1901, 1907, 1913, 1931,
+          1933, 1949, 1951, 1973, 1979, 1987, 1993, 1997, 1999, 2003, 2011, 2017,
+          2027, 2029, 2039, 2053, 2063, 2069, 2081, 2083, 2087, 2089, 2099, 2111,
+          2113, 2129, 2131, 2137, 2141, 2143, 2153, 2161, 2179, 2203, 2207, 2213,
+          2221, 2237, 2239, 2243, 2251, 2267, 2269, 2273, 2281, 2287, 2293, 2297,
+          2309, 2311, 2333, 2339, 2341, 2347, 2351, 2357, 2371, 2377, 2381, 2383, ]
+MONTHS = {'Jan': 1, 'Feb': 2, 'Mar': 3, 'Apr': 4, 'May': 5, 'Jun': 6, 'Jul': 7, 'Aug': 8, 'Sep': 9, 'Oct': 10, 'Nov': 11, 'Dec': 12}
 
 
 def print_header(number, date):
@@ -35,14 +53,26 @@ def print_header(number, date):
 
 ------
 
-======= ====================================== ======= ====== ========
-Date    Description                            Hours   Rate   Subtotal
-======= ====================================== ======= ====== ========""")
+======= ======================================== ======= ====== ========
+Date    Description                              Hours   Rate   Subtotal
+======= ======================================== ======= ====== ========""")
 
 
 def parse_perday(month, lines):
     def format_line(date, description, hours):
-        return f"{date:7} {description:38} {hours:>6.1f}   ${RATE:<4.0f} ${(hours*RATE):<8.2f}".strip()
+        return f"{date:7} {description:40} {hours:>6.1f}   ${RATE:<4.0f} ${(hours*RATE):<8.2f}".strip()
+
+    def _wrap(description):
+        """wrap description to 40 chars, split on comma"""
+        bits = description.split(', ')
+        back = 0
+        while len(description) > 40:
+            back += 1
+            description = ', '.join(bits[:-back]) + ','
+        stuff = [description, ]
+        if back and (rest := bits[-back:]):
+            stuff.extend(_wrap(', '.join(rest)))
+        return stuff
 
     LINE = re.compile(r'^\d\d\d\d-(\d\d-\d\d):\s*(\d+\.\d+)h\s*\([^)]+\)\s+-\s+-\s+(.*)$')
 
@@ -57,27 +87,28 @@ def parse_perday(month, lines):
         date, hours, description = match.groups()
         hours = float(hours)
         total += hours
-        if len(description) > 38:
-            bits = description.split(', ')
-            description = ', '.join(bits[:-1])
-            print(format_line(date, description, hours))
-            print(f'        {bits[-1]}')
+        if len(description) > 40:
+            lines = _wrap(description)
+            print(format_line(date, lines[0], hours))
+            for x in lines[1:]:
+                print(f'        {x}')
         else:
             print(format_line(date, description, hours))
     print(format_line(month, 'Total', total))
-    print('======= ====================================== ======= ====== ========')
+    print('======= ======================================== ======= ====== ========')
 
 
 def make_invoice(lines):
-    MONTH = re.compile(r'-+\s+\w+,\s+(\w+).*')
+    INVOICE_DATE = re.compile(r'-+\s+\w+,\s+(\w+) \d\d, (\d\d\d\d).*')
 
     date = None
     per_day = False
     for line in lines:
         if not line.strip():
             continue
-        if not date and (match := MONTH.match(line)):
-            date = datetime.date(2022, {'Jan': 1, 'Feb':2, 'Mar':3, 'Apr':4, 'May':5}[match.group(1)], 1)
+        if not date and (match := INVOICE_DATE.match(line)):
+            mon, year = match.groups()
+            date = datetime.date(int(year), MONTHS[mon], 1)
             number = PRIMES[(date.month - 1) * (date.year - 2021)]
             print_header(number, date)
         if 'Per Day' in line:

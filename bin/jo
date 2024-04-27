@@ -45,12 +45,13 @@ elif [[ "${target:0:3}" == "rev" ]]; then
   tmux -u send-keys -t "$session:$target".1 "cd ~/work/news/${project}/;poetry shell" C-m
   tmux -u send-keys -t "$session:$target".2 "cd ~/work/news/${project}/;poetry shell" C-m
   tmux -u send-keys -t "$session:$target".3 "cd ~/work/news/${project}/;poetry shell" C-m
+  sleep 2
+  tmux -u send-keys -t "$session:$target".1 "nvm use 18" C-m
+  tmux -u send-keys -t "$session:$target".2 "nvm use 18;git status" C-m
+  tmux -u send-keys -t "$session:$target".3 "nvm use 18" C-m
   tmux -u select-pane -t "$session:$target".1
-  sleep 1
-  tmux -u send-keys -t "$session:$target".2 "git status" C-m
-  tmux -u send-keys -t "$session:$target".3 "pytest" C-m
-elif [[ "${target:0:3}" == "nrh" ]]; then
-  project="webhook-receiver"
+elif [[ "${target:0:3}" == "swb" ]]; then
+  project="switchboard-api"
   tmux -u new-window -n "$target"
   tmux -u split-window -t "$session:$target".1 -v -l 40
   tmux -u split-window -t "$session:$target".1 -h

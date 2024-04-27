@@ -5,6 +5,6 @@ tags
 .gitconfig
 *~
 .*.swp
-.svn
 .pyc
 .pyo
+.coverage

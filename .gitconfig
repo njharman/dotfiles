@@ -1,6 +1,7 @@
 [user]
   name = Norman J. Harman Jr.
   email = njharman@gmail.com
+
 [includeIf "gitdir:~/work/news/"]
   path = .gitconfig-news
 
@@ -8,19 +9,34 @@
   filemode = true
   autocrlf = false
   editor = vim
+  excludeFiles = ~/.gitignore
 [apply]
   whitespace=warn
+[init]
+  defaultBranch = trunk
 [branch]
   autosetupmerge = true
-[push]
-  default = simple
+[commit]
+  verbose = true
+[diff]
+  algorithm = histogram
 [fetch]
   prune = true
+  fsckobjects = true
+[merge]
+  conflictstyle = diff3
+[pull]
+  ff = only
+[push]
+  default = simple
+[receive]
+  fsckobjects = true
 [rerere]
   enabled = true
+[transfer]
+  fsckobjects = true
 
 [alias]
-  #up = "!git remote update -p; git merge --ff-only @{u}"
   br = branch -a
   ci = commit --verbose
   co = checkout
@@ -34,9 +50,9 @@
   ignored = ls-files -o -i --exclude-standard
   oldbranch = for-each-ref --sort=-authorname --format='%(refname) %(authorname) %(committerdate)' refs/remotes/origin/
   stats = shortlog -sn --since='10 weeks' --until='2 weeks'
-  # git log --no-merges main
+  # git log --no-merges trunk
   # See only the file names that has changed in current branch
-  # git diff --no-commit-id --name-only --no-merges origin/main
+  # git diff --no-commit-id --name-only --no-merges origin/trunk
   # Similar to above, but see statistics on what files have changed and how
   # git diff --stat #Your diff condition
 
@@ -55,7 +71,3 @@
   added = green
   changed = red
   untracked = cyan
-# [merge]
-#   conflictstyle = diff3
-[init]
-	defaultBranch = main

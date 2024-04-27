@@ -43,19 +43,18 @@ Plugin 'bronson/vim-trailing-whitespace'
 Plugin 'ervandew/supertab'
 Plugin 'kien/ctrlp.vim'
 Plugin 'sjl/gundo.vim'
-Plugin 'tomtom/tcomment_vim' " un/comment.
-" Python
+Plugin 'tomtom/tcomment_vim'
 Plugin 'davidhalter/jedi-vim'
 Plugin 'nvie/vim-flake8'
 Plugin 'vim-scripts/pydoc.vim'
-" Python real time B.S.
-" Plugin 'prabirshrestha/async.vim'
-" Plugin 'prabirshrestha/vim-lsp'
+Plugin 'github/copilot.vim'
+"Plugin 'Exafunction/codeium.vim'
 ":Gstatus :Gblame :Gedit blob|tree|commit|tag :Ggrep :Glog
 Plugin 'tpope/vim-fugitive'
 " ]c [c jump to hunk. Operate on hunks <leader>h? [s]tage, [u]ndo, [p]review
 Plugin 'airblade/vim-gitgutter'
 " File types
+"Plugin 'habamax/vim-rst'
 "Plugin 'chrisbra/csv.vim'
 "Plugin 'lervag/vimtex'
 call vundle#end()
@@ -164,16 +163,6 @@ set includeexpr=substitute(v:fname,'\\.','/','g')
 au filetype python setlocal suffixesadd=.py
 
 
-if executable('pyls')
-  " pip install python-language-server
-  "au User lsp_setup call lsp#register_server({
-  "  \ 'name': 'pyls',
-  "  \ 'cmd': {server_info->['pyls']},
-  "  \ 'whitelist': ['python'],
-  "  \ })
-  "au FileType python setlocal omnifunc=lsp#complete
-endif
-
 "" Pydoc
 " <leader>pw <leader>pW search word under cursor
 nmap <leader>ps :PydocSearch
@@ -226,7 +215,7 @@ set noerrorbells
 set ttyfast             " 1980 is long past.
 set lazyredraw          " Don't redraw in macros.
 set autoread            " Watch for file changes.
-set spellsuggest=10
+set spellsuggest=8
 set fileformat=unix
 set shiftround          " Use multiple of shiftwidth when indenting with '<' and '>'.
 set nostartofline       " Leave my cursor position alone!.
@@ -308,11 +297,11 @@ nmap ' `
 nmap Y y$
 
 " Reflow paragraph with Q in normal and visual mode.
-nmap Q gqap
+nmap Q gwap
 vmap Q gq
 " Vmap for maintain Visual Mode after shifting > and <
-"vmap < <gv
-"vmap > >gv
+vmap < <gv
+vmap > >gv
 
 
 " Sudo write.
@@ -374,6 +363,15 @@ au FileType help :nnoremap <buffer> S ?\|\zs\S\+\ze\|<CR>
 
 
 cab spellon setlocal spell spelllang=en_us<CR>
+" Don't count acronyms / abbreviations as spelling errors
+" (all upper-case letters, at least three characters)
+" Also will not count acronym with 's' at the end a spelling error
+" Also will not count numbers that are part of this
+" Recognizes the following as correct:
+syn match AcronymNoSpell '\<\(\u\|\d\)\{3,}s\?\>' contains=@NoSpell
+" Don't mark URL-like things as spelling errors
+syn match UrlNoSpell '\w\+:\/\/[^[:space:]]\+' contains=@NoSpell
+
 " Sloppy fingers
 cnorea W! w!
 cnorea Q! q!
@@ -401,18 +399,6 @@ inorea now- <C-R>=strftime("%a, %d %b %Y %H:%M:%S %z")<CR>
 
 "" Filetype handling
 
-" Formatoptions
-" t - Autowrap to textwidth
-" c - Autowrap comments to textwidth
-" q - Allow formatting of comments with :gq
-" l - Don't wrap already long lines on insert
-" a - Reformat when text inserted or deleted, only comments with c flag
-" n - Recognize numbered lists when wrapping
-" 1 - When wrapping paragraphs, don't end lines with one letter words
-" 2 - Support 1st line indent
-" r - Autoinsert comment leader with <Enter>
-" o - Autointert comment leader with 'o' 'O'
-
 " Hi-light long lines.
 "au BufWinEnter * let w:m1=matchadd('Search','\%>120v.\+', -1)
 "au BufWinEnter * let w:m2=matchadd('ErrorMsg','\%<121v.\%>101v', -1)
@@ -425,22 +411,31 @@ au filetype python imap <buffer> <F1> <ESC>
 au filetype python map <buffer> <F5> <ESC>
 au filetype python imap <buffer> <F5> <ESC>
 
+" Formatoptions
+" a - Reformat when text inserted or deleted, only comments with c flag
+" c - Autowrap comments to textwidth
+" j - remove comment leader when joining lines
+" l - Don't wrap already long lines on insert
+" n - Recognize numbered lists
+" t - Autowrap to textwidth
+" q - Allow formatting of comments with :gq
+" 1 - When wrapping paragraphs, don't end lines with one letter words
+" 2 - Support 1st line indent
+" r - Autoinsert comment leader with <Enter>
+" o - Autointert comment leader with 'o' 'O'
+
 au BufEnter * :syntax sync fromstart
 au BufNewFile,BufRead *.html        :setlocal filetype=html
-au BufNewFile,BufRead *.rst         :setlocal filetype=text
-au BufNewFile,BufRead *.sass        :setlocal filetype=sass.css
-au BufNewFile,BufRead *.scss        :setlocal filetype=scss.css
 au FileType css           :setlocal omnifunc=csscomplete#CompleteCSS
 au FileType html,markdown :setlocal omnifunc=htmlcomplete#CompleteTags
 au FileType javascript    :setlocal omnifunc=javascriptcomplete#CompleteJS
-au FileType python        :setlocal formatoptions=rqln12 textwidth=78 ts=4 sw=4 sts=4
-au FileType text          :setlocal formatoptions=tcqln12 nocindent textwidth=78 ts=2 sw=2 sts=2 spell spelllang=en_us
+au FileType python        :setlocal formatoptions=jqln12r textwidth=78 ts=4 sw=4 sts=4
+au FileType text          :setlocal formatoptions=jql12ro nojoinspaces nocindent textwidth=78 ts=2 sw=2 sts=2 spell spelllang=en_us
+au BufNewFile,BufRead *.typst        :setlocal filetype=typst
+au FileType typst         :setlocal formatoptions=jnql12 nojoinspaces nocindent textwidth=100 ts=2 sw=2 sts=2 spell spelllang=en_us commentstring=//\ %s
+au FileType rst           :setlocal formatoptions=jql1 comments=fb:#.,fb:-,fb:*,fb:\|,b:> indentexpr= nojoinspaces nocindent textwidth=78 ts=2 sw=2 sts=2 spell spelllang=en_us syntax=rst
 au FileType xml           :setlocal omnifunc=xmlcomplete#CompleteTags
 au Filetype gitcommit     :setlocal spell textwidth=72
 
-
-" syntax spell toplevel
-" let g:tex_flavor='latex'
-" set grepprg=grep\ -nH\ $*
-
+" Abbreviations
 abbreviate ipdb import ipdb; ipdb.set_trace()

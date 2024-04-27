@@ -6,7 +6,7 @@ path_append()  { path_remove $1; export PATH="$PATH:$1"; }
 path_prepend() { path_remove $1; export PATH="$1:$PATH"; }
 path_remove()  { export PATH=`echo -n $PATH | awk -v RS=: -v ORS=: '$0 != "'$1'"' | sed 's/:$//'`; }
 
-shopt -s cdspell        # Automatically fix 'cd folder' spelling mistakes.
+#shopt -s cdspell        # Automatically fix 'cd folder' spelling mistakes.
 shopt -s checkwinsize   # Resize window after each command, updating the values of LINES and COLUMNS.
 stty -ixon  # Limit terminal "locking" from ^S et al.
 stty ixany  # Allow any character to restart output.
@@ -32,12 +32,28 @@ export EDITOR=/usr/bin/vim
 export PYTHONIOENCODING=UTF-8
 export PIP_REQUIRE_VIRTUALENV=true
 
+## PYENV
+export PYENV_ROOT="$HOME/.pyenv"
+command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init -)"
+
 ## All the things go in work dir
 if [ -e $HOME/work ]; then
   export CDPATH='.:~/work/:~/dropbox/code'
   export WORKON_HOME=$HOME/work/.virtualenvs
   export PROJECT_HOME=$HOME/work
 fi
+
+## Tab Completions
+if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
+  source /etc/bash_completion
+fi
+if is_osx; then
+    . `brew --prefix`/etc/bash_completion
+fi
+eval "$(vex --shell-config bash)"
+eval "$(pip completion --bash)"
+
 
 ## Aliases and Such
 # Top 20 most run commands.
@@ -55,7 +71,7 @@ alias ga='git add'
 alias gd='git diff'
 alias gt='git st'
 alias gdd='git diff --stat develop'
-alias gdm='git diff --stat main'
+alias gdm='git diff --stat trunk'
 # Recursively remove compiled python files.
 alias nukepyc="/usr/bin/find . -depth \( -name '*.py[co]' -or -name '__pycache__' \) -exec /bin/rm -rf {} ';'"
 # Change dir to Python module's source.
@@ -74,11 +90,8 @@ fi
 
 ## Colors & Prompt
 
-# Faster sorting
-export LANG=C
-export LC_COLLATE=C
-# Faster ls, don't colorize executable, suid, sgid, or capbilities
-export LS_COLORS='ex=00:su=00:sg=00:ca=00:'
+# Faster ls, don't colorize ex=00 executable, suid, sgid, or capbilities
+export LS_COLORS='su=00:sg=00:ca=00:'
 
 # Shorten prompt paths.
 PROMPT_DIRTRIM=2
@@ -155,48 +168,7 @@ export LESS_TERMCAP_us=$'\E[01;32m'
 export LESS_TERMCAP_ue=$'\E[0m'
 
 
-## Tab Completions
-if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
-  source /etc/bash_completion
-fi
-if is_osx; then
-    . `brew --prefix`/etc/bash_completion
-fi
-eval "$(vex --shell-config bash)"
-eval "$(pip completion --bash)"
-
-## Local Things
+## Local things
 if [ -f ~/.bash_local ]; then
   source ~/.bash_local
 fi
-
-# Run something, muting output or redirecting it to the debug stream
-# depending on the value of _ARC_DEBUG.
-__python_argcomplete_run() {
-    if [[ -z "$_ARC_DEBUG" ]]; then
-        "$@" 8>&1 9>&2 1>/dev/null 2>&1
-    else
-        "$@" 8>&1 9>&2 1>&9 2>&1
-    fi
-}
-
-_python_argcomplete() {
-    local IFS=$'\013'
-    local SUPPRESS_SPACE=0
-    if compopt +o nospace 2> /dev/null; then
-        SUPPRESS_SPACE=1
-    fi
-    COMPREPLY=( $(IFS="$IFS" \
-                  COMP_LINE="$COMP_LINE" \
-                  COMP_POINT="$COMP_POINT" \
-                  COMP_TYPE="$COMP_TYPE" \
-                  _ARGCOMPLETE_COMP_WORDBREAKS="$COMP_WORDBREAKS" \
-                  _ARGCOMPLETE=1 \
-                  _ARGCOMPLETE_SUPPRESS_SPACE=$SUPPRESS_SPACE \
-                  __python_argcomplete_run "$1") )
-    if [[ $? != 0 ]]; then
-        unset COMPREPLY
-    elif [[ $SUPPRESS_SPACE == 1 ]] && [[ "$COMPREPLY" =~ [=/:]$ ]]; then
-        compopt -o nospace
-    fi
-}
