@@ -71,7 +71,7 @@ alias ga='git add'
 alias gd='git diff'
 alias gt='git st'
 alias gdd='git diff --stat develop'
-alias gdm='git diff --stat trunk'
+alias gdt='git diff --stat trunk'
 # Recursively remove compiled python files.
 alias nukepyc="/usr/bin/find . -depth \( -name '*.py[co]' -or -name '__pycache__' \) -exec /bin/rm -rf {} ';'"
 # Change dir to Python module's source.

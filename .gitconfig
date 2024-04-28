@@ -9,11 +9,8 @@
   filemode = true
   autocrlf = false
   editor = vim
-  excludeFiles = ~/.gitignore
 [apply]
   whitespace=warn
-[init]
-  defaultBranch = trunk
 [branch]
   autosetupmerge = true
 [commit]
@@ -23,6 +20,10 @@
 [fetch]
   prune = true
   fsckobjects = true
+[init]
+  defaultBranch = trunk
+  template = /home/njharman/.git-template
+	templateDir = /home/njharman/.git-template/
 [merge]
   conflictstyle = diff3
 [pull]

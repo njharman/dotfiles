@@ -54,6 +54,8 @@ function symdir {
       fi
       ln -s $path $dest
       echo "symlinked."
+    else
+      echo "no such dotdor $path"
     fi
   done
   }
@@ -133,6 +135,8 @@ function engage_sym {
 
   ## .dotfiles
   symtastico ~ `ls -ad "$WORK"/\.*`
+  ## .dotdirs
+  symdir ~ "$WORK"/.git-template
 
   ## ~/.config
   mkdir -p ~/.config
