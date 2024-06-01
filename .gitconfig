@@ -23,9 +23,9 @@
 [init]
   defaultBranch = trunk
   template = /home/njharman/.git-template
-	templateDir = /home/njharman/.git-template/
+  templateDir = /home/njharman/.git-template/
 [merge]
-  conflictstyle = diff3
+#  conflictstyle = diff3
 [pull]
   ff = only
 [push]

@@ -39,7 +39,7 @@ eval "$(pyenv init -)"
 
 ## All the things go in work dir
 if [ -e $HOME/work ]; then
-  export CDPATH='.:~/work/:~/dropbox/code'
+  export CDPATH='.:~/dropbox/code:~/work/'
   export WORKON_HOME=$HOME/work/.virtualenvs
   export PROJECT_HOME=$HOME/work
 fi

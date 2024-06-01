@@ -429,7 +429,7 @@ au BufNewFile,BufRead *.html        :setlocal filetype=html
 au FileType css           :setlocal omnifunc=csscomplete#CompleteCSS
 au FileType html,markdown :setlocal omnifunc=htmlcomplete#CompleteTags
 au FileType javascript    :setlocal omnifunc=javascriptcomplete#CompleteJS
-au FileType python        :setlocal formatoptions=jqln12r textwidth=78 ts=4 sw=4 sts=4
+au FileType python        :setlocal formatoptions=jqln12r textwidth=120 ts=4 sw=4 sts=4
 au FileType text          :setlocal formatoptions=jql12ro nojoinspaces nocindent textwidth=78 ts=2 sw=2 sts=2 spell spelllang=en_us
 au BufNewFile,BufRead *.typst        :setlocal filetype=typst
 au FileType typst         :setlocal formatoptions=jnql12 nojoinspaces nocindent textwidth=100 ts=2 sw=2 sts=2 spell spelllang=en_us commentstring=//\ %s

@@ -58,10 +58,11 @@ elif [[ "${target:0:3}" == "swb" ]]; then
   tmux -u send-keys -t "$session:$target".1 "cd ~/work/news/${project}/;poetry shell" C-m
   tmux -u send-keys -t "$session:$target".2 "cd ~/work/news/${project}/;poetry shell" C-m
   tmux -u send-keys -t "$session:$target".3 "cd ~/work/news/${project}/;poetry shell" C-m
+  sleep 2
+  tmux -u send-keys -t "$session:$target".1 "nvm use 18" C-m
+  tmux -u send-keys -t "$session:$target".2 "nvm use 18;git status" C-m
+  tmux -u send-keys -t "$session:$target".3 "nvm use 18" C-m
   tmux -u select-pane -t "$session:$target".1
-  sleep 1
-  tmux -u send-keys -t "$session:$target".2 "git status" C-m
-  tmux -u send-keys -t "$session:$target".3 "pytest" C-m
 elif [[ "$target" == "cna" ]]; then
   vex="cnaapi"
   tmux -u new-window -n "$target"
