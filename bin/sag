@@ -43,56 +43,52 @@ print_current_profile_info() {
 print_help() {
     sp="   " # space
     echo ""
-    echo "===============> sack Usage Information <==============="
+    echo "===============> sag Usage Information <==============="
     echo ""
     echo "===> To print this message: <==="
-    echo "$sp sack"
-    echo "$sp sack -h"
-    echo "$sp sack --help"
-    echo "$sp sack --info"
+    echo "$sp sag"
+    echo "$sp sag -h"
+    echo "$sp sag --help"
+    echo "$sp sag --info"
     echo ""
-    echo "===> To learn more about ack: <==="
-    echo "$sp ack --help"
-    echo "$sp man ack-grep"
-    echo ""
-    echo "========> sack-specific commands <========"
+    echo "========> sag-specific commands <========"
     echo ""
     echo "===> Which Profile? <==="
     echo "To find out which profile you are currently on:"
-    echo "$sp sack -wp"
-    echo "$sp sack --whichprofile"
+    echo "$sp sag -wp"
+    echo "$sp sag --whichprofile"
     echo ""
     echo "===> Switch Profile <==="
     echo "To switch to a different profile:"
-    echo "$sp sack -sp PROFILE_NAME"
-    echo "$sp sack --switchprofile no_profile"
+    echo "$sp sag -sp PROFILE_NAME"
+    echo "$sp sag --switchprofile no_profile"
     echo ""
     echo "===> Rename Profile <==="
     echo "To rename the current profile:"
-    echo "$sp sack -rp NEW_PROFILE_NAME"
-    echo "$sp sack --renameprofile reviewboard"
+    echo "$sp sag -rp NEW_PROFILE_NAME"
+    echo "$sp sag --renameprofile reviewboard"
     echo ""
     echo "===> Set Flags <==="
     echo "To set new preset flags to use for the current profile:"
     echo "(All searches run using this profile will use these flags)"
-    echo "$sp sack -sf NEW_FLAGS"
-    echo "$sp sack --setflags -ia -A 2 -B 3"
+    echo "$sp sag -sf NEW_FLAGS"
+    echo "$sp sag --setflags -ia -A 2 -B 3"
     echo ""
     echo "===> Set Directory <==="
     echo "To set a new preset directory to use for the current profile:"
     echo "(All searches will be run under this directory with this profile)"
-    echo "$sp sack -sd NEW_DIRECTORY"
-    echo "$sp sack --setdirectory ~/src/reviewboard"
+    echo "$sp sag -sd NEW_DIRECTORY"
+    echo "$sp sag --setdirectory ~/src/reviewboard"
     echo ""
     echo "===> Add New Profile <==="
     echo "To add a new empty profile:"
-    echo "$sp sack -anp PROFILE_NAME"
-    echo "$sp sack --addnewprofile ReviewBoard"
+    echo "$sp sag -anp PROFILE_NAME"
+    echo "$sp sag --addnewprofile ReviewBoard"
     echo ""
     echo "===> List Profiles <==="
     echo "To show the current available profiles:"
-    echo "$sp sack -lp"
-    echo "$sp sack --listprofiles"
+    echo "$sp sag -lp"
+    echo "$sp sag --listprofiles"
     print_current_profile_info
 }
 
@@ -168,7 +164,6 @@ SHORTCUT
 
 # Open shortcut using sublime rsub (https://github.com/henrikpersson/rsub)
 create_shortcut_cmd_rsub() {
-
     sack__shortcut_cmd_path=$sack__shortcut_path/$sack__shortcut_cmd
     echo "#!/bin/bash" > $sack__shortcut_cmd_path
     echo "sack__rsub_shortcut=\$(sed -n \"\$1p\" < $sack__shortcut_file)" >> $sack__shortcut_cmd_path
@@ -180,7 +175,6 @@ create_shortcut_cmd_rsub() {
 
 # Open shortcut using vscode
 create_shortcut_cmd_vscode() {
-
     sack__shortcut_cmd_path=$sack__shortcut_path/$sack__shortcut_cmd
     echo "#!/bin/bash" > $sack__shortcut_cmd_path
     echo "sack__vscode_shortcut=\$(sed -n \"\$1p\" < $sack__shortcut_file)" >> $sack__shortcut_cmd_path
@@ -194,6 +188,10 @@ create_shortcut_cmd_vscode() {
 switchprofile() {
     # Get the specified profile name from cmdline
     sack__selected_profile=$1
+
+    if [[ "$sack__selected_profile" == "" ]]; then
+      sack__selected_profile=no_profile
+    fi
 
     # Try to find the corresponding profile entry that matches the name EXACTLY
     # with an entry in config file
@@ -255,7 +253,6 @@ switchprofile() {
 
 renameprofile() {
     sack__new_profile_name=$1
-
     # Validation for the new profile name: it must not be empty
     if [[ -z "$sack__new_profile_name" ]]; then
         echo ""
@@ -349,7 +346,6 @@ setflags() {
 
 setdirectory() {
     sack__new_directories=$@
-
     # Validate the list of all directories passed in
     for sack__new_directory in $sack__new_directories
     do
@@ -409,7 +405,6 @@ setdirectory() {
 
 addnewprofile() {
     sack__add_profile_name=$1
-
     # Validation for the new profile name: it must not be empty
     if [[ -z "$sack__add_profile_name" ]]; then
         echo ""
@@ -485,28 +480,15 @@ sack__option=$1
 # By default, use ack:
 sack__default_tool=rg
 
-# Color parameter is different for ack / ag than for grep:
-# sack__color_param='--color'
 sack__color_param='--smart-case --line-number --color always'
 
-echo "sack__option is: $sack__option"
-
-# Determine which search tool to use
-if [[ "$sack__option" == "-ag" ]]; then
-    sack__default_tool=ag
-    shift
-# Determine which search tool to use
-elif [[ "$sack__option" == "-grep" ]]; then
-    sack__default_tool='grep'
-    sack__color_param='--color=always'
-    shift
-# sack profiles - allow switching between different profiles
 # Show help printout
-elif [[ -z "$sack__option" || "$sack__option" == "-h" || "$sack__option" == "--help" || "$sack__option" == "--info" ]]; then
+if [[ -z "$sack__option" || "$sack__option" == "-h" || "$sack__option" == "--help" || "$sack__option" == "--info" ]]; then
     . $sack__config_path
     print_help
     echo ""
     exit 0
+# Sack profiles
 elif [[ "$sack__option" == "-wp" || "$sack__option" == "--whichprofile" ]]; then
     . $sack__config_path
     print_current_profile_info
@@ -556,7 +538,7 @@ if [[ "$sack__profile_name" == "no_profile" ]]; then
     sack__flags=""
     sack__cwd=$(pwd)
 else
-    sack__flags="$sack__profile_preset_flags"
+    sack__flags=$sack__profile_preset_flags
     sack__cwd="$sack__profile_preset_directory"
     # Add automatic tilda expansion if it's not in already
     sack__cwd=$(eval "echo $sack__cwd")
@@ -564,28 +546,13 @@ fi
 
 # Announce start of sack:
 echo ""
-echo "============> running $sack__default_tool! <============"
-# Note that this is different from print_current_profile_info()
-echo ""
 echo "===> Current Profile: $sack__profile_name"
-echo "===> Using flags: $sack__flags"
+echo "===> Command: $sack__default_tool $sack__color_param $sack__flags"
 echo "===> Searching under: $sack__cwd"
-echo "===> Searching parameters: $@"
-echo ""
+echo "===> Searching for: $@"
 
-# The actual wrapper around ack
-$sack__default_tool $sack__color_param $sack__flags "$@" "$sack__cwd" | tee >$sack__dev_null >(display_shortcuts) >(process_shorcut_paths | remove_escaped_chars > $sack__shortcut_file)
-
-# Show usage instructions for first-time users; this can be turned off
-if [[ $sack__show_instructions -eq 0 ]]; then
-    # do nothing
-    echo ""
-else
-    echo ""
-    echo "===== Use: \"$sack__shortcut_cmd #\" to go directly to the search result!"
-    echo "===== Example: ( user@linux:~$ $sack__shortcut_cmd 25 )"
-    echo ""
-fi
+# The actual command
+$sack__default_tool $sack__color_param $sack__profile_preset_flags "$@" "$sack__cwd" | tee >$sack__dev_null >(display_shortcuts) >(process_shorcut_paths | remove_escaped_chars > $sack__shortcut_file)
 
 if [ $sack__default_editor == 'vim' -o $sack__default_editor == 'gvim' ]; then
     create_shortcut_cmd_vim

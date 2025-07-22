@@ -4,15 +4,31 @@ import sys
 from collections import defaultdict
 
 
-NUMBA = re.compile(r'(-?\d[\d,\.]*)')
+NUMBA = re.compile(r'(-?\d[\d,]*(?:\.\d*)?)')
 
+first_col = 0
+last_col = 99999
+if len(sys.argv) == 3:
+    first_col = int(sys.argv[1]) -1
+    last_col = int(sys.argv[2])
+if len(sys.argv) == 2:
+    first_col = int(sys.argv[1]) -1
+
+min_col = None
+max_col = None
 total = defaultdict(int)
-unit = None
 for line in sys.stdin.readlines():
     print(line.rstrip())
-    for i, match in enumerate(NUMBA.findall(line)):
+    if not line.strip():
+        continue
+    matches = list(NUMBA.findall(line))
+    min_col = min(min_col, len(matches)) if min_col is not None else len(matches)
+    max_col = max(max_col, len(matches)) if max_col is not None else len(matches)
+    for i, match in enumerate(matches):
         try:
             total[i] += float(match.replace(',', ''))
         except ValueError as e:
             print(e, f'{i}:[{match}] "{line}"')
-print(' '.join(str(float(x)) for x in total.values()))
+
+print(' '.join(f'{float(x):,.0f}' for x in list(total.values())[first_col:last_col]))
+# print(f'Columns: min:{min_col} max:{max_col}')

@@ -58,11 +58,11 @@ eval "$(pip completion --bash)"
 ## Aliases and Such
 # Top 20 most run commands.
 alias myhistory='sed "s|sudo ||g" ~/.bash_history|cut -d " " -f 1|sort|uniq -c|sort -rn|head -20'
-alias gh='history|grep'
-alias la='/bin/ls -GA'
-alias ll='/bin/ls -lGF'
-# list by time
-alias lt='/bin/ls -Gltrsa'
+alias greph='history|grep'
+alias la='/usr/bin/eza -AF'
+alias ll='/usr/bin/eza -lgF'
+# list by modified time, reverse order
+alias lt='/usr/bin/eza -lgF --reverse -s modified'
 alias visudo="/usr/bin/sudo EDITOR=$EDITOR /usr/sbin/visudo"
 # Muscle memory.
 alias :e=/usr/bin/vim
@@ -76,8 +76,8 @@ alias gdt='git diff --stat trunk'
 alias nukepyc="/usr/bin/find . -depth \( -name '*.py[co]' -or -name '__pycache__' \) -exec /bin/rm -rf {} ';'"
 # Change dir to Python module's source.
 function cdp { cd $(python3 -c"import os,sys;print(os.path.dirname(__import__(sys.argv[1]).__file__))" $1); }
-# Find file with 'foo' in name.
-function f { /usr/bin/find . -iname "*$@*"; }
+# Find file with 'foo' in name using Rust fd (fdfind on ubuntu).
+function f { /usr/bin/fdfind -uiL "$@" .; }
 # Searching running processes
 if is_osx; then
   function psg { /bin/ps axu | `which grep` -v grep | `which grep` "$@" -i --color=auto; }

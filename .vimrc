@@ -1,11 +1,18 @@
+" :setlocal spell spelllang=en_us suggest "z=", addword "zg", temp "zG", next/prev "]s"/"[s"
+" searches # * g# g* g, gd
+" non-ascii search: /[^\x00-\x7F]
+" ciw change in word
+" caw change around word
+" viw visual select in word
+" 123
+"  1 change delete visual
+"  2 inside/around delim
+"  3 word sentince (["'  bracket character
 " :highlight Group ctermbg=white ctermfg=black term=bold
 " :match Group /pattern/
 " :match ErrorMsg /\%>73v.\+/ # \%> match col, 'v' virtual columns only
 " :match None
 " :2match :3match
-" :setlocal spell spelllang=en_us suggest "z=", addword "zg", next/prev "]s"/"[s"
-" searches # * g# g* g, gd
-" non-ascii search: /[^\x00-\x7F]
 
 " Secure file editing
 :set cryptmethod=blowfish2
@@ -42,6 +49,7 @@ Plugin 'christoomey/vim-tmux-navigator'
 Plugin 'bronson/vim-trailing-whitespace'
 Plugin 'ervandew/supertab'
 Plugin 'kien/ctrlp.vim'
+Plugin 'rust-lang/rust.vim'
 Plugin 'sjl/gundo.vim'
 Plugin 'tomtom/tcomment_vim'
 Plugin 'davidhalter/jedi-vim'
@@ -311,6 +319,12 @@ cmap w!! w !sudo tee % >/dev/null
 imap <C-f> <C-x><C-f>
 imap <C-l> <C-x><C-l>
 
+" Nav up/down half page and center
+nmap <C-u> <C-u>zz
+nmap <C-d> <C-d>zz
+nmap <C-f> <C-f>zz
+nmap <C-b> <C-b>zz
+
 " Jump to matching pairs easily, with Tab.
 nmap <tab> %
 vmap <tab> %
@@ -426,6 +440,7 @@ au filetype python imap <buffer> <F5> <ESC>
 
 au BufEnter * :syntax sync fromstart
 au BufNewFile,BufRead *.html        :setlocal filetype=html
+au BufNewFile,BufRead *.rs        :setlocal nocindent
 au FileType css           :setlocal omnifunc=csscomplete#CompleteCSS
 au FileType html,markdown :setlocal omnifunc=htmlcomplete#CompleteTags
 au FileType javascript    :setlocal omnifunc=javascriptcomplete#CompleteJS
