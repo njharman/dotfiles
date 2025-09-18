@@ -14,18 +14,6 @@
 " :match None
 " :2match :3match
 
-" Secure file editing
-:set cryptmethod=blowfish2
-"set nobackup
-"set nowritebackup
-"set noundofile
-"set noswapfile
-"set viminfo=""
-"set noshelltemp
-"set history=0
-"set nomodeline
-"set secure
-
 " Edit / reload .vimrc
 nmap <silent> <leader>ve :e $MYVIMRC<CR>
 nmap <silent> <leader>vr :so $MYVIMRC<CR>
@@ -43,6 +31,7 @@ filetype off
 set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
 Plugin 'VundleVim/Vundle.vim'
+
 Plugin 'vim-airline/vim-airline'
 Plugin 'vim-airline/vim-airline-themes'
 Plugin 'christoomey/vim-tmux-navigator'
@@ -65,10 +54,23 @@ Plugin 'airblade/vim-gitgutter'
 "Plugin 'habamax/vim-rst'
 "Plugin 'chrisbra/csv.vim'
 "Plugin 'lervag/vimtex'
+"
 call vundle#end()
 filetype plugin indent on
 
 let mapleader = " "
+
+" Secure file editing
+:set cryptmethod=blowfish2
+"set nobackup
+"set nowritebackup
+"set noundofile
+"set noswapfile
+"set viminfo=""
+"set noshelltemp
+"set history=0
+"set nomodeline
+"set secure
 
 
 "" Statusline / Airline

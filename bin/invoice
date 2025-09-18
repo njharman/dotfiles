@@ -110,7 +110,7 @@ def make_invoice(lines):
         if not date and (match := INVOICE_DATE.match(line)):
             mon, year = match.groups()
             date = datetime.date(int(year), MONTHS[mon], 1)
-            number = PRIMES[(date.month - 1) * (date.year - 2021)]
+            number = PRIMES[(12 * (date.year - 2021)) + date.month - 1]
             print_header(number, date)
         if 'Per Day' in line:
             per_day = ['', ]
