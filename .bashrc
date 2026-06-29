@@ -87,6 +87,8 @@ fi
 
 
 ## Colors & Prompt
+# Don't add env to prompt (my prompt already does this)
+export VIRTUAL_ENV_DISABLE_PROMPT=1
 
 # Faster ls, don't colorize ex=00 executable, suid, sgid, or capbilities
 export LS_COLORS='su=00:sg=00:ca=00:'
@@ -103,13 +105,12 @@ function prompt_or_jobs {
   [ 0 -eq $jcnt ] && echo "$1" || echo "[$jcnt]"
   }
 function prompt_virtualenv() {
+  if [ -n "$VIRTUAL_ENV_PROMPT" ]; then
+    echo "[${VIRTUAL_ENV_PROMPT}]"
+  elif [ -n "$VIRTUAL_ENV" ]; then
+    echo "[${VIRTUAL_ENV##*/}]"  # ##*/ strips the path, leaving only the last component.
+  fi
   }
-
-# if [ -e /lib/terminfo/x/xterm-256color ]; then
-#   export TERM='xterm-256color'
-# else
-#   export TERM='xterm'
-# fi
 
 if [ -x /usr/bin/tput ] && tput setaf 1 >& /dev/null; then
   color_prompt=yes

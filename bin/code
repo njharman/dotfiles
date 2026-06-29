@@ -1,0 +1,24 @@
+#!/bin/bash
+# cd to python project, set prompt, uv run bash
+CODE=~/dropbox/code
+
+target=$1
+
+if [ -z "$target" ]; then
+    echo "Usage: $(basename "$0") <project>" >&2
+    exit 1
+fi
+
+if [ ! -d "$CODE/$target" ]; then
+    echo "error: '$CODE/$target' not found" >&2
+    ls $CODE
+    exit 1
+fi
+
+cd "$CODE/$target" || exit 1
+
+export VIRTUAL_ENV_PROMPT=$target
+if [ ! -d "$CODE/$target/.venv" ]; then
+    uv sync
+fi
+uv run bash
