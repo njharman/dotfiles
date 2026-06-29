@@ -112,12 +112,6 @@ function osx_install {
   }
 
 
-function shared_install {
-  echo  Python needfulls
-  sudo -H pip3 install -U pip
-  sudo -H pip3 install -U vex
-  }
-
 
 function engage_sym {
   # Make directories, link dotfiles.

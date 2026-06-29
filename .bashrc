@@ -17,7 +17,7 @@ export HISTIGNORE='[bf]g:cd:cd .:cd -:cd ~:l[sal]:ls -al:history:exit::'
 export HISTCONTROL=erasedups
 # Require three consecutive ^D (eof) to exit terminal.
 export IGNOREEOF=2
-# Ensure things are in path, but only once.
+# Ensure on syspath, but only once.
 [[ ":$PATH:" != *":/sbin:"* ]] && PATH="/sbin:${PATH}"
 [[ ":$PATH:" != *":/usr/sbin:"* ]] && PATH="/usr/sbin:${PATH}"
 path_prepend "$HOME/.local/bin"
@@ -32,16 +32,14 @@ export EDITOR=/usr/bin/vim
 export PYTHONIOENCODING=UTF-8
 export PIP_REQUIRE_VIRTUALENV=true
 
-## PYENV
-export PYENV_ROOT="$HOME/.pyenv"
-command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
-eval "$(pyenv init -)"
+# Put virtualenvs in a centralized location, not within each project directory.
+export UV_PREVIEW=1
+export UV_PREVIEW_FEATURES="centralized-project-envs"
 
-## All the things go in work dir
 if [ -e $HOME/work ]; then
-  export CDPATH='.:~/dropbox/code:~/work/'
   export WORKON_HOME=$HOME/work/.virtualenvs
   export PROJECT_HOME=$HOME/work
+  export CDPATH='.:~/dropbox/code:~/work/'
 fi
 
 ## Tab Completions
@@ -51,8 +49,8 @@ fi
 if is_osx; then
     . `brew --prefix`/etc/bash_completion
 fi
-eval "$(vex --shell-config bash)"
 eval "$(pip completion --bash)"
+eval "$(uv generate-shell-completion bash)"
 
 
 ## Aliases and Such
@@ -93,9 +91,6 @@ fi
 # Faster ls, don't colorize ex=00 executable, suid, sgid, or capbilities
 export LS_COLORS='su=00:sg=00:ca=00:'
 
-# Shorten prompt paths.
-PROMPT_DIRTRIM=2
-
 # Git enhance prompt.
 function parse_git_dirty {
   [[ $(git status 2> /dev/null | tail -n1) != "nothing to commit (working directory clean)" ]] && echo "*"
@@ -108,16 +103,13 @@ function prompt_or_jobs {
   [ 0 -eq $jcnt ] && echo "$1" || echo "[$jcnt]"
   }
 function prompt_virtualenv() {
-  if [ -n "$VIRTUAL_ENV" ]; then
-    echo "[${VIRTUAL_ENV##*/}]"
-  fi
   }
 
-if [ -e /lib/terminfo/x/xterm-256color ]; then
-  export TERM='xterm-256color'
-else
-  export TERM='xterm'
-fi
+# if [ -e /lib/terminfo/x/xterm-256color ]; then
+#   export TERM='xterm-256color'
+# else
+#   export TERM='xterm'
+# fi
 
 if [ -x /usr/bin/tput ] && tput setaf 1 >& /dev/null; then
   color_prompt=yes
@@ -141,8 +133,10 @@ if [ "$color_prompt" = yes ]; then
 else
   PS1='\h:\w\$ '
 fi
-
 unset color_prompt
+
+# Shorten prompt paths.
+PROMPT_DIRTRIM=2
 
 export PS2='> '
 export PS4='+ '

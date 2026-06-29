@@ -196,6 +196,7 @@ colo lucius
 "colo norm
 "colo xterm16
 
+set exrc                " project specific .vimrc config
 set virtualedit=block
 set nojoinspaces        " single space after period
 set modeline
@@ -377,14 +378,12 @@ au FileType help :nnoremap <buffer> O ?'\l\{2,\}'<CR>
 au FileType help :nnoremap <buffer> s /\|\zs\S\+\ze\|<CR>
 au FileType help :nnoremap <buffer> S ?\|\zs\S\+\ze\|<CR>
 
-
+" Command to turn on spell checking
 cab spellon setlocal spell spelllang=en_us<CR>
-" Don't count acronyms / abbreviations as spelling errors
-" (all upper-case letters, at least three characters)
+" Don't count acronyms / abbreviations as spelling errors (all upper-case letters, at least three characters)
 " Also will not count acronym with 's' at the end a spelling error
 " Also will not count numbers that are part of this
-" Recognizes the following as correct:
-syn match AcronymNoSpell '\<\(\u\|\d\)\{3,}s\?\>' contains=@NoSpell
+syn match AcronymNoSpell '\<\(\u\|\d\)\{3,}s\?\>' contains=@NoSpell containedin=ALL
 " Don't mark URL-like things as spelling errors
 syn match UrlNoSpell '\w\+:\/\/[^[:space:]]\+' contains=@NoSpell
 
@@ -449,7 +448,7 @@ au FileType javascript    :setlocal omnifunc=javascriptcomplete#CompleteJS
 au FileType python        :setlocal formatoptions=jqln12r textwidth=120 ts=4 sw=4 sts=4
 au FileType text          :setlocal formatoptions=jql12ro nojoinspaces nocindent textwidth=78 ts=2 sw=2 sts=2 spell spelllang=en_us
 au BufNewFile,BufRead *.typst        :setlocal filetype=typst
-au FileType typst         :setlocal formatoptions=jnql12 nojoinspaces nocindent textwidth=100 ts=2 sw=2 sts=2 spell spelllang=en_us commentstring=//\ %s
+au FileType typst         :setlocal formatoptions=jnql12 nojoinspaces nocindent textwidth=80 ts=2 sw=2 sts=2 spell spelllang=en_us commentstring=//\ %s
 au FileType rst           :setlocal formatoptions=jql1 comments=fb:#.,fb:-,fb:*,fb:\|,b:> indentexpr= nojoinspaces nocindent textwidth=78 ts=2 sw=2 sts=2 spell spelllang=en_us syntax=rst
 au FileType xml           :setlocal omnifunc=xmlcomplete#CompleteTags
 au Filetype gitcommit     :setlocal spell textwidth=72

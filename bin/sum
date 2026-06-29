@@ -16,7 +16,7 @@ if len(sys.argv) == 2:
 
 min_col = None
 max_col = None
-total = defaultdict(int)
+total = defaultdict(float)
 for line in sys.stdin.readlines():
     print(line.rstrip())
     if not line.strip():
@@ -30,5 +30,5 @@ for line in sys.stdin.readlines():
         except ValueError as e:
             print(e, f'{i}:[{match}] "{line}"')
 
-print(' '.join(f'{float(x):,.0f}' for x in list(total.values())[first_col:last_col]))
+print(' '.join(f'{float(x):,f}' for x in list(total.values())[first_col:last_col]))
 # print(f'Columns: min:{min_col} max:{max_col}')

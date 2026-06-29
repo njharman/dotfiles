@@ -10,6 +10,9 @@
 # shift $((OPTIND-1))
 
 
+CODE=~/Dropbox/code
+
+
 if [[ "$2" == "" ]]; then
   session="amadeus"  # Default 'rockme' session.
 else
@@ -26,57 +29,28 @@ fi
 
 
 if [[ "$target" == "help" ]]; then
-  echo "  jo ud<foo> generic 3 way"
+  echo "  jo ud<foo> generic 3 way <foo>"
   echo "  jo cna"
   echo "  jo knog"
-  echo -e "  jo <proj>  proj is vbox and dirname of python project\nProjects:"
-  vex --list
+  echo -e "  jo <proj>  4 way vbox of python project, <proj>\nProjects:"
+  ls $CODE
 elif [[ "${target:0:2}" == "ud" ]]; then
   ## 3way generic. Each ud must be unique.
   tmux -u new-window -n "$target"
   tmux -u split-window -t "$session:$target".1 -v -l 40
   tmux -u split-window -t "$session:$target".1 -h
   tmux -u select-pane -t "$session:$target".1
-elif [[ "${target:0:3}" == "rev" ]]; then
-  project="rev-engine"
-  tmux -u new-window -n "$target"
-  tmux -u split-window -t "$session:$target".1 -v -l 40
-  tmux -u split-window -t "$session:$target".1 -h
-  tmux -u send-keys -t "$session:$target".1 "cd ~/work/news/${project}/;poetry shell" C-m
-  tmux -u send-keys -t "$session:$target".2 "cd ~/work/news/${project}/;poetry shell" C-m
-  tmux -u send-keys -t "$session:$target".3 "cd ~/work/news/${project}/;poetry shell" C-m
-  sleep 2
-  tmux -u send-keys -t "$session:$target".1 "nvm use 20" C-m
-  tmux -u send-keys -t "$session:$target".2 "nvm use 20;git status" C-m
-  tmux -u send-keys -t "$session:$target".3 "nvm use 20" C-m
-  tmux -u select-pane -t "$session:$target".1
-elif [[ "${target:0:3}" == "swb" ]]; then
-  project="switchboard-api"
-  tmux -u new-window -n "$target"
-  tmux -u split-window -t "$session:$target".1 -v -l 40
-  tmux -u split-window -t "$session:$target".1 -h
-  tmux -u send-keys -t "$session:$target".1 "cd ~/work/news/${project}/;poetry shell" C-m
-  tmux -u send-keys -t "$session:$target".2 "cd ~/work/news/${project}/;poetry shell" C-m
-  tmux -u send-keys -t "$session:$target".3 "cd ~/work/news/${project}/;poetry shell" C-m
-  sleep 2
-  tmux -u send-keys -t "$session:$target".1 "nvm use 20" C-m
-  tmux -u send-keys -t "$session:$target".2 "nvm use 20;git status" C-m
-  tmux -u send-keys -t "$session:$target".3 "nvm use 20" C-m
-  tmux -u select-pane -t "$session:$target".1
 elif [[ "$target" == "cna" ]]; then
-  vex="cnaapi"
   tmux -u new-window -n "$target"
   tmux -u split-window -t "$session:$target".1 -v -l 40
   tmux -u split-window -t "$session:$target".1 -h
   tmux -u split-window -t "$session:$target".3 -h
-  tmux -u send-keys -t "$session:$target".1 "vex $vex" C-m
-  tmux -u send-keys -t "$session:$target".1 "cd ~/Dropbox/code/cna/api;./manage.py runserver 127.0.0.1:8100" C-m
-  tmux -u send-keys -t "$session:$target".2 "vex $vex" C-m
-  tmux -u send-keys -t "$session:$target".2 "cd ~/Dropbox/code/cna/web;python -m http.server 8000" C-m
-  tmux -u send-keys -t "$session:$target".3 "vex $vex" C-m
+  tmux -u send-keys -t "$session:$target".1 "cd ~/Dropbox/code/cna/api;uv run ./manage.py runserver 127.0.0.1:8100" C-m
+  tmux -u send-keys -t "$session:$target".2 "cd ~/Dropbox/code/cna/web;uv run python -m http.server 8000" C-m
   tmux -u send-keys -t "$session:$target".3 "cd ~/Dropbox/code/cna/core;clear;ls" C-m
-  tmux -u send-keys -t "$session:$target".4 "vex $vex" C-m
+  tmux -u send-keys -t "$session:$target".3 "uv run bash" C-m
   tmux -u send-keys -t "$session:$target".4 "cd ~/Dropbox/code/cna/api;clear;ls" C-m
+  tmux -u send-keys -t "$session:$target".4 "uv run bash" C-m
   tmux -u select-pane -t "$session:$target".1
 elif [[ "$target" == "knog" ]]; then
   ## 3-way SSH to target.
@@ -94,19 +68,18 @@ elif [[ "$target" == "knog" ]]; then
   tmux -u send-keys -t "$session:$target".2 'sudo bash' C-m
 else
   # 4way dev
-  path="$target"
-  vex="$target"
   tmux -u new-window -n "$target"
   tmux -u split-window -t "$session:$target".1 -v -l 40
   tmux -u split-window -t "$session:$target".1 -h
   tmux -u split-window -t "$session:$target".3 -h
-  tmux -u send-keys -t "$session:$target".1 "vex $vex" C-m
-  tmux -u send-keys -t "$session:$target".1 "cd ~/Dropbox/code/$path;clear;ls" C-m
-  tmux -u send-keys -t "$session:$target".2 "vex $vex" C-m
-  tmux -u send-keys -t "$session:$target".2 "cd ~/Dropbox/code/$path;clear" C-m
-  tmux -u send-keys -t "$session:$target".3 "vex $vex" C-m
-  tmux -u send-keys -t "$session:$target".3 "cd ~/Dropbox/code/$path;nukepyc;clear;tree" C-m
-  tmux -u send-keys -t "$session:$target".4 "vex $vex" C-m
-  tmux -u send-keys -t "$session:$target".4 "cd ~/Dropbox/code/$path;clear" C-m
+  tmux -u send-keys -t "$session:$target".1 "cd $CODE/$target" C-m
+  tmux -u send-keys -t "$session:$target".1 "uv run bash" C-m
+  tmux -u send-keys -t "$session:$target".2 "cd $CODE/$target" C-m
+  tmux -u send-keys -t "$session:$target".2 "uv run bash" C-m
+  tmux -u send-keys -t "$session:$target".3 "cd $CODE/$target" C-m
+  tmux -u send-keys -t "$session:$target".3 "uv run bash" C-m
+  tmux -u send-keys -t "$session:$target".3 "nukepyc;clear;tree" C-m
+  tmux -u send-keys -t "$session:$target".4 "cd $CODE/$target" C-m
+  tmux -u send-keys -t "$session:$target".4 "uv run bash" C-m
   tmux -u select-pane -t "$session:$target".1
 fi

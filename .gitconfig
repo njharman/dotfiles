@@ -72,3 +72,12 @@
   added = green
   changed = red
   untracked = cyan
+[safe]
+	directory = /home/njharman/gdrive/Campaigns/GnG/
+	directory = /home/njharman/gdrive/Campaigns/GnG
+	directory = /home/njharman/windows/fof_site
+	directory = /home/njharman/gdrive/fof/site
+	directory = /home/njharman/gdrive/war/CfNA/rewrite
+	directory = /home/njharman/gdrive/Campaigns/Dungeon of Portals
+	directory = /home/njharman/gdrive/war/Atlantic Wall GOSS
+	directory = /home/njharman/gdrive/war/Atlantic Wall GOSS/src

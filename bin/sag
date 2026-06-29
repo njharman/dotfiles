@@ -1,18 +1,15 @@
 #!/bin/bash
 #
-# @filename: sack
-#
-# @author: Sampson L. Chen (sampson-chen / slchen)
-# @date: 2012-10-14
+# @filename: sag
 #
 # @description:
-# s(hortcut)-ack - a faster way to use ack (or grep)!
+# s(hortcut)-ag - rg/ack with shortcuts to open files at the right line in the editor.
 #
 # For more details:
 # https://github.com/sampson-chen/sack
 #
 # @dependencies:
-# - ack (http://betterthangrep.com/)
+# - rg
 # - tee
 # - awk
 # - sed (GNU sed)
@@ -477,7 +474,7 @@ sack__file_name="                                              "
 # Deal with the options that only have to do with sack instead of ack
 sack__option=$1
 
-# By default, use ack:
+# By default, use rg:
 sack__default_tool=rg
 
 sack__color_param='--smart-case --line-number --color always'

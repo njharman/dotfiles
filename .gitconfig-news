@@ -1,6 +1,0 @@
-[user]
-  name = Norman J. Harman Jr.
-  email = norman.harman@fundjournalism.org
-
-[core]
-  sshCommand = "ssh -i ~/.ssh/newsroom -F /dev/null"
