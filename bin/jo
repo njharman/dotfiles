@@ -74,8 +74,9 @@ else
   tmux -u new-window -n "$target" -e "UV_PREVIEW=$UV_PREVIEW" -e "UV_PREVIEW_FEATURES=$UV_PREVIEW_FEATURES" "code $target"
   tmux -u split-window -t "$session:$target".1 -v -l 40 -e "UV_PREVIEW=$UV_PREVIEW" -e "UV_PREVIEW_FEATURES=$UV_PREVIEW_FEATURES" "code $target"
   tmux -u split-window -t "$session:$target".1 -h -e "UV_PREVIEW=$UV_PREVIEW" -e "UV_PREVIEW_FEATURES=$UV_PREVIEW_FEATURES" "code $target"
-  sleep .5
-  tmux -u send-keys -t "$session:$target".2 "nukepyc;tree" C-m
-  tmux -u send-keys -t "$session:$target".3 "ls" C-m
+  tmux -u send-keys -t "$session:$target".2 "nukepyc;claude" C-m
+  sleep .3
+  tmux -u send-keys -t "$session:$target".3 "tree" C-m
+  tmux -u send-keys -t "$session:$target".1 "ls" C-m
   tmux -u select-pane -t "$session:$target".1
 fi

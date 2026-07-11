@@ -8,6 +8,8 @@ path_remove()  { export PATH=`echo -n $PATH | awk -v RS=: -v ORS=: '$0 != "'$1'"
 
 #shopt -s cdspell        # Automatically fix 'cd folder' spelling mistakes.
 shopt -s checkwinsize   # Resize window after each command, updating the values of LINES and COLUMNS.
+shopt -s histappend     # Append to history file instead of overwriting; needed so multiple tmux panes don't clobber each other's history.
+shopt -s globstar       # Enable ** to match files/dirs recursively in glob patterns.
 stty -ixon  # Limit terminal "locking" from ^S et al.
 stty ixany  # Allow any character to restart output.
 
@@ -17,6 +19,13 @@ export HISTIGNORE='[bf]g:cd:cd .:cd -:cd ~:l[sal]:ls -al:history:exit::'
 export HISTCONTROL=ignorespace:erasedups
 # Require three consecutive ^D (eof) to exit terminal.
 export IGNOREEOF=2
+# Immediately append each command to the history file and share it with other
+# panes/shells, instead of only writing history when the shell exits.
+# NOT exported: exporting it leaks stale hook names (e.g. VTE's
+# __vte_prompt_command) into tmux panes' environment, which don't re-run
+# /etc/profile.d (non-login shells) to redefine those functions, causing
+# "command not found" on every prompt.
+PROMPT_COMMAND="history -a${PROMPT_COMMAND:+; $PROMPT_COMMAND}"
 # Ensure on syspath, but only once.
 [[ ":$PATH:" != *":/sbin:"* ]] && PATH="/sbin:${PATH}"
 [[ ":$PATH:" != *":/usr/sbin:"* ]] && PATH="/usr/sbin:${PATH}"
@@ -55,6 +64,8 @@ alias la='/usr/bin/eza -AF'
 alias ll='/usr/bin/eza -lgF'
 # list by modified time, reverse order
 alias lt='/usr/bin/eza -lgF --reverse -s modified'
+# NOTE: $EDITOR expands now (alias definition time), so this line must stay
+# below the `export EDITOR=...` line above it, or it silently uses an empty EDITOR.
 alias visudo="/usr/bin/sudo EDITOR=$EDITOR /usr/sbin/visudo"
 # Vim muscle memory
 alias :e=/usr/bin/vim
@@ -73,17 +84,20 @@ function f { /usr/bin/fdfind -uiL "$@" .; }
 # Searching running processes
 if is_osx; then
   function psg { /bin/ps axu | `which grep` -v grep | `which grep` "$@" -i --color=auto; }
-  function psp { /bin/ps axu | percol; }
+  # Fuzzy-pick a process line with fzf (replaces percol, which is unmaintained).
+  function psp { /bin/ps axu | fzf --header-lines=1; }
 else
   function psg { /bin/ps axuf | `which grep` -v grep | `which grep` "$@" -i --color=auto; }
-  function psp { /bin/ps axuf | percol; }
+  function psp { /bin/ps axuf | fzf --header-lines=1; }
 fi
 
 
 ## Colors & Prompt
 # Git enhance prompt
 function parse_git_dirty {
-  [[ $(git status 2> /dev/null | tail -n1) != "nothing to commit (working directory clean)" ]] && echo "*"
+  # Modern git no longer prints "nothing to commit (working directory clean)",
+  # so check porcelain status directly instead of matching that stale message.
+  [[ -n $(git status --porcelain 2> /dev/null) ]] && echo "*"
   }
 function prompt_git_branch {
   git branch --no-color 2> /dev/null | sed -e '/^[^*]/d' -e "s/* \(.*\)/(\1$(parse_git_dirty))/"
@@ -102,8 +116,6 @@ function prompt_virtualenv() {
 
 # Don't add env to prompt (my prompt already does this)
 export VIRTUAL_ENV_DISABLE_PROMPT=1
-# Faster ls, don't colorize ex=00 executable, suid, sgid, or capbilities
-export LS_COLORS='su=00:sg=00:ca=00:'
 # Shorten prompt paths.
 PROMPT_DIRTRIM=2
 
@@ -123,26 +135,32 @@ if [ "$color_prompt" = yes ]; then
   _WHITE="\[\033[1;37m\]"
   _BLACK="\[\033[00m\]"
   if [ 0 -eq $UID ]; then
-    export PS1="$_RED\u$_GREEN@\h:$_BLUE\w$_RED\$(prompt_or_jobs '#') $_BLACK"
+    PS1="$_RED\u$_GREEN@\h:$_BLUE\w$_RED\$(prompt_or_jobs '#') $_BLACK"
   else
-    export PS1="$_GREEN:$_BLUE\w$_BLACK\$(prompt_virtualenv)\$(prompt_git_branch)\$(prompt_or_jobs '$') "
+    PS1="$_GREEN\u@\h:$_BLUE\w$_BLACK\$(prompt_virtualenv)\$(prompt_git_branch)\$(prompt_or_jobs '$') "
+    # no user/host
+    PS1="$_BLUE\w$_GREEN\$(prompt_virtualenv)$_BLACK\$(prompt_git_branch)\$(prompt_or_jobs '$') "
   fi
 else
-  PS1='\h:\w\$ '
+  PS1='\u@\h:\w\$ '
 fi
-export PS2='> '
-export PS4='+ '
-unset color_prompt
+PS2='> '
+PS4='+ '
+unset color_prompt _RED _LTRED _BLUE _TEAL _GREEN _LTGREEN _WHITE _BLACK
 
 # ls colors
 export CLICOLOR=1
 if [ -x /usr/bin/dircolors ]; then
   test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
+  # Must come after dircolors: LS_COLORS keeps the last value seen per key, so
+  # this disables coloring of executable/suid/sgid/capability files without
+  # being clobbered by dircolors' own su/sg/ca defaults.
+  export LS_COLORS="${LS_COLORS}:su=00:sg=00:ca=00:"
   alias ls='ls --color=auto'
 fi
 
-# grep colors
-export GREP_COLOR='1;32'
+# grep colors (GREP_COLORS, plural - GREP_COLOR is deprecated and ignored by modern grep)
+export GREP_COLORS='mt=1;32'
 
 # less/man colors
 export GROFF_NO_SGR=1
@@ -162,8 +180,28 @@ fi
 if is_osx; then
     . `brew --prefix`/etc/bash_completion
 fi
-eval "$(pip completion --bash)"
-eval "$(uv generate-shell-completion bash)"
+# Cache these instead of eval'ing the subprocess on every shell startup
+# (regenerate by deleting the cache file, e.g. after upgrading pip/uv).
+_completion_cache_dir="$HOME/.cache/bash-completion"
+mkdir -p "$_completion_cache_dir"
+if command -v pip >/dev/null 2>&1; then
+  [ -s "$_completion_cache_dir/pip" ] || pip completion --bash > "$_completion_cache_dir/pip"
+  source "$_completion_cache_dir/pip"
+fi
+if command -v uv >/dev/null 2>&1; then
+  [ -s "$_completion_cache_dir/uv" ] || uv generate-shell-completion bash > "$_completion_cache_dir/uv"
+  source "$_completion_cache_dir/uv"
+fi
+unset _completion_cache_dir
+
+# Fuzzy history search (Ctrl-R) and completion, if fzf is installed.
+if command -v fzf >/dev/null 2>&1; then
+  if fzf --bash >/dev/null 2>&1; then
+    eval "$(fzf --bash)"
+  elif [ -f /usr/share/doc/fzf/examples/key-bindings.bash ]; then
+    source /usr/share/doc/fzf/examples/key-bindings.bash
+  fi
+fi
 
 
 ## Local things

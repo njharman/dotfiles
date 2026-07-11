@@ -33,11 +33,19 @@ set input-meta on
 set output-meta on
 set convert-meta off
 
-# ctrl-J terminate incremental saearch
+# ctrl-J terminate incremental search.
 
 # Bash VI mode
 set editing-mode vi
 $if mode=vi
+  # Show whether we're in insert or command mode directly in the prompt.
+  set show-mode-in-prompt on
+  # Change the terminal cursor shape to match vi mode: block in command mode, bar in insert mode.
+  # This jacks cursor to be insert mode in vim under tmux
+  set vi-ins-mode-string "\1\e[6 q\2"
+  set vi-cmd-mode-string "\1\e[2 q\2"
+  #set vi-ins-mode-string "+"
+  #set vi-cmd-mode-string "="
   # Insert each paste into the editing buffer as a single string of characters, instead of treating each character as if it had been read from the keyboard.
   set enable-bracketed-paste on
   set keymap vi-command

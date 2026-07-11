@@ -94,27 +94,27 @@ let g:airline#extensions#default#layout = [
   \ ]
 let g:airline_section_a = airline#section#create(['paste', 'iminsert', 'crypt'])
 
-"" Gundo.
+"" Gundo
 nmap <silent> <leader>u :GundoToggle<CR>
 
 "" CtrlP
-"<F5> to purge the cache for the current directory to get new files, remove deleted files and apply new ignore options.
-"<c-j>, <c-k> or the arrow keys to navigate the result list.
-"<c-f> and <c-b> to cycle between modes.
-"<c-n>, <c-p> to select the next/previous string in the prompt's history.
-"<c-y> to create a new file and its parent directories.
-"<c-t> or <c-v>, <c-x> to open the selected entry in a new tab or in a new split.
-"<c-d> to switch to filename only search instead of full path.
-"<c-r> to switch to regexp mode.
-"<c-z> to mark/unmark multiple files and <c-o> to open them.
-"Submit two or more dots .. to go up the directory tree by one or multiple levels.
+"<F5> to purge the cache for the current directory to get new files, remove deleted files and apply new ignore options
+"<c-j>, <c-k> or the arrow keys to navigate the result list
+"<c-f> and <c-b> to cycle between modes
+"<c-n>, <c-p> to select the next/previous string in the prompt's history
+"<c-y> to create a new file and its parent directories
+"<c-t> or <c-v>, <c-x> to open the selected entry in a new tab or in a new split
+"<c-d> to switch to filename only search instead of full path
+"<c-r> to switch to regexp mode
+"<c-z> to mark/unmark multiple files and <c-o> to open them
+"Submit two or more dots .. to go up the directory tree by one or multiple levels
 " End the input string with a colon :
 let g:ctrlp_cmd = 'CtrlPMixed'
 " Default search by filename
 let g:ctrlp_by_filename = 0
 " Default regex search, switch with <C-r>
 let g:ctrlp_regexp = 1
-" 1 - follow but ignore looped internal symlinks to avoid duplicates.
+" 1 - follow but ignore looped internal symlinks to avoid duplicates
 let g:ctrlp_follow_symlinks = 1
 let g:ctrlp_map = '<c-p>'
 let g:ctrlp_working_path_mode = 'a'
@@ -140,7 +140,7 @@ let g:jedi#show_call_signatures = "2"
 let g:jedi#documentation_command = "K"
 " let g:jedi#use_splits_not_buffers = "right"
 " let g:jedi#popup_on_dot = 0
-autocmd FileType python setlocal completeopt-=preview  " No docstring popup.
+autocmd FileType python setlocal completeopt-=preview  " No docstring popup
 
 
 "" SuperTab
@@ -154,7 +154,7 @@ let g:SuperTabLongestEnhanced = 0
 let g:SuperTabClosePreviewOnPopupClose = 1
 
 
-" Freakin awesome file completion.
+" Freakin awesome file completion
 set wildmenu
 set wildmode=longest:full,full
 set wildignore=*.pyc,*.pyo,*.o,*.obj,*.swp
@@ -162,13 +162,13 @@ set wildignore+=.hg,.git,.svn,*.DS_Store
 set wildignore+=*.jpg,*.jpeg,*.png,*.gif,*.bmp,*.ico
 set wildignore+=*.tgz,*.gz,*.zip,*.bz2,*.exe,*.bin
 
-" :o <file> open file in path.
-" gf edit file even if it doesn't exist.
+" :o <file> open file in path
+" gf edit file even if it doesn't exist
 "map gf :edit <cfile><CR>
-" Search file's directory, then up from file's directory, then vim's cwd.
+" Search file's directory, then up from file's directory, then vim's cwd
 set path+=.,./**,,
-" If line has 'include' replace dots with slashes and try gf again.
-"set isfname+=32         " Filenames have spaces. Kind of broken.
+" If line has 'include' replace dots with slashes and try gf again
+"set isfname+=32         " Filenames have spaces. Kind of broken
 set includeexpr=substitute(v:fname,'\\.','/','g')
 au filetype python setlocal suffixesadd=.py
 
@@ -181,6 +181,10 @@ let g:pydoc_window_lines=0.7
 " open vertical instead
 let g:pydoc_open_cmd = 'vsplit'
 
+
+"" I-beam insert cursor
+let &t_SI = "\e[6 q"
+let &t_EI = "\e[2 q"
 
 
 syntax on
@@ -201,51 +205,51 @@ set virtualedit=block
 set nojoinspaces        " single space after period
 set modeline
 set modelines=10
-set nobomb              " No Byte Order Mark.
+set nobomb              " No Byte Order Mark
 set ttimeout
 set ttimeoutlen=100
 set encoding=utf-8
 set termencoding=utf-8
-set title               " Change terminal's title.
-set showcmd             " Show command as you type it.
-set showmode            " Show current mode.
-"set noshowmode          " If mode is in airline.
-set nohlsearch          " Don't uglify just cause I searched.
-set ignorecase          " Ignore case in search.
-set smartcase           " Unless search term includes caps.
-set noshowmatch         " Don't show matching brackets.
-set matchtime=0         " Blink matching chars for 0 seconds.
+set title               " Change terminal's title
+set showcmd             " Show command as you type it
+set showmode            " Show current mode
+"set noshowmode          " If mode is in airline
+set nohlsearch          " Don't uglify just cause I searched
+set ignorecase          " Ignore case in search
+set smartcase           " Unless search term includes caps
+set noshowmatch         " Don't show matching brackets
+set matchtime=0         " Blink matching chars for 0 seconds
 set nrformats-=octal    " Octals, wat?
 set history=1000
 set undolevels=1000
-set undofile            " Persist undo history.
-set undodir=~/.backup,~/tmp,.
+set undofile            " Persist undo history
+set undodir=~/.backup,~/tmp,
 set backupdir=~/.backup,~/tmp,.,/tmp
 set novisualbell
 set noerrorbells
-set ttyfast             " 1980 is long past.
-set lazyredraw          " Don't redraw in macros.
-set autoread            " Watch for file changes.
+set ttyfast             " 1980 is long past
+set lazyredraw          " Don't redraw in macros
+set autoread            " Watch for file changes
 set spellsuggest=8
 set fileformat=unix
-set shiftround          " Use multiple of shiftwidth when indenting with '<' and '>'.
-set nostartofline       " Leave my cursor position alone!.
+set shiftround          " Use multiple of shiftwidth when indenting with '<' and '>'
+set nostartofline       " Leave my cursor position alone!
 set backspace=indent,eol,start
-set nowrap              " Don't wrap lines.
-set linebreak           " Wrap lines at convenient points.
-set more                " Use more prompt.
+set nowrap              " Don't wrap lines
+set linebreak           " Wrap lines at convenient points
+set more                " Use more prompt
 set cryptmethod=blowfish2
-set nowritebackup       " Security.
-set nobackup            " Security.
-set noswapfile          " Live dangerously.
-set hidden              " Hide buffers instead of closing them.
-set shortmess=ato       " Shorten messages and no splash screen.
+set nowritebackup       " Security
+set nobackup            " Security
+set noswapfile          " Live dangerously
+set hidden              " Hide buffers instead of closing them
+set shortmess=ato       " Shorten messages and no splash screen
 set viewoptions=unix,slash
-set list                " Show invisible characters.
-set listchars=tab:>·,extends:>,precedes:< " But only show tabs, long line markers.
+set list                " Show invisible characters
+set listchars=tab:>·,extends:>,precedes:< " But only show tabs, long line markers
 let g:clipbrdDefaultReg = '+'
-set pastetoggle=<F9> " When in insert mode, press <F11> to go to paste mode.
-" Freakin awesome, start scrolling 5 lines from top/bottom/left/right.
+set pastetoggle=<F9> " When in insert mode, press <F11> to go to paste mode
+" Freakin awesome, start scrolling 5 lines from top/bottom/left/right
 set scrolloff=5
 set sidescrolloff=5
 
@@ -265,21 +269,21 @@ set shiftwidth=2
 set selectmode=
 set mouse=a  "hr
 set clipboard=unnamedplus
-set mousehide           " Hide the mouse pointer while typing.
-set guioptions=a        " Hide scrollbar/menu/tabs/etc.
+set mousehide           " Hide the mouse pointer while typing
+set guioptions=a        " Hide scrollbar/menu/tabs/etc
 if has('gui_running')
   set encoding=utf-8
   "set guifont=Monospace\ Bold\ 9
   set guifont=Bitstream\ Vera\ Sans\ Mono\ 8
-  " Turn off toolbar and menu.
+  " Turn off toolbar and menu
   set guioptions-=T
   set guioptions-=m
 end
 
 
-" Remember stuff after quiting: marks, registers, searches, buffer list.
+" Remember stuff after quiting: marks, registers, searches, buffer list
 set viminfo='20,<50,s10,h,%
-" When opening, jump to the last known cursor position.
+" When opening, jump to the last known cursor position
 au BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$") | exe "normal g'\"" | endif
 
 
@@ -299,16 +303,16 @@ imap kk <ESC>
 cmap jj <up>
 cmap kk <down>
 
-" Switch to alternate file *and* correct column.
+" Switch to alternate file *and* correct column
 nnoremap <C-6> <C-6>`"
 
-" Swap these keys cause ` is cooler but ' is easier to type.
+" Swap these keys cause ` is cooler but ' is easier to type
 nmap ' `
 
-" Make Y consistent with C and D.
+" Make Y consistent with C and D
 nmap Y y$
 
-" Reflow paragraph with Q in normal and visual mode.
+" Reflow paragraph with Q in normal and visual mode
 nmap Q gwap
 vmap Q gq
 " Vmap for maintain Visual Mode after shifting > and <
@@ -316,10 +320,10 @@ vmap < <gv
 vmap > >gv
 
 
-" Sudo write.
+" Sudo write
 cmap w!! w !sudo tee % >/dev/null
 
-" Complete filenames/lines with a quicker shortcut.
+" Complete filenames/lines with a quicker shortcut
 imap <C-f> <C-x><C-f>
 imap <C-l> <C-x><C-l>
 
@@ -329,11 +333,11 @@ nmap <C-d> <C-d>zz
 nmap <C-f> <C-f>zz
 nmap <C-b> <C-b>zz
 
-" Jump to matching pairs easily, with Tab.
+" Jump to matching pairs easily, with Tab
 nmap <tab> %
 vmap <tab> %
 
-" Indent with spacebar.
+" Indent with spacebar
 nmap <leader><space> >>
 vmap <leader><space> >
 
@@ -353,9 +357,9 @@ nmap <silent> <leader>^ yypVr^
 " Jump to other window
 nmap <leader>w <C-W><C-W>
 
-" Highlight merge conflict markers.
+" Highlight merge conflict markers
 match ErrorMsg '^\(<\|=\|>\)\{7\}\([^=].\+\)\?$'
-" Shortcut to jump to next merge conflict marker.
+" Shortcut to jump to next merge conflict marker
 nmap <silent> <leader>c /^\(<\\|=\\|>\)\{7\}\([^=].\+\)\?$<CR>
 
 " Error-list nav
@@ -364,7 +368,7 @@ nnoremap <leader>] :cnext<CR>
 nnoremap <leader>k :cprev<CR>
 nnoremap <leader>j :cnext<CR>
 
-" Buffer navigation.
+" Buffer navigation
 ":ls list
 ":b# jump to
 map <right> <ESC>:bn<CR>
@@ -402,7 +406,7 @@ inorea adn and
 inorea Todo TODO:
 inorea todo TODO:
 inorea todo: TOdsdfa
-" Things I never remember to use.
+" Things I never remember to use
 inorea months- January February March April May June July August September October November December
 inorea mths- Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec
 inorea 80- 12345678901234567890123456789012345678901234567890123456789012345678901234567890
@@ -415,15 +419,15 @@ inorea now- <C-R>=strftime("%a, %d %b %Y %H:%M:%S %z")<CR>
 
 "" Filetype handling
 
-" Hi-light long lines.
+" Hi-light long lines
 "au BufWinEnter * let w:m1=matchadd('Search','\%>120v.\+', -1)
 "au BufWinEnter * let w:m2=matchadd('ErrorMsg','\%<121v.\%>101v', -1)
 au FileType python let w:m1=matchadd('Search','\%>140v.\+', -1)
 "au FileType python let w:m2=matchadd('ErrorMsg','\%<141v.\%>101v', -1)
-"F1 showing help is not helpful.
+"F1 showing help is not helpful
 au filetype python map <buffer> <F1> <ESC>
 au filetype python imap <buffer> <F1> <ESC>
-"F5 there is no compile.
+"F5 there is no compile
 au filetype python map <buffer> <F5> <ESC>
 au filetype python imap <buffer> <F5> <ESC>
 
@@ -446,7 +450,7 @@ au BufNewFile,BufRead *.rs        :setlocal nocindent
 au FileType css           :setlocal omnifunc=csscomplete#CompleteCSS
 au FileType html,markdown :setlocal omnifunc=htmlcomplete#CompleteTags
 au FileType javascript    :setlocal omnifunc=javascriptcomplete#CompleteJS
-au FileType python        :setlocal formatoptions=jqln12r textwidth=120 ts=4 sw=4 sts=4
+au FileType python        :setlocal formatoptions=jqln12r textwidth=100 ts=4 sw=4 sts=4
 au FileType text          :setlocal formatoptions=jql12ro nojoinspaces nocindent textwidth=78 ts=2 sw=2 sts=2 spell spelllang=en_us
 au BufNewFile,BufRead *.typst        :setlocal filetype=typst
 au FileType typst         :setlocal formatoptions=jnql12 nojoinspaces nocindent textwidth=80 ts=2 sw=2 sts=2 spell spelllang=en_us commentstring=//\ %s
