@@ -244,7 +244,6 @@ set viewoptions=unix,slash
 set list                " Show invisible characters.
 set listchars=tab:>·,extends:>,precedes:< " But only show tabs, long line markers.
 let g:clipbrdDefaultReg = '+'
-set clipboard=unnamed   " access system clipboard on osX
 set pastetoggle=<F9> " When in insert mode, press <F11> to go to paste mode.
 " Freakin awesome, start scrolling 5 lines from top/bottom/left/right.
 set scrolloff=5
@@ -262,8 +261,10 @@ set shiftwidth=2
 
 
 " GUI
-set selectmode=mouse    " Don't enter visual mode cause I touch mouse!
-set mouse=hr            " Let me copy/past dammit.
+" set selectmode=mouse   " Don't enter visual mode cause I touch mouse!
+set selectmode=
+set mouse=a  "hr
+set clipboard=unnamedplus
 set mousehide           " Hide the mouse pointer while typing.
 set guioptions=a        " Hide scrollbar/menu/tabs/etc.
 if has('gui_running')

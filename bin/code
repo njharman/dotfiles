@@ -21,4 +21,5 @@ export VIRTUAL_ENV_PROMPT=$target
 if [ ! -d "$CODE/$target/.venv" ]; then
     uv sync
 fi
+uv run python --version
 uv run bash

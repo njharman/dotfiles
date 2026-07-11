@@ -14,7 +14,7 @@ stty ixany  # Allow any character to restart output.
 export HISTSIZE=999999
 export HISTFILESIZE=999999
 export HISTIGNORE='[bf]g:cd:cd .:cd -:cd ~:l[sal]:ls -al:history:exit::'
-export HISTCONTROL=erasedups
+export HISTCONTROL=ignorespace:erasedups
 # Require three consecutive ^D (eof) to exit terminal.
 export IGNOREEOF=2
 # Ensure on syspath, but only once.
@@ -36,25 +36,19 @@ export PIP_REQUIRE_VIRTUALENV=true
 export UV_PREVIEW=1
 export UV_PREVIEW_FEATURES="centralized-project-envs"
 
+# set up CDPATH to where personal code projects are stored
+if [ -e $HOME/dropbox/code ]; then
+  export CDPATH='.:~/dropbox/code'
+fi
+# ditto for work projects, legacy virtualenvwrapper things
 if [ -e $HOME/work ]; then
-  export WORKON_HOME=$HOME/work/.virtualenvs
-  export PROJECT_HOME=$HOME/work
-  export CDPATH='.:~/dropbox/code:~/work/'
+  # export WORKON_HOME=$HOME/work/.virtualenvs
+  # export PROJECT_HOME=$HOME/work
+  export CDPATH="${CDPATH:+$CDPATH:}~/work/"
 fi
 
-## Tab Completions
-if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
-  source /etc/bash_completion
-fi
-if is_osx; then
-    . `brew --prefix`/etc/bash_completion
-fi
-eval "$(pip completion --bash)"
-eval "$(uv generate-shell-completion bash)"
-
-
-## Aliases and Such
-# Top 20 most run commands.
+## Aliases and such
+# Top 20 most run commands
 alias myhistory='sed "s|sudo ||g" ~/.bash_history|cut -d " " -f 1|sort|uniq -c|sort -rn|head -20'
 alias greph='history|grep'
 alias la='/usr/bin/eza -AF'
@@ -62,7 +56,7 @@ alias ll='/usr/bin/eza -lgF'
 # list by modified time, reverse order
 alias lt='/usr/bin/eza -lgF --reverse -s modified'
 alias visudo="/usr/bin/sudo EDITOR=$EDITOR /usr/sbin/visudo"
-# Muscle memory.
+# Vim muscle memory
 alias :e=/usr/bin/vim
 # Shortify git commands.
 alias ga='git add'
@@ -87,13 +81,7 @@ fi
 
 
 ## Colors & Prompt
-# Don't add env to prompt (my prompt already does this)
-export VIRTUAL_ENV_DISABLE_PROMPT=1
-
-# Faster ls, don't colorize ex=00 executable, suid, sgid, or capbilities
-export LS_COLORS='su=00:sg=00:ca=00:'
-
-# Git enhance prompt.
+# Git enhance prompt
 function parse_git_dirty {
   [[ $(git status 2> /dev/null | tail -n1) != "nothing to commit (working directory clean)" ]] && echo "*"
   }
@@ -112,6 +100,14 @@ function prompt_virtualenv() {
   fi
   }
 
+# Don't add env to prompt (my prompt already does this)
+export VIRTUAL_ENV_DISABLE_PROMPT=1
+# Faster ls, don't colorize ex=00 executable, suid, sgid, or capbilities
+export LS_COLORS='su=00:sg=00:ca=00:'
+# Shorten prompt paths.
+PROMPT_DIRTRIM=2
+
+# The prompts
 if [ -x /usr/bin/tput ] && tput setaf 1 >& /dev/null; then
   color_prompt=yes
 else
@@ -134,25 +130,21 @@ if [ "$color_prompt" = yes ]; then
 else
   PS1='\h:\w\$ '
 fi
-unset color_prompt
-
-# Shorten prompt paths.
-PROMPT_DIRTRIM=2
-
 export PS2='> '
 export PS4='+ '
+unset color_prompt
 
-# ls colors.
+# ls colors
 export CLICOLOR=1
 if [ -x /usr/bin/dircolors ]; then
   test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
   alias ls='ls --color=auto'
 fi
 
-# grep colors.
+# grep colors
 export GREP_COLOR='1;32'
 
-# less/man colors.
+# less/man colors
 export GROFF_NO_SGR=1
 export LESS_TERMCAP_mb=$'\E[01;31m'
 export LESS_TERMCAP_md=$'\E[01;31m'
@@ -161,6 +153,17 @@ export LESS_TERMCAP_so=$'\E[01;44;33m'
 export LESS_TERMCAP_se=$'\E[0m'
 export LESS_TERMCAP_us=$'\E[01;32m'
 export LESS_TERMCAP_ue=$'\E[0m'
+
+
+## Tab Completions
+if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
+  source /etc/bash_completion
+fi
+if is_osx; then
+    . `brew --prefix`/etc/bash_completion
+fi
+eval "$(pip completion --bash)"
+eval "$(uv generate-shell-completion bash)"
 
 
 ## Local things
