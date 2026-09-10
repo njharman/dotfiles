@@ -2,58 +2,53 @@ About
 =====
 Author: Norman J. Harman Jr. <njharman@gmail.com>
 
-Dotfile, ~/bin, and other stuff to 'normanize' shell.
+Dotfile, ``~/.local/bin``, and other stuff to 'normanize' shell.
+
+Targets two systems: **Omarchy** (Arch + Hyprland) and **Ubuntu LTS**.
 
 
 Usage
 =====
-This is how I do things, YMMV. ::
+::
 
     cd ~
-    wget https://raw.github.com/njharman/dotfiles/master/engage.sh
-    ./engage.sh ubuntu
-    ./engage.sh
+    wget https://raw.github.com/njharman/dotfiles/trunk/engage.sh
+    bash engage.sh install    # packages for the detected OS
+    bash engage.sh            # symlinks, directories
     rm engage.sh
 
+``engage.sh --dry-run`` prints what would change without touching anything.
 
-Things to install
------------------
 Sudoers ::
 
   njharman   ALL=NOPASSWD: ALL
 
-./engage.sh ubuntu  # Installs the following...
 
-Ubuntu ::
-    apt-get install build-essential aptitude
-    apt-get install zsh tmux vim git git-flow meld tree bash-completion
-    #apt-get install subversion
-    ## sack/sag/ag
-    apt-get install automake pkg-config libpcre3-dev zlib1g-dev liblzma-dev
-    git clone https://github.com/ggreer/the_silver_searcher
-    cd the_silver_searcher
-    ./build.sh
-    mv ag ~/bin/
+Design
+======
 
-OSX ::
-    ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-    brew install wget tmux git git-flow tree bash-completion
-    #brew install meld x11?
-    brew install the_silver_searcher
-    wget https://bootstrap.pypa.io/get-pip.py
-    python get-pip.py
-    rm get-pip.py
-    bash ~/.dotfiles/osx
+Omarchy provides a large default shell environment: starship prompt, zoxide for
+``cd``, eza for ``ls``, bat as the man pager, fzf key bindings, bash completion,
+and mise. Rather than replace any of it, these dotfiles **layer on top**.
 
-Python ::
-    sudo apt-get -y install python-dev, uv
+``engage.sh`` never symlinks over ``~/.bashrc``. On Omarchy that file is the
+bootstrap which sources ``$OMARCHY_PATH/default/bash/rc``; replacing it would
+discard every default. Instead a single line is appended::
 
-Other tools ::
-    sudo -H pip install -U percol  # visual grep
-    #sudo -H pip install -U ohmu    # diskspace usage
-    git clone https://github.com/licenses/lice.git
+    [[ -f ~/.bashrc_base ]] && source ~/.bashrc_base
 
-    Edit .ssh/config based on ssh/config.
+On Ubuntu the same line is appended to the distro's ``~/.bashrc``.
+
+``.bashrc_base`` holds everything shared, then sources ``~/.bashrc_os``.
+``engage.sh`` detects the OS at install time and links only the matching layer
+-- ``.bashrc_omarchy`` or ``.bashrc_ubuntu`` -- to that name, so the other never
+appears in ``~``. ``ls -l ~/.bashrc_os`` shows which one is active.
+
+Readline is a special case. Omarchy runs ``bind -f`` on its own inputrc *after*
+readline has already read ``~/.inputrc``, silently overriding it -- including
+dropping out of vi mode. ``.bashrc_base`` re-applies ``~/.inputrc`` at the end
+of startup. Because ``bind -f`` is additive rather than a reset, Omarchy's
+completion behaviour that we don't name is inherited.
 
 
 Contents
@@ -61,223 +56,132 @@ Contents
 
 engage.sh
 ---------
-Read the source. Briefly it...
-
-    - Creates directories
-    - Creates symlinks to *.dotfiles/foo*.
-    - Creates .ipython profile
-    - Creates .subversion
-    - Creates .vim et al
-    - Moves existing files to ``~/tmp/.dotfile_preserve``.
-    - Updates from git repo https://github.com/njharman/dotfiles
+    - Detects OS (omarchy / ubuntu).
+    - Creates directories.
+    - Symlinks dotfiles, ``bin/``, and ``config/`` trees.
+    - Appends the ``.bashrc_base`` hook to ``~/.bashrc``.
+    - Archives anything it displaces to ``~/tmp/.dotfile_preserve/<timestamp>/``.
+    - ``install`` subcommand installs packages for the detected OS.
 
 
-Aliases
--------
-These are set in ``.bashrc``.
+Shell
+-----
 
-ll, la, & lt
-    Standard long and all directory listings.
+.inputrc
+    Readline. VI editing mode, prefix history search, completion tuning.
+    Grouped into labelled sections; see Design above for the Omarchy interaction.
+
+.bashrc_base
+    Shared interactive config, sourced last from the OS's own ``~/.bashrc``.
+    History (size, dedup, immediate cross-shell sharing), ``stty`` fixes,
+    ``EDITOR``/``SUDO_EDITOR``, uv centralized virtualenvs, aliases, functions,
+    tool completions, and the ``~/.inputrc`` re-apply.
+
+.bashrc_omarchy
+    Near-empty on purpose; documents what Omarchy already supplies.
+
+.bashrc_ubuntu
+    Re-adds by hand what Omarchy gets for free: ``PAGER``/``MANPAGER``,
+    ``LESS_TERMCAP_*``, ``CDPATH``, fzf key bindings, ``/etc/bash_completion``.
+    Note Ubuntu names ``fd`` as ``fdfind`` and ``bat`` as ``batcat``, and has no
+    ``eza`` in the LTS archive -- the ls aliases fall back to coreutils.
+
+.bash_local
+    Not part of the repository. Sourced last by ``.bashrc_base`` for
+    machine-specific configuration.
+
+
+Aliases and functions
+---------------------
+Set in ``.bashrc_base``. ``ls`` and ``lt`` (tree) are left to Omarchy.
+
+ll, la, lm
+    Long, long-with-hidden, and by-modified-time listings. Flags match
+    Omarchy's ``ls`` so the family looks consistent.
 
 cdp
     cd to source of Python module.
 
-dif & difs
-    Colorized svn diff and side by side diff.
-
 f
     Case insensitive find file with 'foo' in name.
 
-gh
-    Grep bash command history. Too lazy to type ``history|grep``.
-
 myhistory
-    Twenty most typed command lines.  Apparently I hit return (no command) often. ::
-
-   7004 vim
-   6418 cd
-   3888 svn
-   2282 ls
-   1500
-   1285 git
-   1252 ack
-   1200 rm
-   1162 ssh
-   1154 mv
-    904 ansible
-    695 scp
-    583 python
-    542 cp
-    517 cat
-    484 ./test
-    481 go
-    451 apt-get
-    351 find
-    279 pip
+    Twenty most typed command lines.
 
 nukepyc
-    Recursively remove ``.pyc`` and ``.pyo`` files.
+    Recursively remove ``.pyc``/``.pyo`` files and ``__pycache__``.
 
-psg
-    Like ``pgrep -fl`` with more "stuff".
-
-
-Tools
------
-
-meld
-    Gnome's visual diff and merge tool. http://meldmerge.org/
-
-percol
-    Interactive grep tool. https://github.com/mooz/percol
-
-tmux
-    Terminal Multiplexor. More bettter than screen. I find it easier to script
-    (see `rockme` and `jo`). https://tmux.github.io/
-
-tree
-    List contents of directories in a tree-like format. Man, life doesn't get
-    much better than that.
-
-
-~/bin/
-------
-
-rockme [<session>]
-    Create (or connect to existing) *tmux* session.
-
-jo <target> [<session>]
-    Open *tmux* window with several panes ssh'd to target.
-
-256colors.py & colortest.pl
-    Verify terminal is 'shiny'.
-
-ack
-    Beyond grep__.
-
-__ http://beyondgrep.com/
-
-ag
-    Faster than ack. Download, build and install locally.
-    https://github.com/ggreer/the_silver_searcher.git
-
-cdiff
-    Colorize svn diffs. Used by bash aliases *dif* & *difs*.
-
-sack / sag / g
-    Wrapper__ for `ack` / `ag`.
-
-__ https://github.com/sampson-chen/sack
-
-svneditor
-    It's rad.
-
-    ``export SVN_EDITOR=$HOME/bin/svneditor``
+psg, psp
+    Grep running processes; fuzzy-pick one.
 
 
 Configs
 -------
-.bash_logout
-    Yeah.
 
-.bash_local
-    Not part of repository, is sourced by ``.bashrc`` For any local specific bash configuration.
+.gitconfig
+    The single global git config. Git reads both ``~/.config/git/config`` and
+    ``~/.gitconfig``; ``engage.sh`` retires the former so there is only one.
+    Global ignore patterns live in ``config/git/ignore``.
 
-.bash_profile
-    **"Processed for login shells."** Whatever, put everything in ``.bashrc``.
+.git-template/
+    Git init template. ``hooks/pre-commit`` requires the ``pre-commit`` package.
 
-.bashrc
-    HISTORY, PATH, PAGER, EDITOR, etc.
-    CDPATH, search path for the *cd* command, Is neat. cdspell.
-    meld__ for SVN_MERGE & SVN_DIFF. ``~/bin/svneditor`` (or vim) for SVN_EDITOR.
-    Many Aliases.
-    Git enhanced, colorized prompt (RED for root). Other colorizations.
-    Bash completions.
-    Sources ``.bash_local``.
+config/
+    Tracked ``~/.config`` trees. ``config/git`` is linked everywhere;
+    ``config/hypr``, ``config/omarchy``, and ``config/starship.toml`` only on
+    Omarchy.
 
-__ http://meldmerge.org/
+    **Caveat:** ``omarchy refresh hyprland`` and friends follow these symlinks
+    and write *into the repo*. That is desirable -- a reset shows up as a git
+    diff instead of silently vanishing -- but it means a refresh is a repo
+    change, not a local one. Check ``git status`` after running one.
 
-.config/flake8
-    pep8 vim tool config.
-
-.config/pep8
-    pep8 command line tool config.
-
-.gemrc
-    No slow ass rdocs.
-
-.inputrc
-    Readline configuration. VI mode is the flipping bomb.  Took me months to get use to it but it is so worth it.
-
-.ipython
-    From http://pynash.org/2013/03/06/timing-and-profiling.html
-
-  - **%time** & **%timeit**: run time, one time / avg (-n 100).
-  - **%prun**: run time by function.
-  - **%lprun**: run time by line.
-  - **%mprun** & **%memit**: memory usage, one time / avg (-n 100).
-
-.pylintrc
-    Yeah.
+.psqlrc
+    Timing on, visible nulls.
 
 .sackrc
-    Yeah.
+    Config for sack (see ``bin/sag``).
 
 .screenrc
-    Fix screen's retarded defaults.
-
-.subversion/
-    Needful configuration.
+    Fix screen's defaults. Still used on some machines.
 
 .tmux.conf
-    Use *tmux* instead of screen.
+    Terminal multiplexor.
 
-.vimrc
-    Fair amount of comments.  Some highlights:
+.vimrc, .vim/
+    Plugins managed with Vundle::
 
-   - Supertab
-   - Find files.
-   - ReST titles.
-   - Auto removing trailing whitespace on save.
-   - Returning to previous position on file load, every tool should do this.
-   - Wish I had learned about scrolloff and wildmenu 10 years earlier
-   - *jj* to exit insert mode is super bad esp on command line (see .inputrc).
-
-.vim/
-    git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
-
-    Manage plugins with vundel::
-
-        :PluginList             - lists configured plugins.
-        :PluginInstall foo      - installs plugins.
-        :PluginUpdate           - updates plugins.
-        :PluginSearch foo       - append ! to referesh local cache.
-
-    Plugins
-
-    - https://github.com/chrisbra/csv.vim
-    - https://github.com/kien/ctrlp.vim         *<C-p>* Fuzzy file opener
-    - https://github.com/sjl/gundo.vim          *<leader>u* Undo tree
-    - https://github.com/davidhalter/jedi-vim   python completion, docstring, renaming, more.
-    - https://github.com/fs111/pydoc.vim        *pw* *pW* *ps*
-    - https://github.com/ervandew/supertab      awesome tab completion.
-    - https://github.com/tomtom/tcomment_vim    *gc* (un)comment, *g<* explicit uncomment, *g>* explicit comment
-    - https://github.com/bling/vim-airline
-    - https://github.com/bling/vim-airline-themes
-    - https://github.com/nvie/vim-flake8        *<F8>* for code style nirvana.
-    - https://github.com/tpope/vim-fugitive
-    - https://github.com/airblade/vim-gitgutter
-    - https://github.com/voithos/vim-python-matchit
-    - https://github.com/christoomey/vim-tmux-navigator unified tmux/vim nav.
-    - https://github.com/bronson/vim-trailing-whitespace   *:FixWhitespace* (visual selection or whole file)
+        :PluginList / :PluginInstall / :PluginUpdate / :PluginSearch
 
 
-Templates
----------
-Things not automatically copied / installed.
+~/.local/bin
+------------
 
-osx
-    Not a configuration file.  Execute it under osX to set bunch of crap.
+sag / g
+    Wrapper__ for ripgrep with shortcuts that open results at the right line in
+    the editor. ``sag foo`` searches, ``g 3`` opens the third hit.
 
-ssh/
-    ssh configuration template.
+    Note ``.bashrc_base`` runs ``unalias g``. Omarchy aliases ``g`` to ``git``,
+    which would shadow ``~/.local/bin/g`` (the sack shortcut opener). Sack wins;
+    ``git`` is short enough to type.
+
+__ https://github.com/sampson-chen/sack
+
+code
+    cd to a Python project under ``~/Dropbox/code`` and drop into ``uv run bash``.
+    Requires uv.
+
+mysum
+    Sum numeric columns from stdin. (Named to avoid shadowing coreutils ``sum``.)
+
+memuse
+    Measure peak memory usage of a command.
+
+invoice
+    Parse ``utt report`` output into invoice.rst.
+
+256colors.py, colortest.pl
+    Verify terminal is 'shiny'.
+
+jo, rockme
+    tmux session helpers. Deprecated, pending a move to herdr.

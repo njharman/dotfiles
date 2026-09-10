@@ -1,4 +1,0 @@
-[pep8]
-# Default configuration, E121, E123, E126, E133, E226, E241, E242 and E704
-ignore = E124,E127,E128,E501
-hang-closing = True

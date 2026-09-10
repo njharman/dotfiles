@@ -1,0 +1,166 @@
+# Shared interactive bash config, sourced LAST from the OS's own ~/.bashrc.
+#
+# We never replace ~/.bashrc. On Omarchy it is the bootstrap that sources
+# $OMARCHY_PATH/default/bash/rc; on Ubuntu it is the distro's. engage.sh only
+# appends a line sourcing this file, so everything here overrides the OS
+# defaults rather than discarding them.
+
+# If not running interactively, don't do anything
+[ -z "$PS1" ] && return
+
+shopt -s histappend     # Append to history file instead of overwriting; needed so multiple panes don't clobber each other's history.
+shopt -s globstar       # Enable ** to match files/dirs recursively in glob patterns.
+# Guarded: an interactive shell without a tty (bash -i from a script, some
+# editor shells) makes these error on every startup.
+if [ -t 0 ]; then
+  stty -ixon  # Limit terminal "locking" from ^S et al.
+  stty ixany  # Allow any character to restart output.
+fi
+
+export HISTSIZE=999999
+export HISTFILESIZE=999999
+export HISTIGNORE='[bf]g:cd:cd .:cd -:cd ~:l[sal]:ls -al:history:exit::'
+export HISTCONTROL=ignorespace:erasedups
+# Require three consecutive ^D (eof) to exit terminal.
+export IGNOREEOF=2
+# Immediately append each command to the history file and share it with other
+# panes/shells, instead of only writing history when the shell exits.
+# The ${PROMPT_COMMAND:+...} guard is load-bearing: starship sets PROMPT_COMMAND
+# during Omarchy's init, and a plain assignment here would erase the prompt.
+# NOT exported: exporting it leaks stale hook names (e.g. VTE's
+# __vte_prompt_command) into subshells that don't re-run /etc/profile.d, causing
+# "command not found" on every prompt.
+PROMPT_COMMAND="history -a${PROMPT_COMMAND:+; $PROMPT_COMMAND}"
+
+# Ensure ~/.local/bin is early on PATH. Omarchy appends it; we want ours first.
+case ":$PATH:" in
+  *":$HOME/.local/bin:"*) ;;
+  *) PATH="$HOME/.local/bin:$PATH" ;;
+esac
+export PATH
+
+## Preferred tools
+# Omarchy's default EDITOR is "omarchy-launch-editor --inline", which resolves to
+# vim (see `omarchy default editor`) but is two words, breaking `alias :e=$EDITOR`
+# and anything doing exec "$EDITOR". Set it directly. SUDO_EDITOR must be set too:
+# Omarchy derives it from EDITOR *before* this file loads, so it still holds the
+# launcher otherwise.
+export EDITOR=/usr/bin/vim
+export SUDO_EDITOR=/usr/bin/vim
+# PAGER/MANPAGER are left to the OS. Omarchy pipes man through bat.
+
+## Just work dammit
+export PYTHONIOENCODING=UTF-8
+export PIP_REQUIRE_VIRTUALENV=true
+
+# Put virtualenvs in uv's cache rather than a .venv per project (uv keeps a .venv
+# symlink pointing at it, so activation and editors still work). Deliberately not
+# UV_PREVIEW=1, which would turn on every preview feature, not just this one.
+export UV_PREVIEW_FEATURES="centralized-project-envs"
+
+## Aliases and such
+# Omarchy aliases g=git, which shadows ~/.local/bin/g (the sack shortcut opener).
+# Sack wins; git is short enough to type.
+unalias g 2>/dev/null
+
+# Top 20 most run commands
+alias myhistory='sed "s|sudo ||g" ~/.bash_history|cut -d " " -f 1|sort|uniq -c|sort -rn|head -20'
+alias greph='history|grep'
+# ls itself and lt (tree view) are Omarchy's. These match its flags so the
+# whole family looks the same.
+alias ll='eza -lh --group-directories-first --icons=auto'
+alias la='eza -lah --group-directories-first --icons=auto'
+# list by modified time, newest first
+alias lm='eza -lh --group-directories-first --icons=auto --sort=modified --reverse'
+# NOTE: $EDITOR expands now (alias definition time), so these must stay below the
+# `export EDITOR=...` line above, or they silently use an empty EDITOR.
+alias visudo="/usr/bin/sudo EDITOR=$EDITOR /usr/sbin/visudo"
+# Vim muscle memory
+alias :e=/usr/bin/vim
+# Shortify git commands.
+alias ga='git add'
+alias gd='git diff'
+alias gt='git st'
+alias gdd='git diff --stat develop'
+alias gdt='git diff --stat trunk'
+# Recursively remove compiled python files.
+alias nukepyc="/usr/bin/find . -depth \( -name '*.py[co]' -or -name '__pycache__' \) -exec /bin/rm -rf {} ';'"
+
+# Change dir to Python module's source.
+function cdp { cd $(python3 -c"import os,sys;print(os.path.dirname(__import__(sys.argv[1]).__file__))" $1); }
+# Find file with 'foo' in name. Debian/Ubuntu ship the fd binary as fdfind.
+function f {
+  if command -v fd >/dev/null 2>&1; then
+    fd -uiL "$@" .
+  else
+    fdfind -uiL "$@" .
+  fi
+}
+# Searching running processes
+function psg { /bin/ps axuf | grep -v grep | grep "$@" -i --color=auto; }
+# Fuzzy-pick a process line.
+function psp { /bin/ps axuf | fzf --header-lines=1; }
+
+
+## Colors
+# Don't add env to prompt (starship already does).
+export VIRTUAL_ENV_DISABLE_PROMPT=1
+
+export CLICOLOR=1
+if [ -x /usr/bin/dircolors ]; then
+  test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
+  # Must come after dircolors: LS_COLORS keeps the last value seen per key, so
+  # this disables coloring of executable/suid/sgid/capability files without
+  # being clobbered by dircolors' own su/sg/ca defaults.
+  export LS_COLORS="${LS_COLORS}:su=00:sg=00:ca=00:"
+fi
+
+# grep colors (GREP_COLORS, plural - GREP_COLOR is deprecated and ignored by modern grep)
+export GREP_COLORS='mt=1;32'
+
+
+## Completion
+# Bash completion itself is the OS's job: Omarchy sources
+# /usr/share/bash-completion/bash_completion, Debian uses another path (see the
+# per-OS file below). Only tool-specific completions live here.
+
+# Cache these instead of eval'ing a subprocess on every shell startup
+# (regenerate by deleting the cache file, e.g. after upgrading pip/uv).
+_completion_cache_dir="$HOME/.cache/bash-completion"
+mkdir -p "$_completion_cache_dir"
+if command -v pip >/dev/null 2>&1; then
+  [ -s "$_completion_cache_dir/pip" ] || pip completion --bash > "$_completion_cache_dir/pip"
+  source "$_completion_cache_dir/pip"
+fi
+if command -v uv >/dev/null 2>&1; then
+  [ -s "$_completion_cache_dir/uv" ] || uv generate-shell-completion bash > "$_completion_cache_dir/uv"
+  source "$_completion_cache_dir/uv"
+fi
+unset _completion_cache_dir
+
+
+## OS-specific layer
+# engage.sh detects the OS at install time and links only the matching layer
+# (.bashrc_omarchy / .bashrc_ubuntu) here, so there is one fixed name to source.
+# `ls -l ~/.bashrc_os` shows which one is active.
+[ -f ~/.bashrc_os ] && source ~/.bashrc_os
+
+
+## Readline
+# Readline reads ~/.inputrc once, when the shell starts. Omarchy's rc then runs
+# `bind -f $OMARCHY_PATH/default/bash/inputrc`, which silently overrides anything
+# it also sets -- including turning vi editing mode back off. Re-applying our file
+# here, after every OS default has loaded, gives it the last word.
+#
+# `bind -f` is additive: it applies only the settings the file actually contains,
+# it does not reset readline first. So Omarchy's completion behaviour that we
+# don't mention (TAB: menu-complete, menu-complete-display-prefix,
+# completion-query-items, page-completions) survives and we inherit it.
+[ -f ~/.inputrc ] && bind -f ~/.inputrc
+
+
+## Local things
+# Not in the repo. Per-machine overrides; keep this last.
+if [ -f ~/.bash_local ]; then
+  source ~/.bash_local
+fi

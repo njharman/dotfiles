@@ -1,0 +1,67 @@
+# Ubuntu-specific interactive bash config. Sourced by ~/.bashrc_base.
+#
+# Ubuntu ships none of the modern CLI tools Omarchy assumes, and renames two of
+# the ones it does ship:
+#
+#   fd    -> package fd-find,  binary fdfind   (the f() in .bashrc_base handles this)
+#   bat   -> package bat,      binary batcat
+#   eza   -> NOT in the 24.04 LTS archive at all; needs the gierens.de apt repo
+#            or a release binary. The ls aliases below fall back to coreutils ls.
+#
+# So this file re-adds by hand what Omarchy gets for free.
+
+# /sbin and /usr/sbin are real directories here (on Arch they're symlinks to /usr/bin).
+[[ ":$PATH:" != *":/sbin:"* ]] && PATH="/sbin:${PATH}"
+[[ ":$PATH:" != *":/usr/sbin:"* ]] && PATH="/usr/sbin:${PATH}"
+export PATH
+
+## Preferred tools
+export PAGER=/usr/bin/less
+export MANPAGER=/usr/bin/less
+
+# No zoxide, so keep CDPATH as the way to cd into project dirs by bare name.
+if [ -d "$HOME/Dropbox/code" ]; then
+  export CDPATH=".:$HOME/Dropbox/code"
+fi
+if [ -d "$HOME/Work" ]; then
+  export CDPATH="${CDPATH:+$CDPATH:}$HOME/Work"
+fi
+
+## Aliases
+alias ls='ls --color=auto'
+if command -v eza >/dev/null 2>&1; then
+  alias lt='eza --tree --level=2 --long --icons --git'
+else
+  # Fall back to coreutils; .bashrc_base defined these in terms of eza.
+  alias ll='ls -lhF --group-directories-first'
+  alias la='ls -lahF --group-directories-first'
+  alias lm='ls -lhFt'
+  alias lt='ls -R'
+fi
+command -v batcat >/dev/null 2>&1 && alias bat=batcat
+
+## Colors
+# less/man colors. Only meaningful with a less-based MANPAGER; Omarchy uses bat
+# instead, which is why these live here and not in .bashrc_base.
+export GROFF_NO_SGR=1
+export LESS_TERMCAP_mb=$'\E[01;31m'
+export LESS_TERMCAP_md=$'\E[01;31m'
+export LESS_TERMCAP_me=$'\E[0m'
+export LESS_TERMCAP_so=$'\E[01;44;33m'
+export LESS_TERMCAP_se=$'\E[0m'
+export LESS_TERMCAP_us=$'\E[01;32m'
+export LESS_TERMCAP_ue=$'\E[0m'
+
+## Completion
+if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
+  source /etc/bash_completion
+fi
+
+# Fuzzy history search (Ctrl-R) and completion. Omarchy sources these itself.
+if command -v fzf >/dev/null 2>&1; then
+  if fzf --bash >/dev/null 2>&1; then
+    eval "$(fzf --bash)"
+  elif [ -f /usr/share/doc/fzf/examples/key-bindings.bash ]; then
+    source /usr/share/doc/fzf/examples/key-bindings.bash
+  fi
+fi

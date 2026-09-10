@@ -1,65 +1,61 @@
+# Readline configuration.
+#
+# Readline reads this file once, at shell startup. On Omarchy that is not the
+# last word: $OMARCHY_PATH/default/bash/rc then runs `bind -f` on its own inputrc,
+# overriding anything both files set -- including dropping us out of vi mode.
+# .bashrc_base re-applies this file at the end of startup to fix that.
+#
+# Because of that re-apply, settings Omarchy makes that are NOT named here are
+# inherited rather than reset: TAB: menu-complete, menu-complete-backward,
+# menu-complete-display-prefix, completion-query-items, page-completions off.
+# Anything below deliberately overrides Omarchy or fills a gap it leaves.
+
 $include /etc/inputrc
 
-# Search history for the string of characters between the start of the current line and the current cursor position.
-"\C-p":history-search-backward
-"\C-n":history-search-forward
-# Expand Globs without executing. Eg 'rm *x'.
-"\C-g": glob-expand-word
-# Append slash to symbolic links to a directory.
-set mark-symlinked-directories on
-# Completions listed immediately instead of ringing the bell, when more than one possible completion.
-set show-all-if-ambiguous on
-# Completions listed immediately instead of ringing the bell, when more than one possible completion but no partial completion can be made.
-set show-all-if-unmodified on
-# Display possible completions using different colors to indicate their file types.
-set colored-stats on
-# Completions to be appended by characters that indicate their file types reported by the stat system call.
-set visible-stats on
-# set completion-ignore-case On
-# sets 3 to be the maximum number of characters to be the common prefix to display for completions.
-set completion-prefix-display-length 3
-# Attempts to place the point at the same location on each history line retrieved
-#set history-preserve-point on
 
-# Do not match files with leading '.' unless leading '.' supplied.
-set match-hidden-files off
-# Lines being edited will scroll horizontally on a single screen line when they are longer than the width of the screen, instead of wrapping onto a new screen line.
-#set horizontal-scroll-mode On
-set expand-tilde off
-set skip-completed-text on
-
-# Allow UTF-8 input and output, instead of showing stuff like $'\0123\0456'.
-set input-meta on
-set output-meta on
-set convert-meta off
-
-# ctrl-J terminate incremental search.
-
-# Bash VI mode
+## 1. Editing mode
 set editing-mode vi
+
 $if mode=vi
   # Show whether we're in insert or command mode directly in the prompt.
   set show-mode-in-prompt on
-  # Change the terminal cursor shape to match vi mode: block in command mode, bar in insert mode.
-  # This jacks cursor to be insert mode in vim under tmux
+  # Terminal cursor shape per mode: bar in insert, block in command.
   set vi-ins-mode-string "\1\e[6 q\2"
   set vi-cmd-mode-string "\1\e[2 q\2"
-  #set vi-ins-mode-string "+"
-  #set vi-cmd-mode-string "="
-  # Insert each paste into the editing buffer as a single string of characters, instead of treating each character as if it had been read from the keyboard.
-  set enable-bracketed-paste on
+
   set keymap vi-command
-  # Prefix history search, vi-command mode.
-  "j": history-search-backward
-  "k": history-search-forward
+  # Prefix history search. Matches vim: k goes up (older), j goes down (newer).
+  "k": history-search-backward
+  "j": history-search-forward
   "gg": beginning-of-history
   "G": end-of-history
+
   set keymap vi-insert
-  # Prefix history search, vi-insert mode.
+  # Prefix history search on the arrow keys. Omarchy binds these too, but only in
+  # the emacs keymap, so vi-insert needs its own.
   "\e[A": history-search-backward
   "\e[B": history-search-forward
   "\e[C": forward-char
   "\e[D": backward-char
   # kk to command mode.
   "kk": vi-movement-mode
-#endif
+$endif
+
+
+## 2. History search
+# Same prefix search as the arrows, on keys that work in either editing mode.
+"\C-p": history-search-backward
+"\C-n": history-search-forward
+
+
+## 3. Completion
+# Omarchy turns this on; we want case to matter.
+set completion-ignore-case off
+# Minimum length of the common prefix before it is replaced by "..." in the
+# completion list. Keeps long shared paths from crowding out the differences.
+set completion-prefix-display-length 3
+
+
+## 4. Other keys
+# Expand globs in place without executing. Eg 'rm *x'.
+"\C-g": glob-expand-word

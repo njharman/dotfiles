@@ -1,0 +1,14 @@
+# Omarchy-specific interactive bash config. Sourced by ~/.bashrc_base.
+#
+# Deliberately near-empty. Omarchy's own $OMARCHY_PATH/default/bash/rc already
+# provides the things the Ubuntu layer has to set up by hand:
+#
+#   prompt          starship
+#   cd              zoxide (aliased to zd; learns dirs, so no CDPATH needed)
+#   ls / lt         eza, with icons and a tree view
+#   MANPAGER        bat
+#   completion      /usr/share/bash-completion + fzf key bindings
+#   PATH            ~/.local/bin
+#
+# .bashrc_base overrides what it needs from those. Put anything genuinely
+# Omarchy-only here.

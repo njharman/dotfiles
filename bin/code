@@ -1,6 +1,8 @@
 #!/bin/bash
 # cd to python project, set prompt, uv run bash
-CODE=~/dropbox/code
+# Requires uv. Note this shadows VS Code's `code` binary if that is ever
+# installed (`omarchy install editor vscode`).
+CODE=~/Dropbox/code
 
 target=$1
 

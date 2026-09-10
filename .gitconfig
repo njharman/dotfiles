@@ -1,8 +1,19 @@
+# The single global git config.
+#
+# Git reads BOTH ~/.config/git/config and ~/.gitconfig as "global", in that
+# order, with this file winning any key set in both. Omarchy ships its own
+# ~/.config/git/config, which meant two files silently disagreeing (its
+# init.defaultBranch=master vs. trunk here, its pull.rebase vs. pull.ff here).
+# engage.sh backs that file up and removes it, so this is the only one.
+#
+# Global ignore patterns live in ~/.config/git/ignore -- git's default
+# core.excludesFile, so it needs no setting here.
+
 [user]
   name = Norman J. Harman Jr.
   email = njharman@gmail.com
 
-# [includeIf "gitdir:~/work/news/"]
+# [includeIf "gitdir:~/Work/news/"]
 #   path = .gitconfig-news
 
 [core]
@@ -13,27 +24,33 @@
   whitespace=warn
 [branch]
   autosetupmerge = true
+  sort = -committerdate
+[column]
+  ui = auto
 [commit]
   verbose = true
 [diff]
   algorithm = histogram
+  colorMoved = plain
+  mnemonicPrefix = true
 [fetch]
   prune = true
   fsckobjects = true
 [init]
   defaultBranch = trunk
-  template = /home/njharman/.git-template
-  templateDir = /home/njharman/.git-template/
-[merge]
-#  conflictstyle = diff3
+  templateDir = ~/.git-template
 [pull]
   ff = only
 [push]
   default = simple
+  autoSetupRemote = true
 [receive]
   fsckobjects = true
 [rerere]
   enabled = true
+  autoupdate = true
+[tag]
+  sort = -version:refname
 [transfer]
   fsckobjects = true
 
@@ -72,4 +89,3 @@
   added = green
   changed = red
   untracked = cyan
-[safe]

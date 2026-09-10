@@ -1,0 +1,5 @@
+# Global git ignore patterns, for every repo on this machine.
+# Linked to ~/.config/git/ignore, which is git's default core.excludesFile.
+.DS_Store
+*~
+.*.swp
