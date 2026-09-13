@@ -12,3 +12,9 @@
 #
 # .bashrc_base overrides what it needs from those. Put anything genuinely
 # Omarchy-only here.
+
+# Restore traditional ls behavior (names only, colorized/icons, grid layout)
+# instead of Omarchy's default long-format `eza -lh ...`.
+if command -v eza &> /dev/null; then
+  alias ls='eza --group-directories-first --icons=auto'
+fi

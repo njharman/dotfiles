@@ -34,7 +34,7 @@ Plugin 'VundleVim/Vundle.vim'
 
 Plugin 'vim-airline/vim-airline'
 Plugin 'vim-airline/vim-airline-themes'
-Plugin 'christoomey/vim-tmux-navigator'
+" Plugin 'christoomey/vim-tmux-navigator'
 Plugin 'bronson/vim-trailing-whitespace'
 Plugin 'ervandew/supertab'
 Plugin 'kien/ctrlp.vim'
@@ -248,6 +248,15 @@ set viewoptions=unix,slash
 set list                " Show invisible characters
 set listchars=tab:>·,extends:>,precedes:< " But only show tabs, long line markers
 let g:clipbrdDefaultReg = '+'
+
+" OSC 52 yank to system clipboard (works despite vim's -clipboard build)
+function! Osc52Yank(text)
+  let l:b64 = substitute(system('base64', a:text), "\n", '', 'g')
+  call system('printf ''\033]52;c;%s\007'' ' . shellescape(l:b64) . ' > /dev/tty')
+endfunction
+
+autocmd TextYankPost * if v:event.operator ==# 'y' | call Osc52Yank(getreg(v:event.regname ==# '' ? '"' : v:event.regname)) | endif
+
 set pastetoggle=<F9> " When in insert mode, press <F11> to go to paste mode
 " Freakin awesome, start scrolling 5 lines from top/bottom/left/right
 set scrolloff=5

@@ -27,3 +27,7 @@ require("default.hypr.toggles")
 
 -- Add any other personal Hyprland configuration below.
 -- o.window("qemu", { workspace = "5" })
+
+-- virt-viewer VM console: refuse SPICE keyboard-shortcut inhibit so Omarchy
+-- binds (Super+1-5, Super+F, ...) keep working while the VM is focused/fullscreen.
+o.window("^virt-viewer$", { no_shortcuts_inhibit = true })

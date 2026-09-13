@@ -51,9 +51,11 @@ o.bind("SUPER + SHIFT + L", "Swap window to the right", hl.dsp.window.swap({ dir
 o.bind("SUPER + SHIFT + K", "Swap window up", hl.dsp.window.swap({ direction = "u" }))
 o.bind("SUPER + SHIFT + J", "Swap window down", hl.dsp.window.swap({ direction = "d" }))
 
--- Displaced by the hjkl rebind above; moved to SUPER+ALT+J/L.
+-- Displaced by the hjkl rebind above; moved to SUPER+ALT+J/L and SUPER+SHIFT+ALT+K.
 o.bind("SUPER + ALT + J", "Toggle window split", hl.dsp.layout("togglesplit"))
 o.bind("SUPER + ALT + L", "Toggle workspace layout", "omarchy-hyprland-workspace-layout-toggle")
-
--- Displaced by the hjkl rebind above (SUPER+K); moved to SUPER+SHIFT+ALT+K.
 o.bind("SUPER + SHIFT + ALT + K", "Keybindings", "omarchy-menu-keybindings")
+
+-- Replace Omarchy's CTRL+ALT+DELETE (was: close all windows, no confirmation) with the system menu.
+hl.unbind("CTRL + ALT + DELETE")
+o.bind("CTRL + ALT + DELETE", "System menu", "omarchy-menu toggle system")
