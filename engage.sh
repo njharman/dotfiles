@@ -1,17 +1,20 @@
 #!/bin/bash
 # Symlink dotfiles, yo!
+#
+# Three cumulative tiers:
+#   basic   sysadmin-ready on any box: shell, readline, git, sag/g, working vim
+#   vim     basic must already be done; updates the vim plugins
+#   full    basic + vim + the dev/desktop extras
 set -u
 
 REPO="https://github.com/njharman/dotfiles.git"
 WORK=~/.dotfiles
 SAVE=~/tmp/.dotfile_preserve/$(date +%Y%m%d-%H%M%S)
 BASHRC_HOOK='[[ -f ~/.bashrc_base ]] && source ~/.bashrc_base'
+VUNDLE=~/.vim/bundle/Vundle.vim
 
 DRYRUN=
-
-# Repo root files the generic ~ loop must not touch: either they aren't dotfiles
-# for ~ at all, or they're linked by hand further down under a different name.
-SKIP_IN_HOME=".gitignore .gitmodules .bashrc_omarchy .bashrc_ubuntu"
+NOPACKAGES=
 
 # The per-OS bash layers. Only the one matching this machine gets linked, as
 # ~/.bashrc_os; the rest have no business in ~.
@@ -37,7 +40,7 @@ function detect_os {
 function archive {
   # Move an existing file out of the way, preserving it under a timestamped dir.
   # Path relative to ~ is kept, so same-named files from different directories
-  # (say two autostart.lua) don't clobber each other in the archive.
+  # don't clobber each other in the archive.
   local dest=$1 rel
   rel=${dest#"$HOME"/}
   run mkdir -p "$SAVE/$(dirname "$rel")"
@@ -50,6 +53,13 @@ function link_file {
   # link_file <source> <dest>. Replaces our own symlinks, archives real files.
   local src=$1 dest=$2
   [ -f "$src" ] || { say "  no such file $src"; return; }
+  # Leave it alone when dest already IS src. A dest reached through a symlinked
+  # parent directory resolves to the repo's own file, and archiving that moves
+  # the file out of the repo and leaves a dangling link where it used to be.
+  if [ -e "$dest" ] && [ "$(readlink -f "$dest")" = "$(readlink -f "$src")" ]; then
+    say "  $dest (already linked)"
+    return
+  fi
   run mkdir -p "$(dirname "$dest")"
   if [ -h "$dest" ]; then
     run rm "$dest"
@@ -73,7 +83,7 @@ function link_dir_contents {
 
 function link_tree {
   # link_tree <srcdir> <destdir>. Recreates the directory structure under
-  # destdir and symlinks every file in it. Used for ~/.config trees.
+  # destdir and symlinks every file in it.
   local srcdir=$1 destdir=$2 f rel
   while IFS= read -r f; do
     rel=${f#"$srcdir"/}
@@ -84,8 +94,8 @@ function link_tree {
 
 function link_os_bashrc {
   # Link only this machine's OS layer, as ~/.bashrc_os, so .bashrc_base has a
-  # single fixed name to source. Linking all three and choosing at runtime just
-  # litters ~ with files that will never be read on this box.
+  # single fixed name to source. Linking both and choosing at runtime just
+  # litters ~ with a file that will never be read on this box.
   local os=$1 other
   # Clear any per-OS links a previous version of this script left behind.
   for other in $OS_BASHRCS; do
@@ -133,21 +143,136 @@ function retire_xdg_gitconfig {
   }
 
 
-function omarchy_install {
+function install_basic {
+  [ -n "$NOPACKAGES" ] && { say "Packages (skipped)"; return; }
   say "Packages"
-  # Already present in a stock Omarchy install: rg fd eza bat fzf zoxide
-  # starship mise vim. Not installed here on purpose: tmux (moving to herdr),
-  # tree (Omarchy's `lt` is eza's tree view), uv (installed by hand for now).
-  run omarchy pkg add pre-commit ruff
+  case "$(detect_os)" in
+    omarchy)
+      # git vim rg fd bat fzf eza are all in a stock Omarchy install.
+      say "  nothing to do, Omarchy ships everything basic needs"
+      ;;
+    ubuntu)
+      run sudo apt -y install git vim wget bash-completion ripgrep fd-find bat fzf
+      # Ubuntu names fd as fdfind and bat as batcat, and has no eza in the LTS
+      # archive -- see the notes in .bashrc_ubuntu.
+      ;;
+    *) say "  unknown OS, skipping package install";;
+  esac
   }
 
 
-function ubuntu_install {
+function install_full {
+  [ -n "$NOPACKAGES" ] && { say "Packages (skipped)"; return; }
   say "Packages"
-  run sudo apt -y install build-essential
-  run sudo apt -y install git vim tree wget bash-completion ripgrep fd-find bat fzf
-  run sudo apt -y install python3-pip pre-commit
-  # eza is not in the 24.04 LTS archive; see the note in .bashrc_ubuntu.
+  case "$(detect_os)" in
+    omarchy) run omarchy pkg add pre-commit ruff;;
+    ubuntu)  run sudo apt -y install build-essential python3-pip pre-commit;;
+    *)       say "  unknown OS, skipping package install";;
+  esac
+  }
+
+
+function basic_done {
+  # Cheap proxy for "engage.sh basic has been run here".
+  [ -h ~/.bashrc_os ] && [ -h ~/.vimrc ] && [ -d "$VUNDLE" ]
+  }
+
+
+function engage_basic {
+  local os
+  os=$(detect_os)
+  say "Detected OS: $os"
+
+  install_basic
+
+  ## Directories
+  run mkdir -p ~/.local/bin ~/tmp ~/Work ~/.backup  # .backup is vim undo and backups
+  run chmod 700 ~/.local/bin ~/tmp ~/Work ~/.backup
+
+  ## ~/.local/bin -- just the search pair and memuse; the rest is `full`.
+  say "~/.local/bin"
+  link_file "$WORK/bin/sag" ~/.local/bin/sag
+  link_file "$WORK/bin/g" ~/.local/bin/g
+  link_file "$WORK/bin/memuse" ~/.local/bin/memuse
+
+  ## Shell and readline
+  say "~"
+  link_file "$WORK/.inputrc" ~/.inputrc
+  link_file "$WORK/.sackrc" ~/.sackrc
+  link_file "$WORK/.bashrc_base" ~/.bashrc_base
+  link_os_bashrc "$os"
+  link_file "$WORK/.screenrc" ~/.screenrc
+  link_file "$WORK/.psqlrc" ~/.psqlrc
+
+  ## ~/.bashrc gets a source line, never a symlink.
+  say "~/.bashrc"
+  hook_bashrc
+
+  ## git
+  say "git"
+  link_file "$WORK/.gitconfig" ~/.gitconfig
+  retire_xdg_gitconfig
+  link_tree "$WORK/config/git" ~/.config/git
+
+  ## ~/.ssh and ~/.keys (contents are not tracked; this is permission hygiene)
+  say "permissions"
+  run mkdir -p ~/.ssh/cm_socket/
+  run chmod -f 700 ~/.ssh ~/.ssh/cm_socket/
+  run chmod -f 600 ~/.ssh/authorized_keys ~/.ssh/config
+  run chmod -f 600 ~/.ssh/*pub ~/.ssh/*pem ~/.ssh/*rsa
+  run chown -fR "$USER" ~/.ssh
+  run chmod -f 600 ~/.keys/*
+  run chown -fR "$USER" ~/.keys
+
+  ## vim: config and colors now, plugins next.
+  say "~/.vim"
+  run mkdir -p ~/.vim/bundle ~/.vim/colors ~/.vim/spell
+  run chmod 700 ~/.vim ~/.vim/bundle ~/.vim/colors ~/.vim/spell
+  link_file "$WORK/.vimrc" ~/.vimrc
+  link_dir_contents "$WORK/.vim/colors" ~/.vim/colors
+  vundle_bootstrap
+  }
+
+
+function vundle_bootstrap {
+  # .vimrc calls vundle#begin() unconditionally, so a box with .vimrc but no
+  # Vundle throws E117/E492 on every start. basic installs it for that reason.
+  if [ ! -d "$VUNDLE" ]; then
+    say "Vundle for Vim"
+    run git clone https://github.com/VundleVim/Vundle.vim.git "$VUNDLE"
+  fi
+  if [ -z "$DRYRUN" ] && [ ! -d "$VUNDLE" ]; then
+    say "Failed to find / install Vundle"
+    exit 1
+  fi
+  say "vim plugins"
+  run vim +PluginInstall +qall
+  }
+
+
+function engage_vim {
+  # Plugin update only -- everything it needs comes from basic.
+  say "vim plugins"
+  run git -C "$VUNDLE" pull
+  run vim +PluginUpdate +qall
+  }
+
+
+function engage_full {
+  engage_basic
+  engage_vim
+
+  install_full
+
+  ## The rest of ~/.local/bin
+  say "~/.local/bin"
+  link_file "$WORK/bin/code" ~/.local/bin/code
+  link_file "$WORK/bin/mysum" ~/.local/bin/mysum
+  link_file "$WORK/bin/256colors.py" ~/.local/bin/256colors.py
+
+  ## Git init template. hooks/pre-commit needs the pre-commit package.
+  say "~/.git-template"
+  link_file "$WORK/.git-template/hooks/pre-commit" ~/.git-template/hooks/pre-commit
   }
 
 
@@ -168,151 +293,56 @@ function init_the_dotfiles {
   }
 
 
-function engage_sym {
-  local os
-  os=$(detect_os)
-  say "Detected OS: $os"
-
-  ## ~/.local/bin
-  say "~/.local/bin"
-  run mkdir -p ~/.local/bin
-  run chmod 700 ~/.local/bin
-  link_dir_contents "$WORK/bin" ~/.local/bin
-
-  ## Directories
-  run mkdir -p ~/tmp ~/Work ~/.backup  # .backup is vim undo and backups
-  run chmod 700 ~/tmp ~/Work ~/.backup
-
-  ## Dotfiles in ~
-  say "~"
-  local f name
-  for f in "$WORK"/.*; do
-    [ -f "$f" ] || continue
-    name=$(basename "$f")
-    case " $SKIP_IN_HOME " in *" $name "*) continue;; esac
-    case "$name" in *~|*.swp) continue;; esac
-    link_file "$f" ~/"$name"
-  done
-  link_file "$WORK/.git-template/hooks/pre-commit" ~/.git-template/hooks/pre-commit
-
-  ## The one OS layer this machine actually uses, as ~/.bashrc_os.
-  link_os_bashrc "$os"
-
-  ## ~/.bashrc gets a source line, never a symlink.
-  say "~/.bashrc"
-  hook_bashrc
-
-  ## ~/.config
-  say "~/.config"
-  retire_xdg_gitconfig
-  link_tree "$WORK/config/git" ~/.config/git
-  if [ "$os" = omarchy ]; then
-    # NOTE: `omarchy refresh hyprland` (and friends) follow these symlinks and
-    # write into the repo. That is what we want -- a reset shows up as a git
-    # diff instead of silently vanishing -- but it means a refresh is a repo
-    # change, not a local one. Check `git status` after running one.
-    link_tree "$WORK/config/hypr" ~/.config/hypr
-    link_tree "$WORK/config/omarchy" ~/.config/omarchy
-    link_file "$WORK/config/starship.toml" ~/.config/starship.toml
-  fi
-
-  ## ~/.ssh  (config itself is not tracked; this is just permission hygiene)
-  run mkdir -p ~/.ssh/cm_socket/
-  run chmod -f 700 ~/.ssh ~/.ssh/cm_socket/
-  run chmod -f 600 ~/.ssh/authorized_keys ~/.ssh/config
-  run chmod -f 600 ~/.ssh/*pub ~/.ssh/*pem ~/.ssh/*rsa
-  run chown -fR "$USER" ~/.ssh
-
-  ## ~/.keys
-  run chmod -f 600 ~/.keys/*
-  run chown -fR "$USER" ~/.keys
-
-  ## ~/.vim  (vundle & bundles, pretty colors)
-  run mkdir -p ~/.vim/bundle ~/.vim/colors ~/.vim/spell
-  run chmod 700 ~/.vim ~/.vim/bundle ~/.vim/colors ~/.vim/spell
-  link_dir_contents "$WORK/.vim/colors" ~/.vim/colors
-  }
-
-
-function engage_install {
-  case "$(detect_os)" in
-    omarchy) omarchy_install;;
-    ubuntu)  ubuntu_install;;
-    *)       say "Unknown OS, skipping package install.";;
-  esac
-  }
-
-
-function engage_up {
-  cd "$WORK" || exit 1
-  git pull
-  }
-
-
-function engage_vim {
-  if [ ! -d ~/.vim/bundle/Vundle.vim ]; then
-    say "Vundle for Vim"
-    mkdir -p ~/.vim/bundle
-    git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
-  fi
-  if [ ! -d ~/.vim/bundle/Vundle.vim ]; then
-    say "Failed to find / install Vundle"
-    exit 1
-  fi
-  cd ~/.vim/bundle/Vundle.vim || exit 1
-  git pull
-  cd - >/dev/null || exit 1
-  vim +PluginUpdate +qall
-  }
-
-
 function usage {
   local prog
   prog=$(basename "$0")
   cat <<USAGE
-$prog              - (re)create symbolic links, directories, etc.
-$prog install      - install packages for the detected OS
-$prog up           - git pull
-$prog vim          - update vim plugins
-$prog all          - up, vim, symlinks
+$prog basic         - shell, readline, git, sag/g, working vim. Everywhere.
+$prog vim           - update vim plugins. Needs 'basic' to have been run.
+$prog full          - basic, vim, then the dev extras.
+$prog help          - this
 
 Options:
   --dry-run        - print what would change, touch nothing
+  --no-packages    - skip the OS package install
 USAGE
   }
 
 
-if [[ "${1:-}" == "--dry-run" ]]; then
-  DRYRUN=1
+while [[ "${1:-}" == --* ]]; do
+  case "$1" in
+    --dry-run)     DRYRUN=1; say "DRY RUN - nothing will be changed.";;
+    --no-packages) NOPACKAGES=1;;
+    --help)        usage; exit 0;;
+    *)             say "Unknown option: $1"; usage; exit 1;;
+  esac
   shift
-  say "DRY RUN - nothing will be changed."
-fi
+done
 
 case "${1:-}" in
-  help|--help|-h)
+  help|-h)
     usage
     ;;
-  install)
+  basic)
     init_the_dotfiles
-    engage_install
-    ;;
-  up)
-    init_the_dotfiles
-    engage_up
+    engage_basic
     ;;
   vim)
-    init_the_dotfiles
+    # Checked before init_the_dotfiles: this tier only touches ~/.vim, so
+    # there is no reason to clone the repo just to refuse.
+    if ! basic_done; then
+      say "Run '$(basename "$0") basic' first: vim only updates plugins."
+      exit 1
+    fi
     engage_vim
     ;;
-  all)
+  full)
     init_the_dotfiles
-    engage_up
-    engage_vim
-    engage_sym
+    engage_full
     ;;
   "")
-    init_the_dotfiles
-    engage_sym
+    usage
+    exit 1
     ;;
   *)
     say "Unknown command: $1"

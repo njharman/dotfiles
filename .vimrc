@@ -44,7 +44,6 @@ Plugin 'davidhalter/jedi-vim'
 Plugin 'nvie/vim-flake8'
 Plugin 'vim-scripts/pydoc.vim'
 Plugin 'github/copilot.vim'
-"Plugin 'Exafunction/codeium.vim'
 ":Gstatus :Gblame :Gedit blob|tree|commit|tag :Ggrep :Glog
 Plugin 'tpope/vim-fugitive'
 " ]c [c jump to hunk. Operate on hunks <leader>h? [s]tage, [u]ndo, [p]review

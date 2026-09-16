@@ -2,9 +2,11 @@ About
 =====
 Author: Norman J. Harman Jr. <njharman@gmail.com>
 
-Dotfile, ``~/.local/bin``, and other stuff to 'normanize' shell.
+Dotfile, ``~/.local/bin``, and other stuff to 'normanize' shell and vim.
 
 Targets two systems: **Omarchy** (Arch + Hyprland) and **Ubuntu LTS**.
+Desktop and window-manager config lives elsewhere; this repo is commandline and
+vim, and is expected to work on a server you ssh into once.
 
 
 Usage
@@ -13,15 +15,25 @@ Usage
 
     cd ~
     wget https://raw.github.com/njharman/dotfiles/trunk/engage.sh
-    bash engage.sh install    # packages for the detected OS
-    bash engage.sh            # symlinks, directories
+    bash engage.sh basic      # or: full
     rm engage.sh
 
-``engage.sh --dry-run`` prints what would change without touching anything.
+Three cumulative tiers:
 
-Sudoers ::
+basic
+    Shell, readline, git, ``sag``/``g``, and a working vim (config, colors and
+    plugins). Simple "sysadmin" baseline.
 
-  njharman   ALL=NOPASSWD: ALL
+vim
+    Update vim plugins.
+
+full
+    ``basic`` + ``vim`` + development extras.
+
+Options::
+
+    --dry-run        print what would change, touch nothing
+    --no-packages    skip the package install (the slow part of a re-run)
 
 
 Design
@@ -39,16 +51,20 @@ discard every default. Instead a single line is appended::
 
 On Ubuntu the same line is appended to the distro's ``~/.bashrc``.
 
-``.bashrc_base`` holds everything shared, then sources ``~/.bashrc_os``.
-``engage.sh`` detects the OS at install time and links only the matching layer
--- ``.bashrc_omarchy`` or ``.bashrc_ubuntu`` -- to that name, so the other never
-appears in ``~``. ``ls -l ~/.bashrc_os`` shows which one is active.
+``.bashrc_base`` holds everything shared across distros, then sources
+``~/.bashrc_os``. OS is detected at install time and only the matching layer
+-- ``.bashrc_omarchy`` or ``.bashrc_ubuntu`` -- is linked to ``~/.bashrc_os``.
 
 Readline is a special case. Omarchy runs ``bind -f`` on its own inputrc *after*
 readline has already read ``~/.inputrc``, silently overriding it -- including
 dropping out of vi mode. ``.bashrc_base`` re-applies ``~/.inputrc`` at the end
 of startup. Because ``bind -f`` is additive rather than a reset, Omarchy's
 completion behaviour that we don't name is inherited.
+
+Vim is the other special case. ``.vimrc`` calls ``vundle#begin()``
+unconditionally, so a machine with the config but no Vundle throws errors on
+every start. That is why ``basic`` installs the plugins rather than leaving them
+to the ``vim`` tier.
 
 
 Contents
@@ -57,11 +73,10 @@ Contents
 engage.sh
 ---------
     - Detects OS (omarchy / ubuntu).
-    - Creates directories.
-    - Symlinks dotfiles, ``bin/``, and ``config/`` trees.
+    - Installs packages, creates directories.
+    - Symlinks dotfiles, ``bin/``, and ``config/git``.
     - Appends the ``.bashrc_base`` hook to ``~/.bashrc``.
     - Archives anything it displaces to ``~/tmp/.dotfile_preserve/<timestamp>/``.
-    - ``install`` subcommand installs packages for the detected OS.
 
 
 Shell
@@ -74,15 +89,16 @@ Shell
 .bashrc_base
     Shared interactive config, sourced last from the OS's own ``~/.bashrc``.
     History (size, dedup, immediate cross-shell sharing), ``stty`` fixes,
-    ``EDITOR``/``SUDO_EDITOR``, uv centralized virtualenvs, aliases, functions,
-    tool completions, and the ``~/.inputrc`` re-apply.
+    ``EDITOR``/``SUDO_EDITOR``, ``CDPATH`` (``.``, ``~/Dropbox/code``,
+    ``~/Work``), aliases, functions, tool completions, and the ``~/.inputrc``
+    re-apply.
 
 .bashrc_omarchy
     Near-empty on purpose; documents what Omarchy already supplies.
 
 .bashrc_ubuntu
     Re-adds by hand what Omarchy gets for free: ``PAGER``/``MANPAGER``,
-    ``LESS_TERMCAP_*``, ``CDPATH``, fzf key bindings, ``/etc/bash_completion``.
+    ``LESS_TERMCAP_*``, fzf key bindings, ``/etc/bash_completion``.
     Note Ubuntu names ``fd`` as ``fdfind`` and ``bat`` as ``batcat``, and has no
     ``eza`` in the LTS archive -- the ls aliases fall back to coreutils.
 
@@ -95,15 +111,15 @@ Aliases and functions
 ---------------------
 Set in ``.bashrc_base``. ``ls`` and ``lt`` (tree) are left to Omarchy.
 
-ll, la, lm
-    Long, long-with-hidden, and by-modified-time listings. Flags match
-    Omarchy's ``ls`` so the family looks consistent.
+f
+    Case insensitive find file with 'foo' in name.
 
 cdp
     cd to source of Python module.
 
-f
-    Case insensitive find file with 'foo' in name.
+ll, la, lm
+    Long, long-with-hidden, and by-modified-time listings. Flags match
+    Omarchy's ``ls`` so the family looks consistent.
 
 myhistory
     Twenty most typed command lines.
@@ -125,28 +141,16 @@ Configs
 
 .git-template/
     Git init template. ``hooks/pre-commit`` requires the ``pre-commit`` package.
-
-config/
-    Tracked ``~/.config`` trees. ``config/git`` is linked everywhere;
-    ``config/hypr``, ``config/omarchy``, and ``config/starship.toml`` only on
-    Omarchy.
-
-    **Caveat:** ``omarchy refresh hyprland`` and friends follow these symlinks
-    and write *into the repo*. That is desirable -- a reset shows up as a git
-    diff instead of silently vanishing -- but it means a refresh is a repo
-    change, not a local one. Check ``git status`` after running one.
+    ``full`` only.
 
 .psqlrc
-    Timing on, visible nulls.
+    Postgresql Timing on, visible nulls.
 
 .sackrc
     Config for sack (see ``bin/sag``).
 
 .screenrc
     Fix screen's defaults. Still used on some machines.
-
-.tmux.conf
-    Terminal multiplexor.
 
 .vimrc, .vim/
     Plugins managed with Vundle::
@@ -167,21 +171,19 @@ sag / g
 
 __ https://github.com/sampson-chen/sack
 
+memuse
+    Measure peak memory usage of a command.
+
 code
-    cd to a Python project under ``~/Dropbox/code`` and drop into ``uv run bash``.
-    Requires uv.
+    ``code <proj>[/sub] [-n]``: cd to a Python project under ``~/Dropbox/code``
+    and drop into ``uv run bash`` (venv active, prompt shows ``[proj]``). The venv
+    lives in ``~/.venvs/<proj>`` (``UV_PROJECT_ENVIRONMENT``), outside Dropbox;
+    ``<proj>/.venv`` is a symlink to it so pyright/Claude/editors find it. ``-n``
+    only prepares (link + ``uv sync``). Pick Python per project with
+    ``uv python install 3.x`` + ``uv python pin 3.x``. Requires uv.
 
 mysum
     Sum numeric columns from stdin. (Named to avoid shadowing coreutils ``sum``.)
 
-memuse
-    Measure peak memory usage of a command.
-
-invoice
-    Parse ``utt report`` output into invoice.rst.
-
-256colors.py, colortest.pl
+256colors.py
     Verify terminal is 'shiny'.
-
-jo, rockme
-    tmux session helpers. Deprecated, pending a move to herdr.
