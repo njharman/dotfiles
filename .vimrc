@@ -34,7 +34,6 @@ Plugin 'VundleVim/Vundle.vim'
 
 Plugin 'vim-airline/vim-airline'
 Plugin 'vim-airline/vim-airline-themes'
-" Plugin 'christoomey/vim-tmux-navigator'
 Plugin 'bronson/vim-trailing-whitespace'
 Plugin 'ervandew/supertab'
 Plugin 'kien/ctrlp.vim'
@@ -249,13 +248,29 @@ set list                " Show invisible characters
 set listchars=tab:>·,extends:>,precedes:< " But only show tabs, long line markers
 let g:clipbrdDefaultReg = '+'
 
-" OSC 52 yank to system clipboard (works despite vim's -clipboard build)
-function! Osc52Yank(text)
-  let l:b64 = substitute(system('base64', a:text), "\n", '', 'g')
-  call system('printf ''\033]52;c;%s\007'' ' . shellescape(l:b64) . ' > /dev/tty')
-endfunction
+if has('clipboard_provider')
+  " Vim 9.2+ talks OSC 52 to the terminal itself, so "+ is the system clipboard
+  " and "* the primary selection, even with a -clipboard build, over ssh, and
+  " inside a multiplexer.
+  " Plenty of terminals write OSC 52 but never answer a paste query; asking then
+  " hangs or returns nothing, so don't ask. Paste with the terminal's own key.
+  let g:osc52_disable_paste = 1
+  " A multiplexer between vim and the terminal can swallow the DA1 reply the
+  " plugin probes for, leaving it to conclude OSC 52 is unavailable.
+  let g:osc52_force_avail = 1
+  packadd osc52
+  set clipmethod+=osc52
+  " Mouse drag-select copies to clipboard and primary, matching the terminal.
+  xnoremap <silent> <LeftRelease> <LeftRelease>"+ygv"*ygv
+else
+  " OSC 52 yank to system clipboard (works despite vim's -clipboard build)
+  function! Osc52Yank(text)
+    let l:b64 = substitute(system('base64', a:text), "\n", '', 'g')
+    call system('printf ''\033]52;c;%s\007'' ' . shellescape(l:b64) . ' > /dev/tty')
+  endfunction
 
-autocmd TextYankPost * if v:event.operator ==# 'y' | call Osc52Yank(getreg(v:event.regname ==# '' ? '"' : v:event.regname)) | endif
+  autocmd TextYankPost * if v:event.operator ==# 'y' | call Osc52Yank(getreg(v:event.regname ==# '' ? '"' : v:event.regname)) | endif
+endif
 
 set pastetoggle=<F9> " When in insert mode, press <F11> to go to paste mode
 " Freakin awesome, start scrolling 5 lines from top/bottom/left/right
@@ -382,6 +397,28 @@ nnoremap <leader>j :cnext<CR>
 ":b# jump to
 map <right> <ESC>:bn<CR>
 map <left> <ESC>:bp<CR>
+
+"" Netrw
+" :Back or - : save file, close its buffer, return to directory listing
+function! s:Back() abort
+  if &buftype !=# ''
+    return
+  endif
+  update
+  let l:buf = bufnr('%')
+  let l:name = expand('%:t')
+  if exists('w:netrw_rexlocal')
+    Rexplore
+  else
+    Explore
+    call search('^\V' . escape(l:name, '\') . '\m[*@]\=$', 'cw')
+  endif
+  if bufnr('%') != l:buf && empty(win_findbuf(l:buf))
+    execute 'bdelete' l:buf
+  endif
+endfunction
+command! Back call s:Back()
+nnoremap <silent> - :Back<CR>
 
 " Help Nav
 au FileType help :noremap <buffer> q :q<CR>
