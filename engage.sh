@@ -192,13 +192,12 @@ function engage_basic {
   ## ~/.local/bin -- just the search pair and memuse; the rest is `full`.
   say "~/.local/bin"
   link_file "$WORK/bin/sag" ~/.local/bin/sag
-  link_file "$WORK/bin/g" ~/.local/bin/g
   link_file "$WORK/bin/memuse" ~/.local/bin/memuse
 
   ## Shell and readline
   say "~"
   link_file "$WORK/.inputrc" ~/.inputrc
-  link_file "$WORK/.sackrc" ~/.sackrc
+  link_file "$WORK/.sagrc" ~/.sagrc
   link_file "$WORK/.bashrc_base" ~/.bashrc_base
   link_os_bashrc "$os"
   link_file "$WORK/.screenrc" ~/.screenrc

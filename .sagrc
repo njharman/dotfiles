@@ -1,0 +1,35 @@
+#!/bin/bash
+#
+# Configuration file for sag (see bin/sag)
+
+# sag -lp
+# sag -wp
+# sag -sp trac
+
+sag__shortcut_path=~/.local/bin
+sag__shortcut_cmd=g
+sag__shortcut_file=~/.sag_shortcuts
+sag__dev_null=/dev/null
+sag__OS=$(uname)
+sag__default_editor=vim
+
+# (Note: do not edit the beacon tags below by hand, sag rewrites around them)
+# sag__beacon_tag_profiles
+#
+sag__profile_name=no_profile
+sag__profile_preset_flags=""
+sag__profile_preset_directory=""
+#
+sag__profile_name=work
+sag__profile_preset_flags="--ignore='*locale' --ignore='*pdf' --ignore='*min.js' --ignore='*min.css' --ignore='*min.js.map'"
+sag__profile_preset_directory="~/work"
+
+# sag__beacon_tag_new_profiles
+
+# sag__beacon_tag_current_profile BEGIN
+#
+sag__profile_name=no_profile
+sag__profile_preset_flags=""
+sag__profile_preset_directory=""
+#
+# sag__beacon_tag_current_profile END

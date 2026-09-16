@@ -63,8 +63,8 @@ CDPATH=.
 [ -d "$HOME/Work" ] && CDPATH="$CDPATH:$HOME/Work"
 
 ## Aliases and such
-# Omarchy aliases g=git, which shadows ~/.local/bin/g (the sack shortcut opener).
-# Sack wins; git is short enough to type.
+# Omarchy aliases g=git, which shadows ~/.local/bin/g (the sag shortcut opener).
+# Sag wins; git is short enough to type.
 unalias g 2>/dev/null
 
 # Top 20 most run commands
