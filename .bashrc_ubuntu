@@ -19,14 +19,6 @@ export PATH
 export PAGER=/usr/bin/less
 export MANPAGER=/usr/bin/less
 
-# No zoxide, so keep CDPATH as the way to cd into project dirs by bare name.
-if [ -d "$HOME/Dropbox/code" ]; then
-  export CDPATH=".:$HOME/Dropbox/code"
-fi
-if [ -d "$HOME/Work" ]; then
-  export CDPATH="${CDPATH:+$CDPATH:}$HOME/Work"
-fi
-
 ## Aliases
 alias ls='ls --color=auto'
 if command -v eza >/dev/null 2>&1; then

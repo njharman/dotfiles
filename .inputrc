@@ -49,8 +49,8 @@ $endif
 
 
 ## 3. Completion
-# Omarchy turns this on; we want case to matter.
-set completion-ignore-case off
+# Omarchy turns this on too; set here so Ubuntu gets it. `cd dro<TAB>` finds Dropbox.
+set completion-ignore-case on
 # Minimum length of the common prefix before it is replaced by "..." in the
 # completion list. Keeps long shared paths from crowding out the differences.
 set completion-prefix-display-length 3

@@ -4,7 +4,8 @@
 # provides the things the Ubuntu layer has to set up by hand:
 #
 #   prompt          starship
-#   cd              zoxide (aliased to zd; learns dirs, so no CDPATH needed)
+#   cd              zoxide (aliased to zd; tries CDPATH from .bashrc_base first,
+#                   then fuzzy-matches visited dirs. Never completes `cd` TAB.)
 #   ls / lt         eza, with icons and a tree view
 #   MANPAGER        bat
 #   completion      /usr/share/bash-completion + fzf key bindings

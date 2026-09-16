@@ -53,10 +53,14 @@ export SUDO_EDITOR=/usr/bin/vim
 export PYTHONIOENCODING=UTF-8
 export PIP_REQUIRE_VIRTUALENV=true
 
-# Put virtualenvs in uv's cache rather than a .venv per project (uv keeps a .venv
-# symlink pointing at it, so activation and editors still work). Deliberately not
-# UV_PREVIEW=1, which would turn on every preview feature, not just this one.
-export UV_PREVIEW_FEATURES="centralized-project-envs"
+## cd
+# Bare-name cd into project dirs from anywhere; search order ./ -> code -> Work.
+# Not exported: an exported CDPATH changes what `cd` does inside scripts.
+# Also feeds TAB completion (bash-completion's _cd reads CDPATH). On Omarchy,
+# cd -> zd -> z -> builtin cd uses this before falling back to zoxide's history.
+CDPATH=.
+[ -d "$HOME/Dropbox/code" ] && CDPATH="$CDPATH:$HOME/Dropbox/code"
+[ -d "$HOME/Work" ] && CDPATH="$CDPATH:$HOME/Work"
 
 ## Aliases and such
 # Omarchy aliases g=git, which shadows ~/.local/bin/g (the sack shortcut opener).
@@ -72,6 +76,9 @@ alias ll='eza -lh --group-directories-first --icons=auto'
 alias la='eza -lah --group-directories-first --icons=auto'
 # list by modified time, newest first
 alias lm='eza -lh --group-directories-first --icons=auto --sort=modified --reverse'
+# tree view with no depth limit. Omarchy's lt stops at 2 levels; `lt -L N` (or
+# --level=N) sets another depth, since the last --level given wins.
+alias tree='eza --tree --long --icons --git'
 # NOTE: $EDITOR expands now (alias definition time), so these must stay below the
 # `export EDITOR=...` line above, or they silently use an empty EDITOR.
 alias visudo="/usr/bin/sudo EDITOR=$EDITOR /usr/sbin/visudo"
@@ -103,7 +110,8 @@ function psp { /bin/ps axuf | fzf --header-lines=1; }
 
 
 ## Colors
-# Don't add env to prompt (starship already does).
+# Keep venv activate scripts off PS1; where starship is configured to show it,
+# [name] comes from VIRTUAL_ENV_PROMPT via starship's env_var module.
 export VIRTUAL_ENV_DISABLE_PROMPT=1
 
 export CLICOLOR=1
