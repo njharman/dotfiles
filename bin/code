@@ -1,13 +1,23 @@
 #!/bin/bash
 # cd to python project, set prompt, uv run bash
+#
+# The venv lives outside Dropbox in ~/.venvs/<name> (UV_PROJECT_ENVIRONMENT).
+# <proj>/.venv is a symlink to it, so pyright/Claude/editors find it and plain
+# `uv sync` in that dir uses it too. Dropbox syncs the link itself; on a machine
+# without that venv the link dangles (plain uv errors "File exists") until
+# `code <proj>` recreates the venv.
+#
+# Usage: code <project>[/subdir] [-n]    -n: create venv + link only, no shell
+#
 # Requires uv. Note this shadows VS Code's `code` binary if that is ever
 # installed (`omarchy install editor vscode`).
 CODE=~/Dropbox/code
+VENVS=~/.venvs
 
-target=$1
+target=${1%/}
 
 if [ -z "$target" ]; then
-    echo "Usage: $(basename "$0") <project>" >&2
+    echo "Usage: $(basename "$0") <project>[/subdir] [-n]" >&2
     exit 1
 fi
 
@@ -19,9 +29,28 @@ fi
 
 cd "$CODE/$target" || exit 1
 
-export VIRTUAL_ENV_PROMPT=$target
-if [ ! -d "$CODE/$target/.venv" ]; then
-    uv sync
+if [ ! -f pyproject.toml ]; then
+    echo "warning: no pyproject.toml, no venv" >&2
+    [ "$2" = "-n" ] && exit
+    exec bash
 fi
+
+# cna/src/api -> cna-src-api
+export UV_PROJECT_ENVIRONMENT=$VENVS/${target//\//-}
+export VIRTUAL_ENV_PROMPT=$target
+
+if [ -L .venv ] || [ ! -e .venv ]; then
+    # Also replaces stale links, e.g. into another machine's uv cache.
+    [ "$(readlink .venv)" = "$UV_PROJECT_ENVIRONMENT" ] || ln -sfn "$UV_PROJECT_ENVIRONMENT" .venv
+else
+    echo "warning: .venv is a real directory in Dropbox; ignoring it for $UV_PROJECT_ENVIRONMENT" >&2
+fi
+
+if [ ! -d "$UV_PROJECT_ENVIRONMENT" ]; then
+    mkdir -p "$VENVS"
+    uv sync || exit 1
+fi
+
+[ "$2" = "-n" ] && exit
 uv run python --version
-uv run bash
+exec uv run bash
