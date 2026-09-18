@@ -19,3 +19,125 @@
 if command -v eza &> /dev/null; then
   alias ls='eza --group-directories-first --icons=auto'
 fi
+
+## open
+# Omarchy's own open() (in $OMARCHY_PATH/default/bash/aliases) is
+#     open() ( xdg-open "$@" >/dev/null 2>&1 & )
+# and xdg-open takes exactly ONE argument. So `open ./Various Sci-fi/foo.pdf`
+# (unquoted, space in the path) and `open *.jpg` both die on "unexpected
+# argument" -- which the 2>&1 then throws away, so they look like no-ops.
+#
+# This version says what went wrong before launching anything, rejoins an
+# unquoted path, and hands a whole batch of files to a single instance of their
+# app when its Exec takes %F/%U (imv and evince both do), so you get one window
+# to page through instead of none. Launch itself is still backgrounded with
+# output discarded: xdg-open/gio block for the app's whole lifetime, so a
+# post-launch error can't be reported without splattering the prompt later.
+
+# Resolve a .desktop id to its path, searching where xdg-open searches.
+_open_desktop_file() {
+  local id=$1 dir found
+  local -a dirs
+  IFS=: read -r -a dirs <<<"${XDG_DATA_DIRS:-/usr/local/share:/usr/share}"
+  dirs=("${XDG_DATA_HOME:-$HOME/.local/share}" "${dirs[@]}")
+  for dir in "${dirs[@]}"; do
+    if [[ -f $dir/applications/$id ]]; then
+      printf '%s\n' "$dir/applications/$id"
+      return 0
+    fi
+    # Ids like kde-foo.desktop can live in a subdir as kde/foo.desktop.
+    found=$(find "$dir/applications" -name "$id" -type f -print -quit 2>/dev/null)
+    if [[ -n $found ]]; then
+      printf '%s\n' "$found"
+      return 0
+    fi
+  done
+  return 1
+}
+
+open() {
+  if (($# == 0)); then
+    printf 'open: no file given\n' >&2
+    return 2
+  fi
+
+  local arg
+  local -a targets=()
+  local every=1
+  for arg in "$@"; do
+    if [[ $arg == *://* || -e $arg ]]; then
+      continue
+    fi
+    every=0
+    break
+  done
+
+  if ((every)); then
+    # Everything named exists: a deliberate (and correctly quoted) list.
+    targets=("$@")
+  elif [[ -e "$*" ]]; then
+    # Nothing else fits, but the args rejoined with spaces do name a real file:
+    # an unquoted path. Checked second so a real list always wins.
+    targets=("$*")
+  else
+    local -a missing=()
+    for arg in "$@"; do
+      [[ $arg == *://* || -e $arg ]] || missing+=("$arg")
+    done
+    printf 'open: no such file: %s\n' "${missing[@]}" >&2
+    return 1
+  fi
+
+  # Pair each target with the .desktop id that handles it. URLs get an empty
+  # handler and go straight to xdg-open, which knows about scheme handlers.
+  local mime app i j
+  local -a apps=()
+  for arg in "${targets[@]}"; do
+    if [[ ! -e $arg && $arg == *://* ]]; then
+      apps+=("")
+      continue
+    fi
+    mime=$(xdg-mime query filetype "$arg" 2>/dev/null)
+    app=""
+    [[ -n $mime ]] && app=$(xdg-mime query default "$mime" 2>/dev/null)
+    if [[ -z $app ]]; then
+      printf 'open: no handler for %s (%s)\n' "$arg" "${mime:-unknown type}" >&2
+      return 1
+    fi
+    apps+=("$app")
+  done
+
+  # One launch per distinct handler, batching that handler's files together.
+  local -A seen=()
+  local desktop exec_line
+  local -a batch
+  for i in "${!targets[@]}"; do
+    app=${apps[i]}
+    if [[ -z $app ]]; then
+      (xdg-open "${targets[i]}" >/dev/null 2>&1 &)
+      continue
+    fi
+    [[ -n ${seen[$app]:-} ]] && continue
+    seen[$app]=1
+
+    desktop=$(_open_desktop_file "$app")
+    if [[ -z $desktop ]]; then
+      printf 'open: handler %s not installed\n' "$app" >&2
+      return 1
+    fi
+
+    batch=()
+    for j in "${!targets[@]}"; do
+      [[ ${apps[j]} == "$app" ]] && batch+=("${targets[j]}")
+    done
+
+    exec_line=$(grep -m1 '^Exec=' "$desktop")
+    if [[ $exec_line == *%[FU]* ]] && command -v gio >/dev/null; then
+      (gio launch "$desktop" "${batch[@]}" >/dev/null 2>&1 &)
+    else
+      for arg in "${batch[@]}"; do
+        (xdg-open "$arg" >/dev/null 2>&1 &)
+      done
+    fi
+  done
+}
