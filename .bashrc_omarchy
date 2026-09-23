@@ -14,6 +14,12 @@
 # .bashrc_base overrides what it needs from those. Put anything genuinely
 # Omarchy-only here.
 
+# Keep Python/ruff caches out of ~/Dropbox/code (Dropbox has no gitignore-style
+# exclude; see the dropbox-churn skill). Standard stdlib/tool env vars, not
+# custom paths: sys.pycache_prefix (PEP 3147) and ruff's documented override.
+export PYTHONPYCACHEPREFIX=$HOME/.cache/pycache
+export RUFF_CACHE_DIR=$HOME/.cache/ruff
+
 # Restore traditional ls behavior (names only, colorized/icons, grid layout)
 # instead of Omarchy's default long-format `eza -lh ...`.
 if command -v eza &> /dev/null; then
