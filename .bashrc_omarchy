@@ -17,6 +17,8 @@
 # Keep Python/ruff caches out of ~/Dropbox/code (Dropbox has no gitignore-style
 # exclude; see the dropbox-churn skill). Standard stdlib/tool env vars, not
 # custom paths: sys.pycache_prefix (PEP 3147) and ruff's documented override.
+# The session-wide copy is ~/.config/uwsm/env.d/60-dropbox-churn; this one
+# covers ssh/TTY logins, which don't go through uwsm.
 export PYTHONPYCACHEPREFIX=$HOME/.cache/pycache
 export RUFF_CACHE_DIR=$HOME/.cache/ruff
 
