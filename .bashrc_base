@@ -95,13 +95,25 @@ alias nukepyc="/usr/bin/find . -depth \( -name '*.py[co]' -or -name '__pycache__
 
 # Change dir to Python module's source.
 function cdp { cd $(python3 -c"import os,sys;print(os.path.dirname(__import__(sys.argv[1]).__file__))" $1); }
-# Find file with 'foo' in name. Debian/Ubuntu ship the fd binary as fdfind.
+# Find file with 'foo' in name, skipping venv/cache/VCS/build dirs; -a/--all
+# (anywhere in the args) searches everything. This shadows fd's own -a; use
+# --absolute-path for that. Debian/Ubuntu ship the fd binary as fdfind.
 function f {
-  if command -v fd >/dev/null 2>&1; then
-    fd -uiL "$@" .
-  else
-    fdfind -uiL "$@" .
+  local fd=fd all= a args=() excl=()
+  command -v fd >/dev/null 2>&1 || fd=fdfind
+  for a in "$@"; do
+    case $a in
+      -a|--all) all=1 ;;
+      *) args+=("$a") ;;
+    esac
+  done
+  if [ -z "$all" ]; then
+    for a in .venv .snapshots .cache .git __pycache__ .pytest_cache .ruff_cache \
+             .mypy_cache .tox .nox node_modules dist; do
+      excl+=(-E "$a")
+    done
   fi
+  "$fd" -uiL "${excl[@]}" "${args[@]}" .
 }
 # Searching running processes
 function psg { /bin/ps axuf | grep -v grep | grep "$@" -i --color=auto; }
