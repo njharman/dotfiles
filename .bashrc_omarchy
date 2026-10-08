@@ -41,6 +41,21 @@ fi
 # to page through instead of none. Launch itself is still backgrounded with
 # output discarded: xdg-open/gio block for the app's whole lifetime, so a
 # post-launch error can't be reported without splattering the prompt later.
+#
+# -t/--tiled opens the window tiled instead of floating (Omarchy floats evince,
+# imv, mpv, ...). It launches through Hyprland's hl.exec_cmd with a tile rule.
+
+# Run a command detached. With $tiled set (dynamic scope from open), have
+# Hyprland start it with a tile rule instead.
+_open_launch() {
+  if [[ -n ${tiled:-} ]]; then
+    local cmd
+    printf -v cmd '%q ' "$@"
+    hyprctl eval "hl.exec_cmd([==[$cmd >/dev/null 2>&1]==], { tile = true })" >/dev/null
+  else
+    ("$@" >/dev/null 2>&1 &)
+  fi
+}
 
 # Resolve a .desktop id to its path, searching where xdg-open searches.
 _open_desktop_file() {
@@ -64,6 +79,28 @@ _open_desktop_file() {
 }
 
 open() {
+  local tiled=""
+  while (($#)); do
+    case $1 in
+      -t | --tiled) tiled=1 ;;
+      -h | --help)
+        printf 'usage: open [-t|--tiled] [--] file-or-url...\n'
+        return 0
+        ;;
+      --)
+        shift
+        break
+        ;;
+      -?*)
+        [[ -e $1 ]] && break
+        printf 'open: unknown option: %s\n' "$1" >&2
+        return 2
+        ;;
+      *) break ;;
+    esac
+    shift
+  done
+
   if (($# == 0)); then
     printf 'open: no file given\n' >&2
     return 2
@@ -122,7 +159,7 @@ open() {
   for i in "${!targets[@]}"; do
     app=${apps[i]}
     if [[ -z $app ]]; then
-      (xdg-open "${targets[i]}" >/dev/null 2>&1 &)
+      _open_launch xdg-open "${targets[i]}"
       continue
     fi
     [[ -n ${seen[$app]:-} ]] && continue
@@ -141,10 +178,10 @@ open() {
 
     exec_line=$(grep -m1 '^Exec=' "$desktop")
     if [[ $exec_line == *%[FU]* ]] && command -v gio >/dev/null; then
-      (gio launch "$desktop" "${batch[@]}" >/dev/null 2>&1 &)
+      _open_launch gio launch "$desktop" "${batch[@]}"
     else
       for arg in "${batch[@]}"; do
-        (xdg-open "$arg" >/dev/null 2>&1 &)
+        _open_launch xdg-open "$arg"
       done
     fi
   done
