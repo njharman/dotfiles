@@ -1,0 +1,4 @@
+# Linked to ~/.config/git/code.gitconfig. Included by ~/.gitconfig for
+# repos under ~/Dropbox/code/ only.
+[core]
+  excludesFile = ~/.config/git/ignore-code

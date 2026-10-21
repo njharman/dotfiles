@@ -1,0 +1,13 @@
+# Linked to ~/.config/git/ignore-code. Ignore patterns for repos under
+# ~/Dropbox/code/ (see code.gitconfig).
+# core.excludesFile is single-valued, so this REPLACES ~/.config/git/ignore there:
+# keep the general patterns below in sync with that file.
+.DS_Store
+*~
+.*.swp
+
+# Claude Code
+.claude/
+CLAUDE.md
+CLAUDE.local.md
+claude_*.md

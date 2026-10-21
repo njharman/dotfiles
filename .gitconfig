@@ -7,7 +7,8 @@
 # engage.sh backs that file up and removes it, so this is the only one.
 #
 # Global ignore patterns live in ~/.config/git/ignore -- git's default
-# core.excludesFile, so it needs no setting here.
+# core.excludesFile, so it needs no setting here. Repos under ~/Dropbox/code/
+# (any depth) swap in ~/.config/git/ignore-code via the includeIf at the end.
 
 [user]
   name = Norman J. Harman Jr.
@@ -90,3 +91,8 @@
   added = green
   changed = red
   untracked = cyan
+
+# Code repos: keep Claude Code files out of (public) repos without a telltale
+# .gitignore line in each. Trailing / matches every repo below, any depth.
+[includeIf "gitdir:~/Dropbox/code/"]
+  path = ~/.config/git/code.gitconfig
