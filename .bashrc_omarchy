@@ -43,15 +43,18 @@ fi
 # post-launch error can't be reported without splattering the prompt later.
 #
 # -t/--tiled opens the window tiled instead of floating (Omarchy floats evince,
-# imv, mpv, ...). It launches through Hyprland's hl.exec_cmd with a tile rule.
+# imv, mpv, ...). It launches through Hyprland's hl.exec_cmd with a tile rule,
+# which spawns in Hyprland's cwd, so the command is prefixed with a cd to $PWD
+# to keep relative paths (../foo.pdf) working.
 
 # Run a command detached. With $tiled set (dynamic scope from open), have
 # Hyprland start it with a tile rule instead.
 _open_launch() {
   if [[ -n ${tiled:-} ]]; then
-    local cmd
+    local cwd cmd
+    printf -v cwd '%q' "$PWD"
     printf -v cmd '%q ' "$@"
-    hyprctl eval "hl.exec_cmd([==[$cmd >/dev/null 2>&1]==], { tile = true })" >/dev/null
+    hyprctl eval "hl.exec_cmd([==[cd -- $cwd && $cmd >/dev/null 2>&1]==], { tile = true })" >/dev/null
   else
     ("$@" >/dev/null 2>&1 &)
   fi

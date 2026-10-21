@@ -179,6 +179,25 @@ unset _completion_cache_dir
 [ -f ~/.inputrc ] && bind -f ~/.inputrc
 
 
+## Prompt
+# "[N] " (orange) at the start of the prompt while there are background or
+# Ctrl-Z'd jobs; nothing when there are none. No fork per prompt: bash turns \j
+# into the job count *before* parameter expansion, so ${_PS1_JOBS[\j]-...}
+# hits the set-but-empty index 0 when idle and falls to the default otherwise
+# (`-`, not `:-`, or index 0 would also take the default).
+# 38;5;214 not ANSI 33: the Omarchy theme remaps the 16-colour palette.
+_PS1_JOBS=('')
+_ps1_jobs='${_PS1_JOBS[\j]-\[\e[1;38;5;214m\][\j]\[\e[0m\] }'
+# starship rewrites PS1 every prompt, so re-insert after it runs; on a static PS1
+# this is a no-op after the first prompt. Keeps starship's leading blank line.
+_ps1_add_jobs() {
+  [[ $PS1 == *"$_ps1_jobs"* ]] && return
+  if [[ $PS1 == $'\n'* ]]; then PS1=$'\n'"$_ps1_jobs${PS1#$'\n'}"
+  else PS1="$_ps1_jobs$PS1"; fi
+}
+PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND; }_ps1_add_jobs"
+
+
 ## Local things
 # Not in the repo. Per-machine overrides; keep this last.
 if [ -f ~/.bash_local ]; then
